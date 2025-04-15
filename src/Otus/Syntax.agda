@@ -1,4 +1,4 @@
-module Otus.Syntax where
+module Otus.Definition where
 
-open import Otus.Syntax.Universe
+open import Otus.Definition.Universe
 

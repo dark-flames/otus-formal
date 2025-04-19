@@ -1,4 +1,4 @@
-module Otus.Definition.Term where
+module Otus.Definition.Typed where
 
-open import Otus.Definition.Typed.Context public
+open import Otus.Definition.Typed.Base public
 

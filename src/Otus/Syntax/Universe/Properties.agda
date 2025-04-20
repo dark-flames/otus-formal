@@ -1,6 +1,6 @@
-module Otus.Definition.Universe.Properties where
+module Otus.Syntax.Universe.Properties where
 
-open import Otus.Definition.Universe.Base
+open import Otus.Syntax.Universe.Base
 open import Agda.Builtin.Equality using (_≡_; refl)
 open import Relation.Binary.PropositionalEquality hiding (cong)
 

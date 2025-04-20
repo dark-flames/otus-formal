@@ -1,4 +1,4 @@
-module Otus.Definition.Universe.Base where
+module Otus.Syntax.Universe.Base where
 
 data ULevel : Set where
     lzero : ULevel

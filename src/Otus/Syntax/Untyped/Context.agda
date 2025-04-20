@@ -1,6 +1,6 @@
-module Otus.Definition.Untyped.Context where
+module Otus.Syntax.Untyped.Context where
 
-open import Otus.Definition.Untyped.Term
+open import Otus.Syntax.Untyped.Term
 
 infixl 30 _,_
 

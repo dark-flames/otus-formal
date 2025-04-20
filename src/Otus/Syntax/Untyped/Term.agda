@@ -1,9 +1,10 @@
-module Otus.Definition.Untyped.Term where
+module Otus.Syntax.Untyped.Term where
 
 open import Data.Nat
-open import Otus.Definition.Universe.Base
+open import Otus.Syntax.Universe.Base
 
-
+infixl 33 _∙_
+infixl 31 _∘_
 
 data Substitution : Set
 

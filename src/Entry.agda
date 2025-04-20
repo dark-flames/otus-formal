@@ -1,3 +1,3 @@
 module Entry where
 
-open import Otus.Definition public
+open import Otus.Syntax public

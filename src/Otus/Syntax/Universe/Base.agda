@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Universe.Base where
 
 data ULevel : Set where

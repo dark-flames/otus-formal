@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Universe.Properties where
 
 open import Otus.Syntax.Universe.Base

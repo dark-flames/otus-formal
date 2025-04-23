@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Untyped.Context where
 
 open import Otus.Syntax.Untyped.Term

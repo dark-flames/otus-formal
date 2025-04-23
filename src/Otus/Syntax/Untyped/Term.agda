@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Untyped.Term where
 
 open import Data.Nat
@@ -23,6 +24,9 @@ data Substitution where
 
 idₛ : Substitution
 idₛ = drop 0
+
+lift : Substitution → Substitution
+lift γ = (γ ∘ (drop 1)) , Var 0
 
     
 

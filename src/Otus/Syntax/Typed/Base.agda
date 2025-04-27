@@ -21,8 +21,7 @@ data ⊢_ : Context → Set
 data _⊢_ : Context → Term → Set
 data _⊢_∷_ : Context → Term → Term → Set
 data _⊢_⇒_ : Context → Substitution → Context → Set
-
-data ⊢_≡ⱼ_ : Context → Context → Set
+data ⊢_≡ⱼ_ : Context → Context → Set 
 data _⊢_≡ⱼ_ : Context → Term → Term → Set
 data _⊢_≡ⱼ_⇒_ : Context → Substitution → Substitution → Context → Set
 data _⊢_≡ⱼ_∷_ : Context → Term → Term → Term → Set
@@ -31,6 +30,7 @@ data ⊢_ where
     CEmp : ⊢ ε
     CExt : ⊢ Γ → Γ ⊢ A
         →  ⊢ Γ , A
+open ⊢_
 
 data _⊢_ where
     TyPi : Γ ⊢ A → Γ , A ⊢ B
@@ -41,14 +41,18 @@ data _⊢_ where
     TyRussel : Γ ⊢ A ∷ U l
         → Γ ⊢ A
 
+open _⊢_
+
 data _⊢_⇒_ where
-    SbDropᶻ : ⊢ Γ → Γ ⊢ drop 0 ⇒ Γ
+    SbId : ⊢ Γ ≡ⱼ Δ → Γ ⊢ idₛ ⇒ Δ
     SbDropˢ : Γ ⊢ drop x ⇒ Δ → Γ ⊢ A
         → Γ , A ⊢ drop (suc x) ⇒ Δ
     SbExt : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ∷ (A [ γ ]ₑ)
         → Γ ⊢ γ , a ⇒ Δ , A
     SbComp : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ δ ∘ γ ⇒ Ξ
+
+open _⊢_⇒_
 
 data _⊢_∷_ where
     TmVar : Γ ⊢ A
@@ -65,6 +69,15 @@ data _⊢_∷_ where
         → Γ ⊢ U l ∷ U (lsuc l)
     TmTyConv : Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B
         → Γ ⊢ a ∷ B
+open _⊢_∷_
+
+
+data ⊢_≡ⱼ_ where
+    CEqRefl : ⊢ Γ → ⊢ Γ ≡ⱼ Γ
+    CEqSym : ⊢ Γ ≡ⱼ Δ → ⊢ Δ ≡ⱼ Γ
+    CEqTrans : ⊢ Γ ≡ⱼ Δ → ⊢ Δ ≡ⱼ Ξ → ⊢ Γ ≡ⱼ Ξ
+    CEqExt : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Δ ⊢ B → Γ ⊢ A ≡ⱼ B
+        → ⊢ Γ , A ≡ⱼ Δ , B
 
 data _⊢_≡ⱼ_ where
 --- Eq
@@ -108,7 +121,7 @@ data _⊢_≡ⱼ_⇒_ where
         → Γ ⊢ δ₁ ∘ γ₁ ≡ⱼ δ₂ ∘ γ₂ ⇒ Ξ
 ---- Computation
     SbEqCompAssoc : Ξ ⊢ ξ ⇒ Θ → Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ
-        → Γ ⊢ (ξ ∘ δ) ∘ γ ≡ⱼ (ξ ∘ δ) ∘ γ ⇒ Θ
+        → Γ ⊢ ξ ∘ δ ∘ γ ≡ⱼ ξ ∘ (δ ∘ γ) ⇒ Θ
     SbEqIdₗ : Δ ⊢ idₛ ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ idₛ ∘ γ ≡ⱼ γ ⇒ Ξ
     SbEqIdᵣ : Δ ⊢ γ ⇒ Ξ → Γ ⊢ idₛ ⇒ Δ
@@ -122,6 +135,13 @@ data _⊢_≡ⱼ_⇒_ where
     SbEqExtComp : Δ ⊢ δ , a ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ (δ , a) ∘ γ ≡ⱼ(δ ∘ γ , (a [ γ ]ₑ))  ⇒ Ξ
 
+open _⊢_≡ⱼ_⇒_
+
+module Subst-≡ⱼ-Comp where
+    infixl 2 _⟨⟩_
+    
+    _⟨⟩_ : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₂ ≡ⱼ γ₃ ⇒ Δ → Γ ⊢ γ₁ ≡ⱼ γ₃ ⇒ Δ
+    _⟨⟩_ = SbEqTrans
     
 data _⊢_≡ⱼ_∷_ where
 ---- Eq
@@ -172,3 +192,5 @@ data _⊢_≡ⱼ_∷_ where
 ---- η rules
     TmEqPiEta : Γ ⊢ f ∷ (Pi A B)
         → Γ ⊢ f ≡ⱼ (Lam ((f [ drop 1 ]ₑ) ∙ Var 0)) ∷ (B [ idₛ , a ]ₑ)
+
+open _⊢_≡ⱼ_∷_

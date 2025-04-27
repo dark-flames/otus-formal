@@ -27,6 +27,3 @@ idₛ = drop 0
 
 lift : Substitution → Substitution
 lift γ = (γ ∘ (drop 1)) , Var 0
-
-    
-

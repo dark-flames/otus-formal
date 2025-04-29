@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --termination-depth=10 #-}
+{-# OPTIONS --without-K #-}
 module Otus.Syntax.Typed.Properties.Presuppositions where
 
 open import Otus.Syntax.Universe
@@ -22,7 +22,7 @@ open _⊢_
 
 postulate 
     substComainStability : ⊢ Δ ≡ⱼ Ξ → Γ ⊢ γ ⇒ Δ → Γ ⊢ γ ⇒ Ξ
-    tyEqStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A ≡ⱼ B → Δ ⊢ A ≡ⱼ B
+    
 
     {- If Γ ⊢ δ ⇒ Δ then ⊢ Γ and ⊢ Δ -}
     substWfCtx : Γ ⊢ δ ⇒ Δ → ⊢ Γ × ⊢ Δ
@@ -39,9 +39,8 @@ postulate
     
 tyStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Δ ⊢ A
 substDomainStability : ⊢ Γ ≡ⱼ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ γ ⇒ Δ
-substDomainStability' : ⊢ Γ ≡ⱼ Ξ → Ξ ⊢ γ ⇒ Δ → Γ ⊢ γ ⇒ Δ
 tmStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ a ∷ A → Δ ⊢ a ∷ A
-tmStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ a ∷ A → Γ ⊢ a ∷ A
+tyEqStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A ≡ⱼ B → Δ ⊢ A ≡ⱼ B
 
 displayMap : Γ ⊢ A → Γ , A ⊢ drop 1 ⇒ Γ
 ---- Context
@@ -51,10 +50,24 @@ ctxWeakening (CExt ctx _) = ctx
 ctxExpand : ⊢ Γ , A → Γ ⊢ A
 ctxExpand (CExt _ ty) = ty
 
+ctxEqSym : ⊢ Γ ≡ⱼ Δ → ⊢ Δ ≡ⱼ Γ
+ctxEqSym (CEqRefl ⊢Γ) = CEqRefl ⊢Γ
+ctxEqSym (CEqExt Γ≡Δ Γ⊢A Δ⊢B Γ⊢A≡B Δ⊢A≡B) = let Δ≡Γ = ctxEqSym Γ≡Δ
+    in CEqExt Δ≡Γ Δ⊢B Γ⊢A (TyEqSym Δ⊢A≡B) (TyEqSym Γ⊢A≡B)
+
+
+ctxEqTrans : ⊢ Γ ≡ⱼ Δ → ⊢ Δ ≡ⱼ Ξ → ⊢ Γ ≡ⱼ Ξ
+ctxEqTrans (CEqRefl ⊢Γ) Γ≡Ξ = Γ≡Ξ
+ctxEqTrans Γ≡Ξ (CEqRefl ⊢Ξ) = Γ≡Ξ
+ctxEqTrans (CEqExt Γ≡Δ Γ⊢A Δ⊢B Γ⊢A≡B Δ⊢A≡B) (CEqExt Δ≡Ξ _ Ξ⊢C Δ⊢B≡C Ξ⊢B≡C) = let Γ≡Ξ = ctxEqTrans Γ≡Δ Δ≡Ξ
+    in let Δ⊢A≡C = TyEqTrans Δ⊢A≡B Δ⊢B≡C
+    in let Ξ⊢A≡C = tyEqStability Δ≡Ξ Δ⊢A≡C -- todo : may be blocked by tc
+    in let Γ⊢A≡C = tyEqStability (ctxEqSym Γ≡Δ) Δ⊢A≡C
+    in CEqExt Γ≡Ξ Γ⊢A Ξ⊢C Γ⊢A≡C Ξ⊢A≡C 
+
+
 ctxEqWf : ⊢ Γ ≡ⱼ Δ → ⊢ Γ × ⊢ Δ
 ctxEqWf (CEqRefl ⊢Γ) = pair ⊢Γ ⊢Γ
-ctxEqWf (CEqSym Γ≡Δ) = swap (ctxEqWf Γ≡Δ)
-ctxEqWf (CEqTrans Γ≡Δ Δ≡Ξ) = pair (proj₁ (ctxEqWf Γ≡Δ)) (proj₂ (ctxEqWf Δ≡Ξ))
 ctxEqWf (CEqExt Γ≡Δ Γ⊢A Δ⊢B Γ⊢A≡B Δ⊢A≡B) = let (pair ⊢Γ ⊢Δ) = ctxEqWf Γ≡Δ
     in pair (CExt ⊢Γ Γ⊢A) (CExt ⊢Δ Δ⊢B)
 
@@ -72,9 +85,7 @@ tyStability Γ≡Δ (TyRussel Γ⊢A∷U) = TyRussel (tmStability Γ≡Δ Γ⊢A
 
 -- substDomainStability : ⊢ Γ ≡ⱼ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ γ ⇒ Δ
 substDomainStability (CEqRefl ⊢Γ) Γ⇒Δ = Γ⇒Δ
-substDomainStability (CEqSym Ξ≡Γ) Γ⇒Δ = substDomainStability' Ξ≡Γ Γ⇒Δ
-substDomainStability (CEqTrans Γ≡Δ Δ≡Ξ) γ = substDomainStability Δ≡Ξ (substDomainStability Γ≡Δ γ)
-substDomainStability Γ≡Ξ (SbId Γ≡Δ) = SbId (CEqTrans (CEqSym Γ≡Ξ) Γ≡Δ)
+substDomainStability Γ≡Ξ (SbId Γ≡Δ) = SbId (ctxEqTrans (ctxEqSym Γ≡Ξ) Γ≡Δ)
 substDomainStability (CEqExt Γ≡Ξ Γ⊢A Ξ⊢B Γ⊢A≡B Δ⊢A≡B) (SbDropˢ Γ⇒Δ _) = let Ξ⇒Δ = substDomainStability Γ≡Ξ Γ⇒Δ
     in SbDropˢ Ξ⇒Δ  Ξ⊢B
 substDomainStability Γ,A≡Ξ,B (SbExt Γ,A⇒Δ Δ⊢A Γ,A⊢a∷A) = let Ξ,B⇒Δ = substDomainStability Γ,A≡Ξ,B Γ,A⇒Δ
@@ -82,21 +93,8 @@ substDomainStability Γ,A≡Ξ,B (SbExt Γ,A⇒Δ Δ⊢A Γ,A⊢a∷A) = let Ξ,
 substDomainStability Γ₁≡Δ (SbComp Γ₂⇒Γ₃ Γ₁⇒Γ₂) = let Δ⇒Γ₂ = substDomainStability Γ₁≡Δ Γ₁⇒Γ₂
     in SbComp Γ₂⇒Γ₃ Δ⇒Γ₂
 
-substDomainStability' (CEqRefl ⊢Γ) Ξ⇒Δ = Ξ⇒Δ
-substDomainStability' (CEqSym Γ≡Ξ) Ξ⇒Δ = substDomainStability Γ≡Ξ Ξ⇒Δ
-substDomainStability' (CEqTrans Γ≡Δ Δ≡Ξ) s = substDomainStability' Γ≡Δ (substDomainStability' Δ≡Ξ s)
-substDomainStability' Γ≡Ξ (SbId Ξ≡Δ) = SbId (CEqTrans Γ≡Ξ Ξ≡Δ)
-substDomainStability' (CEqExt Γ≡Ξ Γ⊢A Ξ⊢B Γ⊢A≡B Δ⊢A≡B) (SbDropˢ Ξ⇒Δ _) = let Γ⇒Δ = substDomainStability' Γ≡Ξ Ξ⇒Δ
-    in SbDropˢ Γ⇒Δ Γ⊢A
-substDomainStability' Γ,A≡Ξ,B (SbExt Ξ,B⇒Δ Δ⊢B Γ,B⊢b∷B) = let Γ,A⇒Δ = substDomainStability' Γ,A≡Ξ,B Ξ,B⇒Δ
-    in SbExt Γ,A⇒Δ Δ⊢B (tmStability' Γ,A≡Ξ,B Γ,B⊢b∷B)
-substDomainStability' Γ≡Δ₁ (SbComp Δ₂⇒Δ₃ Δ₁⇒Δ₂) = let Γ⇒Δ₂ = substDomainStability' Γ≡Δ₁ Δ₁⇒Δ₂
-    in SbComp Δ₂⇒Δ₃ Γ⇒Δ₂
-
 -- tmStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ a ∷ A → Δ ⊢ a ∷ A
 tmStability (CEqRefl ⊢Γ) Γ⊢a∷A = Γ⊢a∷A
-tmStability (CEqSym Γ≡Δ) Γ⊢a∷A = tmStability' Γ≡Δ Γ⊢a∷A
-tmStability (CEqTrans Γ≡Δ Δ≡Ξ) Γ⊢a∷A = tmStability Δ≡Ξ (tmStability Γ≡Δ Γ⊢a∷A)
 tmStability (CEqExt Γ≡Δ Γ⊢A Δ⊢B Γ⊢A≡B Δ⊢A≡B) (TmVar _) = let Δ,B⇒Δ = displayMap Δ⊢B
     in let A≡B' = TyEqSubst (TyEqSym Δ⊢A≡B) (SbEqRefl Δ,B⇒Δ)
     in TmTyConv (TmVar Δ⊢B) A≡B'
@@ -104,14 +102,25 @@ tmStability Γ≡Δ (TmLam Γ⊢A Γ,A⊢b∷B) = let Δ⊢A = tyStability Γ≡
     in let Γ,A≡Δ,A = CEqExt Γ≡Δ Γ⊢A Δ⊢A (TyEqRefl Γ⊢A) (TyEqRefl Δ⊢A)
     in let Δ,A⊢b∷B = tmStability Γ,A≡Δ,A Γ,A⊢b∷B
     in TmLam Δ⊢A Δ,A⊢b∷B
+tmStability Γ≡Δ (TmPi Γ⊢A∷U Γ,A⊢B∷U) = let Γ⊢A = TyRussel Γ⊢A∷U
+    in let Δ⊢A∷U = tmStability Γ≡Δ Γ⊢A∷U
+    in let Δ⊢A = TyRussel Δ⊢A∷U 
+    in let Γ,A≡Δ,A = CEqExt Γ≡Δ Γ⊢A Δ⊢A (TyEqRefl Γ⊢A) (TyEqRefl Δ⊢A)
+    in let Δ,A⊢B∷U = tmStability Γ,A≡Δ,A Γ,A⊢B∷U
+    in TmPi Δ⊢A∷U Δ,A⊢B∷U
+tmStability Γ≡Δ (TmApp Γ⊢f∷PiAB Γ⊢a∷A) = let Δ⊢f∷PiAB = tmStability Γ≡Δ Γ⊢f∷PiAB
+    in let Δ⊢a∷A = tmStability Γ≡Δ Γ⊢a∷A
+    in TmApp Δ⊢f∷PiAB Δ⊢a∷A
+tmStability Γ≡Δ (TmSubst Ξ⊢a∷A Γ⇒Ξ) = TmSubst Ξ⊢a∷A (substDomainStability Γ≡Δ Γ⇒Ξ)
+tmStability Γ≡Δ (TmU _) = let pair _ ⊢Δ = ctxEqWf Γ≡Δ
+    in TmU ⊢Δ
+tmStability Γ≡Δ (TmTyConv Γ⊢a∷A Γ⊢A≡B) = TmTyConv (tmStability Γ≡Δ Γ⊢a∷A) (tyEqStability Γ≡Δ Γ⊢A≡B)
 
--- tmStability : ⊢ Γ ≡ⱼ Δ → Δ ⊢ a ∷ A → Γ ⊢ a ∷ A
-tmStability' (CEqRefl ⊢Γ) Γ⊢a∷A = Γ⊢a∷A
-tmStability' (CEqSym Δ≡Γ) Δ⊢a∷A = tmStability Δ≡Γ Δ⊢a∷A
-tmStability' (CEqTrans Γ≡Δ Δ≡Ξ) Ξ⊢a∷A = tmStability' Γ≡Δ (tmStability' Δ≡Ξ Ξ⊢a∷A)
-tmStability' (CEqExt Γ≡Δ Γ⊢A Δ⊢B Γ⊢A≡B Δ⊢A≡B) (TmVar _) = let Γ,A⇒Γ = displayMap Γ⊢A
-    in let A≡B' = TyEqSubst Γ⊢A≡B (SbEqRefl Γ,A⇒Γ)
-    in TmTyConv (TmVar Γ⊢A) A≡B'
+
+-- tyEqStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A ≡ⱼ B → Δ ⊢ A ≡ⱼ B
+tyEqStability (CEqRefl ⊢Γ) Γ⊢A≡B = Γ⊢A≡B
+tyEqStability Γ≡Δ (TyEqRefl Γ⊢A) = TyEqRefl (tyStability Γ≡Δ Γ⊢A)
+tyEqStability Γ≡Δ (TyEqSym Γ⊢B≡A) = TyEqSym (tyEqStability Γ≡Δ Γ⊢B≡A)
 
 ---- Substitution
 -- displayMap : Γ ⊢ A → Γ , A ⊢ drop 1 ⇒ Γ
@@ -133,7 +142,7 @@ forward : ⊢ Γ ≡ⱼ Δ → Γ ⊢ idₛ ⇒ Δ
 forward = SbId
 
 backward : ⊢ Γ ≡ⱼ Δ → Δ ⊢ idₛ ⇒ Γ
-backward Γ≡Δ = SbId (CEqSym Γ≡Δ)
+backward Γ≡Δ = SbId (ctxEqSym Γ≡Δ)
 
 tyEqLift : Γ ⊢ A ≡ⱼ B → Γ ⊢ C → Γ , C ⊢ (A [ drop 1 ]ₑ) ≡ⱼ (B [ drop 1 ]ₑ)
 tyEqLift eq eTy = let sb = displayMap eTy

@@ -74,8 +74,6 @@ open _⊢_∷_
 
 data ⊢_≡ⱼ_ where
     CEqRefl : ⊢ Γ → ⊢ Γ ≡ⱼ Γ
-    CEqSym : ⊢ Γ ≡ⱼ Δ → ⊢ Δ ≡ⱼ Γ
-    CEqTrans : ⊢ Γ ≡ⱼ Δ → ⊢ Δ ≡ⱼ Ξ → ⊢ Γ ≡ⱼ Ξ
     CEqExt : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Δ ⊢ B → Γ ⊢ A ≡ⱼ B → Δ ⊢ A ≡ⱼ B
         → ⊢ Γ , A ≡ⱼ Δ , B
 

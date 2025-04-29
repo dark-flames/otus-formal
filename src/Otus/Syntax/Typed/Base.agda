@@ -57,7 +57,7 @@ open _⊢_⇒_
 data _⊢_∷_ where
     TmVar : Γ ⊢ A
         → Γ , A ⊢ Var 0 ∷ (A [ drop 1 ]ₑ)
-    TmLam : Γ , A ⊢ b ∷ B
+    TmLam : Γ ⊢ A → Γ , A ⊢ b ∷ B
         → Γ ⊢ Lam b ∷ Pi A B
     TmPi : Γ ⊢ A ∷ U l₁ → Γ , A ⊢ B ∷ U l₂
         → Γ ⊢ Pi A B ∷ U (l₁ ⊔ l₂)
@@ -76,7 +76,7 @@ data ⊢_≡ⱼ_ where
     CEqRefl : ⊢ Γ → ⊢ Γ ≡ⱼ Γ
     CEqSym : ⊢ Γ ≡ⱼ Δ → ⊢ Δ ≡ⱼ Γ
     CEqTrans : ⊢ Γ ≡ⱼ Δ → ⊢ Δ ≡ⱼ Ξ → ⊢ Γ ≡ⱼ Ξ
-    CEqExt : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Δ ⊢ B → Γ ⊢ A ≡ⱼ B
+    CEqExt : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Δ ⊢ B → Γ ⊢ A ≡ⱼ B → Δ ⊢ A ≡ⱼ B
         → ⊢ Γ , A ≡ⱼ Δ , B
 
 data _⊢_≡ⱼ_ where
@@ -154,7 +154,7 @@ data _⊢_≡ⱼ_∷_ where
     TmEqCong : Γ ⊢ A ≡ⱼ B → Γ ⊢ a ≡ⱼ b ∷ A
         → Δ ⊢ a ≡ⱼ b ∷ B
 ---- congruence
-    TmEqLam : Γ , A ⊢ a ≡ⱼ b ∷ B
+    TmEqLam : Γ ⊢ A → Γ , A ⊢ a ≡ⱼ b ∷ B
         → Γ ⊢ (Lam a) ≡ⱼ (Lam b) ∷ Pi A B
     TmEqPi : Γ ⊢ A ≡ⱼ B ∷ U l₁ → Γ , A ⊢ C ≡ⱼ D ∷ U l₂
         → Γ ⊢ (Pi A B) ≡ⱼ (Pi C D) ∷ U (l₁ ⊔ l₂)

@@ -44,14 +44,15 @@ data _⊢_ where
 open _⊢_
 
 data _⊢_⇒_ where
-    SbId : ⊢ Γ ≡ⱼ Δ → Γ ⊢ idₛ ⇒ Δ
+    SbId : ⊢ Γ → Γ ⊢ idₛ ⇒ Γ
     SbDropˢ : Γ ⊢ drop x ⇒ Δ → Γ ⊢ A
         → Γ , A ⊢ drop (suc x) ⇒ Δ
     SbExt : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ∷ (A [ γ ]ₑ)
         → Γ ⊢ γ , a ⇒ Δ , A
     SbComp : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ δ ∘ γ ⇒ Ξ
-
+    SbConv : Γ ⊢ γ ⇒ Δ₁ → ⊢ Δ₁ ≡ⱼ Δ₂ 
+        → Γ ⊢ γ ⇒ Δ₂
 open _⊢_⇒_
 
 data _⊢_∷_ where
@@ -74,7 +75,7 @@ open _⊢_∷_
 
 data ⊢_≡ⱼ_ where
     CEqRefl : ⊢ Γ → ⊢ Γ ≡ⱼ Γ
-    CEqExt : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Δ ⊢ B → Γ ⊢ A ≡ⱼ B → Δ ⊢ A ≡ⱼ B
+    CEqExt : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Δ ⊢ B → Γ ⊢ A ≡ⱼ B
         → ⊢ Γ , A ≡ⱼ Δ , B
 
 data _⊢_≡ⱼ_ where
@@ -88,7 +89,7 @@ data _⊢_≡ⱼ_ where
 ---- Cong
     TyEqPi : Γ ⊢ A ≡ⱼ B → Γ , A ⊢ C ≡ⱼ D
         →   Γ ⊢ (Pi A C) ≡ⱼ (Pi B D)
-    TyEqU : l₁ ≡ l₂
+    TyEqU : l₁ ≡ l₂ → ⊢ Γ
         → Γ ⊢ (U l₁) ≡ⱼ U l₂
     TyEqSubst : Δ ⊢ A ≡ⱼ B → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ (A [ γ₁ ]ₑ) ≡ⱼ (B [ γ₂ ]ₑ)
@@ -110,10 +111,12 @@ data _⊢_≡ⱼ_⇒_ where
         → Γ ⊢ γ₂ ≡ⱼ γ₁ ⇒ Δ
     SbEqTrans : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₂ ≡ⱼ γ₃ ⇒ Δ
         → Γ ⊢ γ₁ ≡ⱼ γ₃ ⇒ Δ
+    SbEqConv : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ₁ → ⊢ Δ₁ ≡ⱼ Δ₂
+        → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ₂
 ---- congruence
     SbEqDrop : x ≡ y → Γ ⊢ drop x ⇒ Δ
         → Γ ⊢ drop x ≡ⱼ drop y ⇒ Δ
-    SbEqExt : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ a ≡ⱼ b ∷ (A [ γ₁ ]ₑ)
+    SbEqExt : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ≡ⱼ b ∷ (A [ γ₁ ]ₑ)
         → Γ ⊢ γ₁ , a ≡ⱼ γ₂ , b  ⇒ Δ , A
     SbEqComp : Δ ⊢ δ₁ ≡ⱼ δ₂ ⇒ Ξ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ δ₁ ∘ γ₁ ≡ⱼ δ₂ ∘ γ₂ ⇒ Ξ
@@ -149,8 +152,8 @@ data _⊢_≡ⱼ_∷_ where
         → Γ ⊢ b ≡ⱼ a ∷ B
     TmEqTrans : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ b ≡ⱼ c ∷ A
         → Γ ⊢ a ≡ⱼ c ∷ A
-    TmEqCong : Γ ⊢ A ≡ⱼ B → Γ ⊢ a ≡ⱼ b ∷ A
-        → Δ ⊢ a ≡ⱼ b ∷ B
+    TmEqConv : Γ ⊢ A ≡ⱼ B → Γ ⊢ a ≡ⱼ b ∷ A
+        → Γ ⊢ a ≡ⱼ b ∷ B
 ---- congruence
     TmEqLam : Γ ⊢ A → Γ , A ⊢ a ≡ⱼ b ∷ B
         → Γ ⊢ (Lam a) ≡ⱼ (Lam b) ∷ Pi A B
@@ -158,7 +161,7 @@ data _⊢_≡ⱼ_∷_ where
         → Γ ⊢ (Pi A B) ≡ⱼ (Pi C D) ∷ U (l₁ ⊔ l₂)
     TmEqApp : Γ ⊢ f ≡ⱼ g ∷ (Pi A B) → Γ ⊢ a ≡ⱼ b ∷ A
         → Γ ⊢ (f ∙ a) ≡ⱼ (g ∙ b) ∷ (B [ idₛ , a ]ₑ)
-    TmEqU : l₁ ≡ l₂
+    TmEqU : l₁ ≡ l₂ → ⊢ Γ
         → Γ ⊢ (U l₁) ≡ⱼ (U l₂) ∷ U (lsuc l₁)
     TmEqSubst : Δ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ (a [ γ₁ ]ₑ) ≡ⱼ (b [ γ₂ ]ₑ) ∷ (A [ γ₁ ]ₑ)

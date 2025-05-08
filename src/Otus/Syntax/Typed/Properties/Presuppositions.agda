@@ -97,7 +97,7 @@ tyEqWfCtx ty with ty
 ...| (TyEqRussel Γ⊢A≡B∷U) = tmEqWfCtx Γ⊢A≡B∷U
 ...| (TyEqPiSubst _ Γ⇒Δ) = proj₁ (substWfCtx Γ⇒Δ)
 ...| (TyEqUSubst _ Γ⇒Δ) = proj₁ (substWfCtx Γ⇒Δ)
-...| (TyEqSubstSubst _ Γ⇒Δ) = proj₁ (substWfCtx Γ⇒Δ)
+...| (TyEqSubstSubst _ Γ⇒Δ _) = proj₁ (substWfCtx Γ⇒Δ)
 ...| (TyEqSubstId Γ⊢A) = tyWfCtx Γ⊢A
 
 -- tmWfCtx : Γ ⊢ a ∷ A → ⊢ Γ

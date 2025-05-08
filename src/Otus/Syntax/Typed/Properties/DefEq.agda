@@ -28,6 +28,7 @@ tmWfTy : Γ ⊢ a ∷ A → Γ ⊢ A
 
 substEqWf : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₁ ⇒ Δ × Γ ⊢ γ₂ ⇒ Δ
 tyEqWf : Γ ⊢ A ≡ⱼ B → Γ ⊢ A × Γ ⊢ B
+
 postulate
   tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
 
@@ -127,6 +128,8 @@ tyEqWf eq with eq
 ...| TyEqSubstId Γ⊢A = let ⊢Γ = tyWfCtx Γ⊢A
   in pair (TySubst Γ⊢A (SbId ⊢Γ)) (Γ⊢A)
 
--- tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
--- tmEqWf eq with eq
--- ...| 
+tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
+tmEqWf eq with eq
+...| TmEqRefl Γ⊢a∷A = pair Γ⊢a∷A Γ⊢a∷A
+...| TmEqSym Γ⊢b≡a∷A = swap (tmEqWf Γ⊢b≡a∷A)
+...| TmEqTrans Γ⊢a≡b∷A Γ⊢b≡c∷A = pair (proj₁ (tmEqWf Γ⊢a≡b∷A)) (proj₂ (tmEqWf Γ⊢b≡c∷A))

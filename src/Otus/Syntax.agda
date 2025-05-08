@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --safe #-}
+{-# OPTIONS --without-K #-}
 module Otus.Syntax where
 
 open import Otus.Syntax.Universe public

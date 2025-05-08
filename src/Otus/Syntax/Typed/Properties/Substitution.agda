@@ -1,7 +1,6 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Substitution where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Presuppositions
@@ -33,5 +32,5 @@ liftSubst Γ⊢γ⇒Δ Δ⊢A = let Γ⊢Aγ = TySubst Δ⊢A Γ⊢γ⇒Δ
   in let Γ,Aγ⊢drop1⇒Γ = displayMap Γ⊢Aγ
   in let Γ,Aγ⊢γ∘drop1⇒Δ = SbComp Γ⊢γ⇒Δ Γ,Aγ⊢drop1⇒Γ
   in let Γ,Aγ⊢Aγdrop≡A[γ∘drop] = TyEqSubstSubst Γ⊢γ⇒Δ Γ,Aγ⊢drop1⇒Γ Δ⊢A
-  in let Γ,Aγ⊢var∷↑A = TmTyConv (TmVar Γ⊢Aγ) Γ,Aγ⊢Aγdrop≡A[γ∘drop]
+  in let Γ,Aγ⊢var∷↑A = TmTyConv (TmVarᶻ Γ⊢Aγ) Γ,Aγ⊢Aγdrop≡A[γ∘drop]
   in SbExt Γ,Aγ⊢γ∘drop1⇒Δ Δ⊢A Γ,Aγ⊢var∷↑A

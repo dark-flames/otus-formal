@@ -1,6 +1,5 @@
 {-# OPTIONS --without-K #-}
 module Otus.Syntax where
 
-open import Otus.Syntax.Universe public
 open import Otus.Syntax.Typed public
 open import Otus.Syntax.Untyped public

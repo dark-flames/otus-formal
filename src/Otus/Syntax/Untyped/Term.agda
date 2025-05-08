@@ -2,7 +2,7 @@
 module Otus.Syntax.Untyped.Term where
 
 open import Data.Nat
-open import Otus.Syntax.Universe.Base
+open import Otus.Syntax.Untyped.Universe
 
 infixl 33 _∙_
 infixl 31 _∘_

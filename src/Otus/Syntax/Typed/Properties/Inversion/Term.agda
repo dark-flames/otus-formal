@@ -1,11 +1,12 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Inversion.Term where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped hiding (_∘_)
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Presuppositions
 open import Otus.Syntax.Typed.Properties.Inversion.Base
+open import Otus.Syntax.Typed.Properties.Inversion.Context
+open import Otus.Syntax.Typed.Properties.Substitution
 
 open import Data.Nat hiding (_⊔_)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl)
@@ -36,3 +37,15 @@ piTmInversion (TmPi Γ⊢A∷Ul₁ Γ,A⊢B∷Ul₂) = let l₁ = univInversion 
 piTmInversion (TmTyConv Γ⊢PiAB∷G Γ⊢G≡T) = let pair inv (pair Γ⊢G≡Ul (pair Γ⊢A∷Ul₁ Γ,A⊢B∷Ul₂)) = piTmInversion Γ⊢PiAB∷G
   in let Γ⊢T≡Ul = TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡Ul
   in pair inv (pair Γ⊢T≡Ul (pair Γ⊢A∷Ul₁ Γ,A⊢B∷Ul₂))
+
+varTmInversion : Γ ⊢ Var 0 ∷ T → Σ[ inv ∈ CtxExtInversion Γ ]
+    (Γ ⊢ T ≡ⱼ ((CtxExtInversion.A inv) [ drop 1 ]ₑ))
+varTmInversion (TmVarᶻ Γ⊢A) = let pair Γ A = tyInversion Γ⊢A
+  in let ⊢Γ = tyWfCtx Γ⊢A
+  in let ⊢Γ,A = CExt ⊢Γ Γ⊢A
+  in let inv = ctxExtInv Γ A Γ⊢A (CEqRefl ⊢Γ,A)
+  in let Γ,A⊢drop⇒Γ = displayMap Γ⊢A
+  in let Γ,A⊢A[drop] = TySubst Γ⊢A Γ,A⊢drop⇒Γ
+  in pair inv (TyEqRefl Γ,A⊢A[drop])
+varTmInversion (TmTyConv Γ⊢var∷G Γ⊢G≡T) = let pair inv Γ⊢G≡A[drop] = varTmInversion Γ⊢var∷G
+  in pair inv (TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡A[drop])

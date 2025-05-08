@@ -2,7 +2,6 @@
 
 module Otus.Syntax.Typed.Base where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped
 
 open import Data.Nat hiding (_⊔_)
@@ -11,7 +10,7 @@ open import Agda.Builtin.Equality using (_≡_; refl)
 private
   variable
     l l₁ l₂ : ULevel
-    x y : ℕ
+    x y n : ℕ
     Γ Γ₁ Γ₂ Γ₃ Δ Δ₁ Δ₂ Θ Ξ : Context
     γ γ₁ γ₂ γ₃ δ δ₁ δ₂ δ₃ ξ : Substitution
     A B C D : Term
@@ -56,8 +55,10 @@ data _⊢_⇒_ where
 open _⊢_⇒_
 
 data _⊢_∷_ where
-    TmVar : Γ ⊢ A
+    TmVarᶻ : Γ ⊢ A
         → Γ , A ⊢ Var 0 ∷ (A [ drop 1 ]ₑ)
+    TmVarˢ : Γ ⊢ Var x ∷ A → Γ ⊢ B
+        → Γ , B ⊢ Var (suc x) ∷ (A [ drop 1 ]ₑ)
     TmLam : Γ ⊢ A → Γ , A ⊢ b ∷ B
         → Γ ⊢ Lam b ∷ Pi A B
     TmPi : Γ ⊢ A ∷ U l₁ → Γ , A ⊢ B ∷ U l₂
@@ -141,19 +142,19 @@ data _⊢_≡ⱼ_∷_ where
     TmEqRefl : Γ ⊢ a ∷ A
         → Γ ⊢ a ≡ⱼ a ∷ A
     TmEqSym : Γ ⊢ a ≡ⱼ b ∷ A
-        → Γ ⊢ b ≡ⱼ a ∷ B
+        → Γ ⊢ b ≡ⱼ a ∷ A
     TmEqTrans : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ b ≡ⱼ c ∷ A
         → Γ ⊢ a ≡ⱼ c ∷ A
 ---- Congruence
-    TmEqLam : Γ ⊢ A → Γ , A ⊢ a ≡ⱼ b ∷ B
+    TmEqLam : Γ ⊢ A → Γ , A ⊢ a ≡ⱼ b ∷ B -- Γ ⊢ A required by ContextConv
         → Γ ⊢ (Lam a) ≡ⱼ (Lam b) ∷ Pi A B
-    TmEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ U l₁ → Γ , A ⊢ C ≡ⱼ D ∷ U l₂
-        → Γ ⊢ (Pi A B) ≡ⱼ (Pi C D) ∷ U (l₁ ⊔ l₂)
-    TmEqApp : Γ ⊢ f ≡ⱼ g ∷ (Pi A B) → Γ ⊢ a ≡ⱼ b ∷ A
+    TmEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ U l₁ → Γ , A ⊢ C ≡ⱼ D ∷ U l₂ -- Γ ⊢ A required by ContextConv
+        → Γ ⊢ (Pi A C) ≡ⱼ (Pi B D) ∷ U (l₁ ⊔ l₂)
+    TmEqApp : Γ ⊢ (Pi A B) → Γ ⊢ f ≡ⱼ g ∷ (Pi A B) → Γ ⊢ a ≡ⱼ b ∷ A
         → Γ ⊢ (f ∙ a) ≡ⱼ (g ∙ b) ∷ (B [ idₛ , a ]ₑ)
-    TmEqSubst : Δ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
+    TmEqSubst : Δ ⊢ A → Δ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ (a [ γ₁ ]ₑ) ≡ⱼ (b [ γ₂ ]ₑ) ∷ (A [ γ₁ ]ₑ)
-    TmEqConv : Γ ⊢ A ≡ⱼ B → Γ ⊢ a ≡ⱼ b ∷ A
+    TmEqConv : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ A ≡ⱼ B
         → Γ ⊢ a ≡ⱼ b ∷ B
 ---- Subst Computation
     TmEqSubstId : Γ ⊢ a ∷ A

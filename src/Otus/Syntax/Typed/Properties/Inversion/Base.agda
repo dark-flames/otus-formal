@@ -1,11 +1,8 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Inversion.Base where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped hiding (_∘_)
 open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Properties.Context
-open import Otus.Syntax.Typed.Properties.Presuppositions
 
 open import Data.Product renaming (_,_ to pair)
 
@@ -18,6 +15,9 @@ private
 
 ctxEqInversion : ⊢ Γ ≡ⱼ Δ → Context × Context
 ctxEqInversion { Γ } { Δ } _ = pair Γ Δ
+
+ctxExtInversion : ⊢ Γ , A → ⊢ Γ × Γ ⊢ A
+ctxExtInversion (CExt ⊢Γ Γ⊢A) = pair ⊢Γ Γ⊢A
 
 tyInversion : Γ ⊢ A → Context × Term
 tyInversion { Γ } { A } _ = pair Γ A

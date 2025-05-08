@@ -1,7 +1,6 @@
 {-# OPTIONS --without-K #-}
 module Otus.Syntax.Typed.Properties.DefEq where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Presuppositions
@@ -29,23 +28,53 @@ tmWfTy : Γ ⊢ a ∷ A → Γ ⊢ A
 substEqWf : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₁ ⇒ Δ × Γ ⊢ γ₂ ⇒ Δ
 tyEqWf : Γ ⊢ A ≡ⱼ B → Γ ⊢ A × Γ ⊢ B
 
-postulate
-  tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
+tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
 
 -- tmWfTy : Γ ⊢ a ∷ A → Γ ⊢ A
 tmWfTy tm with tm
-...| (TmVar Γ⊢A) = let Γ,A⊢drop1⇒Γ = displayMap Γ⊢A
+...| TmVarᶻ Γ⊢A = let Γ,A⊢drop1⇒Γ = displayMap Γ⊢A
   in TySubst Γ⊢A Γ,A⊢drop1⇒Γ
-...| (TmLam Γ⊢A Γ,A⊢b∷B) = TyPi Γ⊢A (tmWfTy Γ,A⊢b∷B )
-...| (TmPi Γ⊢A∷U Γ,A⊢B∷U) = TyU (tmWfCtx Γ⊢A∷U)
-...| (TmApp Γ⊢f∷PiAB Γ⊢a∷A) = let Γ⊢PiAB = tmWfTy Γ⊢f∷PiAB
+...| TmVarˢ Γ⊢VarX∷A Γ⊢B = let Γ⊢A = tmWfTy Γ⊢VarX∷A
+  in let Γ,B⊢drop1⇒Γ = displayMap Γ⊢B
+  in TySubst Γ⊢A Γ,B⊢drop1⇒Γ
+...| TmLam Γ⊢A Γ,A⊢b∷B = TyPi Γ⊢A (tmWfTy Γ,A⊢b∷B )
+...| TmPi Γ⊢A∷U Γ,A⊢B∷U = TyU (tmWfCtx Γ⊢A∷U)
+...| TmApp Γ⊢f∷PiAB Γ⊢a∷A = let Γ⊢PiAB = tmWfTy Γ⊢f∷PiAB
   in let pair Γ⊢A Γ,A⊢B = piTyInversion Γ⊢PiAB
   in let Γ⊢id,a⇒Γ,A = section Γ⊢A Γ⊢a∷A
   in TySubst Γ,A⊢B Γ⊢id,a⇒Γ,A
-...| (TmSubst Δ⊢a∷A Γ⇒Δ) = let Δ⊢A = tmWfTy Δ⊢a∷A
+...| TmSubst Δ⊢a∷A Γ⇒Δ = let Δ⊢A = tmWfTy Δ⊢a∷A
   in TySubst Δ⊢A Γ⇒Δ
-...| (TmU ⊢Γ) = TyU ⊢Γ
-...| (TmTyConv _ Γ⊢A≡B) = proj₂ (tyEqWf Γ⊢A≡B)
+...| TmU ⊢Γ = TyU ⊢Γ
+...| TmTyConv _ Γ⊢A≡B = proj₂ (tyEqWf Γ⊢A≡B)
+
+
+
+{-
+tmEqWfTy : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ A
+tmEqWfTy tm with tm
+...| TmEqRefl Γ⊢a∷A = tmWfTy Γ⊢a∷A
+...| TmEqSym Γ⊢b≡a∷A = tmEqWfTy Γ⊢b≡a∷A
+...| TmEqTrans Γ⊢a≡b∷A _ = tmEqWfTy Γ⊢a≡b∷A
+...| TmEqLam Γ⊢A Γ,A⊢a≡b∷B = let Γ,A⊢B = tmEqWfTy Γ,A⊢a≡b∷B
+  in TyPi Γ⊢A Γ,A⊢B
+...| TmEqPi Γ⊢A _ _ = TyU (tyWfCtx Γ⊢A)
+...| TmEqApp Γ⊢PiAB Γ⊢f≡g∷PiAB Γ⊢a≡b∷A = let pair Γ⊢A Γ,A⊢B = piTyInversion Γ⊢PiAB
+  in let Γ⊢id,a⇒Γ,A = section Γ⊢A (proj₁ (tmEqWf Γ⊢a≡b∷A))
+  in TySubst Γ,A⊢B Γ⊢id,a⇒Γ,A
+...| (TmEqSubst _ Γ⊢γ₁≡γ₂⇒Δ) = proj₁ (substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ)
+...| (TmEqConv Γ⊢a≡b∷A _) = tmEqWfCtx Γ⊢a≡b∷A
+...| (TmEqSubstId Γ⊢a∷A) = tmWfCtx Γ⊢a∷A
+...| (TmEqSubstVarExt _ Γ⊢γ,a⇒Δ) = proj₁ (substWfCtx Γ⊢γ,a⇒Δ)
+...| (TmEqSubstVarDrop _ Γ⊢dropX⇒Δ) = proj₁ (substWfCtx Γ⊢dropX⇒Δ)
+...| (TmEqLamSubst _ Γ⇒Δ) = proj₁ (substWfCtx Γ⇒Δ)
+...| (TmEqAppSubst _ Γ⇒Δ) = proj₁ (substWfCtx Γ⇒Δ)
+...| (TmEqSubstComp _ Γ⊢γ⇒Δ _) = proj₁ (substWfCtx Γ⊢γ⇒Δ)
+...| (TmEqUSubst Γ⇒Δ) = proj₁ (substWfCtx Γ⇒Δ)
+...| (TmEqPiSubst _ Γ⇒Δ) = proj₁ (substWfCtx Γ⇒Δ)
+...| (TmEqPiBeta _ _ Γ⊢a∷A) = tmWfCtx Γ⊢a∷A
+...| (TmEqPiEta Γ⊢f∷PiAB) = tmWfCtx Γ⊢f∷PiAB-}
+
 
 -- substEqWf : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₁ ⇒ Δ × Γ ⊢ γ₂ ⇒ Δ
 substEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
@@ -128,8 +157,57 @@ tyEqWf eq with eq
 ...| TyEqSubstId Γ⊢A = let ⊢Γ = tyWfCtx Γ⊢A
   in pair (TySubst Γ⊢A (SbId ⊢Γ)) (Γ⊢A)
 
-tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
+-- tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
 tmEqWf eq with eq
 ...| TmEqRefl Γ⊢a∷A = pair Γ⊢a∷A Γ⊢a∷A
 ...| TmEqSym Γ⊢b≡a∷A = swap (tmEqWf Γ⊢b≡a∷A)
 ...| TmEqTrans Γ⊢a≡b∷A Γ⊢b≡c∷A = pair (proj₁ (tmEqWf Γ⊢a≡b∷A)) (proj₂ (tmEqWf Γ⊢b≡c∷A))
+...| TmEqLam Γ⊢A Γ,A⊢a≡b∷B = let pair Γ,A⊢a∷B Γ,A⊢b∷B = tmEqWf Γ,A⊢a≡b∷B
+  in pair (TmLam Γ⊢A Γ,A⊢a∷B) (TmLam Γ⊢A Γ,A⊢b∷B)
+...| TmEqPi Γ⊢A Γ⊢A≡B∷Ul₁ Γ,A⊢C≡D∷Ul₂ = let pair Γ⊢A∷Ul₁ Γ⊢B∷Ul₁ = tmEqWf Γ⊢A≡B∷Ul₁
+  in let pair Γ,A⊢C∷Ul₂ Γ,A⊢D∷Ul₂ = tmEqWf Γ,A⊢C≡D∷Ul₂
+  in let Γ⊢A≡B = TyEqRussel Γ⊢A≡B∷Ul₁
+  in let ⊢Γ = tyWfCtx Γ⊢A
+  in let ⊢Γ,A≡Γ,B = CEqExt (CEqRefl ⊢Γ) (TyRussel Γ⊢A∷Ul₁) (TyRussel Γ⊢B∷Ul₁) Γ⊢A≡B
+  in let Γ,B⊢D∷Ul₂ = tmStability ⊢Γ,A≡Γ,B Γ,A⊢D∷Ul₂
+  in pair (TmPi Γ⊢A∷Ul₁ Γ,A⊢C∷Ul₂) (TmPi Γ⊢B∷Ul₁ Γ,B⊢D∷Ul₂)
+...| TmEqApp Γ⊢PiAB Γ⊢f≡g∷PiAB Γ⊢a≡b∷A = let ⊢Γ = tmEqWfCtx Γ⊢f≡g∷PiAB
+  in let pair Γ⊢f∷PiAB Γ⊢g∷PiAB = tmEqWf Γ⊢f≡g∷PiAB
+  in let pair Γ⊢a∷A Γ⊢b∷A = tmEqWf Γ⊢a≡b∷A
+  in let pair Γ⊢A Γ,A⊢B = piTyInversion Γ⊢PiAB
+  in let Γ⊢a≡b∷Aid = TmEqConv Γ⊢a≡b∷A (TyEqSym (TyEqSubstId Γ⊢A))
+  in let Γ⊢id,a≡id,b⇒Γ,A = SbEqExt (SbEqRefl (SbId ⊢Γ)) Γ⊢A Γ⊢a≡b∷Aid
+  in let Γ⊢fa∷B[id,a] = TmApp Γ⊢f∷PiAB Γ⊢a∷A
+  in let Γ⊢gb∷B[id,b] = TmApp Γ⊢g∷PiAB Γ⊢b∷A
+  in let Γ⊢B[id,a]≡B[id,b] = TyEqSubst (TyEqRefl Γ,A⊢B) Γ⊢id,a≡id,b⇒Γ,A
+  in let Γ⊢gb∷B[id,a] = TmTyConv Γ⊢gb∷B[id,b] (TyEqSym Γ⊢B[id,a]≡B[id,b])
+  in pair Γ⊢fa∷B[id,a] Γ⊢gb∷B[id,a]
+...| TmEqSubst Δ⊢A Δ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Δ = let pair Δ⊢a∷A Δ⊢b∷A = tmEqWf Δ⊢a≡b∷A
+  in let pair Γ⊢γ₁⇒Δ Γ⊢γ₂⇒Δ = substEqWf Γ⊢γ₁≡γ₂⇒Δ
+  in let Γ⊢a∷Aγ₁ = TmSubst Δ⊢a∷A Γ⊢γ₁⇒Δ
+  in let Γ⊢b∷Aγ₂ = TmSubst Δ⊢b∷A Γ⊢γ₂⇒Δ
+  in let Γ⊢Aγ₁≡Aγ₂ = TyEqSubst (TyEqRefl Δ⊢A) Γ⊢γ₁≡γ₂⇒Δ
+  in let Γ⊢b∷Aγ₁ = TmTyConv Γ⊢b∷Aγ₂ (TyEqSym Γ⊢Aγ₁≡Aγ₂)
+  in pair Γ⊢a∷Aγ₁ Γ⊢b∷Aγ₁
+...| TmEqConv Γ⊢a≡b∷A Γ⊢A≡B = let pair Γ⊢a∷A Γ⊢b∷A = tmEqWf Γ⊢a≡b∷A
+  in pair (TmTyConv Γ⊢a∷A Γ⊢A≡B) (TmTyConv Γ⊢b∷A Γ⊢A≡B)
+...| TmEqSubstId Γ⊢a∷A = let Γ⊢A = tmWfTy Γ⊢a∷A
+  in let Γ⊢aid∷Aid = (TmSubst Γ⊢a∷A (SbId (tmWfCtx Γ⊢a∷A)))
+  in let Γ⊢Aid≡A = TyEqSubstId Γ⊢A
+  in let Γ⊢aid∷A = TmTyConv Γ⊢aid∷Aid Γ⊢Aid≡A
+  in pair Γ⊢aid∷A Γ⊢a∷A
+...| TmEqSubstVarExt Δ⊢var∷A Γ⊢γ,a⇒Δ = let pair (ctxExtInv Δ₁ B₁ Δ₁⊢B₁ ⊢Δ≡Δ₁,B₁) (pair Γ⊢γ⇒Δ₁ Γ⊢a∷B₁[γ]) = substExtInversion Γ⊢γ,a⇒Δ
+  in let pair (ctxExtInv Δ₂ B₂ Δ₂⊢B₂ ⊢Δ≡Δ₂,B₂) Δ⊢A≡B₂[drop] = varTmInversion Δ⊢var∷A
+  in let ⊢Δ₁,B₁≡Δ₂,B₂ = ctxEqTrans (ctxEqSym ⊢Δ≡Δ₁,B₁) ⊢Δ≡Δ₂,B₂
+  in let pair ⊢Δ₁≡Δ₂ Δ₁⊢B₁≡B₂ = ctxEqExtInversion ⊢Δ₁,B₁≡Δ₂,B₂
+  in let Γ⊢γ,a⇒Δ₂,B₂ = SbConv Γ⊢γ,a⇒Δ ⊢Δ≡Δ₂,B₂
+  in let Δ₂,B₂⊢drop⇒Δ₂ = displayMap Δ₂⊢B₂
+  in let Δ₂,B₂⊢A≡B₂[drop] = tyEqStability ⊢Δ≡Δ₂,B₂ Δ⊢A≡B₂[drop]
+  in let Γ⊢A[γ,a]≡B₂[drop][γ,a] = TyEqSubst Δ₂,B₂⊢A≡B₂[drop] (SbEqRefl Γ⊢γ,a⇒Δ₂,B₂)
+  in let Γ⊢B₂[drop][γ,a]≡B₂[drop∘[γ,a]] = TyEqSubstSubst Δ₂,B₂⊢drop⇒Δ₂ Γ⊢γ,a⇒Δ₂,B₂ Δ₂⊢B₂
+  in let Γ⊢B₂[drop∘[γ,a]]≡B₂[γ] = TyEqSubst (TyEqRefl Δ₂⊢B₂) (SbEqDropExt Δ₂,B₂⊢drop⇒Δ₂ Γ⊢γ,a⇒Δ₂,B₂)
+  in let Γ⊢B₂[γ]≡B₁[γ] = TyEqSym (TyEqSubst Δ₁⊢B₁≡B₂ (SbEqRefl Γ⊢γ⇒Δ₁))
+  in let Γ⊢A[γ,a]≡B₁[γ] = TyEqTrans (TyEqTrans Γ⊢A[γ,a]≡B₂[drop][γ,a] Γ⊢B₂[drop][γ,a]≡B₂[drop∘[γ,a]]) (TyEqTrans Γ⊢B₂[drop∘[γ,a]]≡B₂[γ] Γ⊢B₂[γ]≡B₁[γ])
+  in let Γ⊢a∷A[γ,a] = TmTyConv Γ⊢a∷B₁[γ] (TyEqSym Γ⊢A[γ,a]≡B₁[γ])
+  in pair (TmSubst Δ⊢var∷A Γ⊢γ,a⇒Δ) Γ⊢a∷A[γ,a]
+...| TmEqSubstVarDrop  Δ⊢varX∷A Γ⊢dropY⇒Δ = {!   !}

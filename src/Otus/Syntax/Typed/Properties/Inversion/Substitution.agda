@@ -1,7 +1,6 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Inversion.Substitution where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped hiding (_∘_)
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Context

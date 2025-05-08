@@ -1,17 +1,18 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Context.Fundamental where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Context.Base
 
+open import Data.Nat hiding (_⊔_)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; J)
 open import Data.Product renaming (_,_ to pair)
 open import Function.Base using (id)
 
 private
   variable
+    x : ℕ
     Γ Δ Ξ  : Context
     γ γ₁ γ₂ δ : Substitution
     a b A B : Term
@@ -64,11 +65,13 @@ weakenCtxConv' (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢
 
 -- tmCtxConv : ⊢ Γ ≃ Δ → Γ ⊢ a ∷ A → Δ ⊢ a ∷ A
 tmCtxConv (CConvEmpty) = id
-tmCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) (TmVar _) = let Δ,B⊢var∷B = TmVar Δ⊢B
+tmCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) (TmVarᶻ _) = let Δ,B⊢var∷B = TmVarᶻ Δ⊢B
   in let ⊢Δ = proj₂ (ctxConvWf ⊢Γ≃Δ)
   in let Δ,B⇒Δ = SbDropˢ (SbId ⊢Δ) Δ⊢B
   in let Δ,B⊢B≡A = TyEqSubst (TyEqSym Δ⊢A≡B)  (SbEqRefl Δ,B⇒Δ)
   in TmTyConv Δ,B⊢var∷B Δ,B⊢B≡A
+tmCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) (TmVarˢ Γ⊢VarX∷C _) = let Δ⊢VarX∷C = tmCtxConv ⊢Γ≃Δ Γ⊢VarX∷C 
+  in TmVarˢ Δ⊢VarX∷C Δ⊢B
 tmCtxConv ⊢Γ≃Δ (TmLam Γ⊢A Γ,A⊢b∷B) = let Δ⊢A = tyCtxConv ⊢Γ≃Δ Γ⊢A
   in let ⊢Γ,A≃Δ,A = ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A
   in let Δ,A⊢b∷B = tmCtxConv ⊢Γ,A≃Δ,A Γ,A⊢b∷B
@@ -162,14 +165,15 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
   in let ⊢Γ,A≃Δ,A = ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A
   in let Δ,A⊢C≡D∷U = tmEqCtxConv ⊢Γ,A≃Δ,A Γ,A⊢C≡D∷U
   in TmEqPi Δ⊢A Δ⊢A≡B∷U Δ,A⊢C≡D∷U
-...| TmEqApp Γ⊢f≡g∷PiAB Γ⊢a≡b∷A = let Δ⊢f≡g∷PiAB = tmEqCtxConv ⊢Γ≃Δ Γ⊢f≡g∷PiAB
+...| TmEqApp Γ⊢PiAB Γ⊢f≡g∷PiAB Γ⊢a≡b∷A = let Δ⊢f≡g∷PiAB = tmEqCtxConv ⊢Γ≃Δ Γ⊢f≡g∷PiAB
   in let Δ⊢a≡b∷A = tmEqCtxConv ⊢Γ≃Δ Γ⊢a≡b∷A
-  in TmEqApp Δ⊢f≡g∷PiAB Δ⊢a≡b∷A
-...| TmEqSubst Ξ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Ξ = let Δ⊢γ₁≡γ₂⇒Ξ = substEqCtxConv ⊢Γ≃Δ Γ⊢γ₁≡γ₂⇒Ξ
-  in TmEqSubst Ξ⊢a≡b∷A Δ⊢γ₁≡γ₂⇒Ξ
-...| TmEqConv Γ⊢A≡B Γ⊢a≡b∷A = let Δ⊢A≡B = tyEqCtxConv ⊢Γ≃Δ Γ⊢A≡B
+  in let Δ⊢PiAB = tyCtxConv ⊢Γ≃Δ Γ⊢PiAB
+  in TmEqApp Δ⊢PiAB Δ⊢f≡g∷PiAB Δ⊢a≡b∷A
+...| TmEqSubst Ξ⊢A Ξ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Ξ = let Δ⊢γ₁≡γ₂⇒Ξ = substEqCtxConv ⊢Γ≃Δ Γ⊢γ₁≡γ₂⇒Ξ
+  in TmEqSubst Ξ⊢A Ξ⊢a≡b∷A Δ⊢γ₁≡γ₂⇒Ξ
+...| TmEqConv Γ⊢a≡b∷A Γ⊢A≡B = let Δ⊢A≡B = tyEqCtxConv ⊢Γ≃Δ Γ⊢A≡B
   in let Δ⊢a≡b∷A = tmEqCtxConv ⊢Γ≃Δ Γ⊢a≡b∷A
-  in TmEqConv Δ⊢A≡B Δ⊢a≡b∷A
+  in TmEqConv Δ⊢a≡b∷A Δ⊢A≡B
 ...| TmEqSubstId Γ⊢a∷A = let Δ⊢a∷A = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A
   in TmEqSubstId Δ⊢a∷A
 ...| TmEqSubstVarExt Ξ⊢var0∷A Γ⊢γ,a⇒Ξ = let Δ⊢γ,a⇒Ξ = substCtxConv ⊢Γ≃Δ Γ⊢γ,a⇒Ξ

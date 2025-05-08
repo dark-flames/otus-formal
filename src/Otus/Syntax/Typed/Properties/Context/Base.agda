@@ -1,7 +1,6 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Context.Base where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 

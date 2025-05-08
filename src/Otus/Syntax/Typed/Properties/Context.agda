@@ -1,11 +1,11 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Context where
 
-open import Otus.Syntax.Universe
 open import Otus.Syntax.Untyped hiding (_∘_)
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Context.Base
 open import Otus.Syntax.Typed.Properties.Context.Fundamental
+open import Otus.Syntax.Typed.Properties.Presuppositions
 
 open import Data.Nat hiding (_⊔_)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; J)
@@ -64,4 +64,3 @@ substEqStability ⊢Γ≡Δ = substEqCtxConv (ctxConvFundamental ⊢Γ≡Δ)
 
 substEqStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ
 substEqStability' ⊢Γ≡Δ = substEqStability (ctxEqSym ⊢Γ≡Δ)
-

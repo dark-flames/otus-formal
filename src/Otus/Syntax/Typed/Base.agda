@@ -98,7 +98,7 @@ data _⊢_≡ⱼ_ where
         → Γ ⊢ (Pi A B) [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ)
     TyEqUSubst : Δ ⊢ U l → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l
-    TyEqSubstSubst : Δ ⊢ (A [ δ ]ₑ) → Γ ⊢ γ ⇒ Δ
+    TyEqSubstSubst : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ A
         → Γ ⊢  (A [ δ ]ₑ [ γ ]ₑ) ≡ⱼ (A [ δ ∘ γ ]ₑ)
     TyEqSubstId : Γ ⊢ A
         → Γ ⊢ A [ idₛ ]ₑ ≡ⱼ A
@@ -129,18 +129,12 @@ data _⊢_≡ⱼ_⇒_ where
         →  Γ ⊢ (drop 1), Var 0 ≡ⱼ idₛ  ⇒ Δ
     SbEqDropExt : Δ ⊢ drop 1 ⇒ Ξ → Γ ⊢ γ , a ⇒ Δ
         → Γ ⊢ drop 1 ∘ (γ , a)≡ⱼ γ ⇒ Ξ
-    SbEqDropComp : Δ ⊢ drop x ⇒ Ξ → Γ ⊢ idₛ ⇒ Δ
+    SbEqDropComp : Δ ⊢ drop x ⇒ Ξ → Γ ⊢ drop 1 ⇒ Δ
         → Γ ⊢ drop x ∘ drop 1 ≡ⱼ drop (suc x)  ⇒ Ξ 
     SbEqExtComp : Δ ⊢ δ , a ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ (δ , a) ∘ γ ≡ⱼ(δ ∘ γ , (a [ γ ]ₑ))  ⇒ Ξ
 
 open _⊢_≡ⱼ_⇒_
-
-module Subst-≡ⱼ-Comp where
-    infixl 2 _⟨⟩_
-    
-    _⟨⟩_ : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₂ ≡ⱼ γ₃ ⇒ Δ → Γ ⊢ γ₁ ≡ⱼ γ₃ ⇒ Δ
-    _⟨⟩_ = SbEqTrans
     
 data _⊢_≡ⱼ_∷_ where
 ---- Eq

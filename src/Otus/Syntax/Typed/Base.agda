@@ -28,11 +28,11 @@ data _⊢_≡ⱼ_∷_ : Context → Term → Term → Term → Set
 data ⊢_ where
     CEmp : ⊢ ε
     CExt : ⊢ Γ → Γ ⊢ A
-        →  ⊢ Γ , A
+        →  ⊢ Γ ▷ A
 open ⊢_
 
 data _⊢_ where
-    TyPi : Γ ⊢ A → Γ , A ⊢ B
+    TyPi : Γ ⊢ A → Γ ▷ A ⊢ B
         → Γ ⊢ Pi A B
     TyU : ⊢ Γ → Γ ⊢ U l
     TySubst : Δ ⊢ A → Γ ⊢ γ ⇒ Δ 
@@ -45,9 +45,9 @@ open _⊢_
 data _⊢_⇒_ where
     SbId : ⊢ Γ → Γ ⊢ idₛ ⇒ Γ
     SbDropˢ : Γ ⊢ drop x ⇒ Δ → Γ ⊢ A
-        → Γ , A ⊢ drop (suc x) ⇒ Δ
+        → Γ ▷ A ⊢ drop (suc x) ⇒ Δ
     SbExt : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ∷ (A [ γ ]ₑ)
-        → Γ ⊢ γ , a ⇒ Δ , A
+        → Γ ⊢ γ ▶ a ⇒ Δ ▷ A
     SbComp : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ δ ∘ γ ⇒ Ξ
     SbConv : Γ ⊢ γ ⇒ Δ₁ → ⊢ Δ₁ ≡ⱼ Δ₂ 
@@ -56,15 +56,15 @@ open _⊢_⇒_
 
 data _⊢_∷_ where
     TmVarᶻ : Γ ⊢ A
-        → Γ , A ⊢ Var 0 ∷ (A [ drop 1 ]ₑ)
+        → Γ ▷ A ⊢ Var 0 ∷ (A [ drop 1 ]ₑ)
     TmVarˢ : Γ ⊢ Var x ∷ A → Γ ⊢ B
-        → Γ , B ⊢ Var (suc x) ∷ (A [ drop 1 ]ₑ)
-    TmLam : Γ ⊢ A → Γ , A ⊢ b ∷ B
+        → Γ ▷ B ⊢ Var (suc x) ∷ (A [ drop 1 ]ₑ)
+    TmLam : Γ ⊢ A → Γ ▷ A ⊢ b ∷ B
         → Γ ⊢ Lam b ∷ Pi A B
-    TmPi : Γ ⊢ A ∷ U l₁ → Γ , A ⊢ B ∷ U l₂
+    TmPi : Γ ⊢ A ∷ U l₁ → Γ ▷ A ⊢ B ∷ U l₂
         → Γ ⊢ Pi A B ∷ U (l₁ ⊔ l₂)
     TmApp : Γ ⊢ f ∷ Pi A B → Γ ⊢ a ∷ A
-        → Γ ⊢ f ∙ a ∷ (B [ idₛ , a ]ₑ)
+        → Γ ⊢ f ∙ a ∷ (B [ idₛ ▶ a ]ₑ)
     TmSubst : Δ ⊢ a ∷ A → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ (a [ γ ]ₑ) ∷ (A [ γ ]ₑ)
     TmU : ⊢ Γ 
@@ -77,7 +77,7 @@ open _⊢_∷_
 data ⊢_≡ⱼ_ where
     CEqRefl : ⊢ Γ → ⊢ Γ ≡ⱼ Γ
     CEqExt : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Δ ⊢ B → Γ ⊢ A ≡ⱼ B
-        → ⊢ Γ , A ≡ⱼ Δ , B
+        → ⊢ Γ ▷ A ≡ⱼ Δ ▷ B
 
 data _⊢_≡ⱼ_ where
 --- Eq
@@ -88,7 +88,7 @@ data _⊢_≡ⱼ_ where
     TyEqTrans : Γ ⊢ A ≡ⱼ B → Γ ⊢ B ≡ⱼ C
         → Γ ⊢ A ≡ⱼ C
 ---- Cong
-    TyEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B → Γ , A ⊢ C ≡ⱼ D
+    TyEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B → Γ ▷ A ⊢ C ≡ⱼ D
         →   Γ ⊢ (Pi A C) ≡ⱼ (Pi B D)
     TyEqSubst : Δ ⊢ A ≡ⱼ B → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ (A [ γ₁ ]ₑ) ≡ⱼ (B [ γ₂ ]ₑ)
@@ -114,7 +114,7 @@ data _⊢_≡ⱼ_⇒_ where
         → Γ ⊢ γ₁ ≡ⱼ γ₃ ⇒ Δ
 ---- congruence
     SbEqExt : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ≡ⱼ b ∷ (A [ γ₁ ]ₑ)
-        → Γ ⊢ γ₁ , a ≡ⱼ γ₂ , b  ⇒ Δ , A
+        → Γ ⊢ γ₁ ▶ a ≡ⱼ γ₂ ▶ b  ⇒ Δ ▷ A
     SbEqComp : Δ ⊢ δ₁ ≡ⱼ δ₂ ⇒ Ξ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ δ₁ ∘ γ₁ ≡ⱼ δ₂ ∘ γ₂ ⇒ Ξ
     SbEqConv : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ₁ → ⊢ Δ₁ ≡ⱼ Δ₂
@@ -126,14 +126,14 @@ data _⊢_≡ⱼ_⇒_ where
         → Γ ⊢ idₛ ∘ γ ≡ⱼ γ ⇒ Ξ
     SbEqIdᵣ : Δ ⊢ γ ⇒ Ξ → Γ ⊢ idₛ ⇒ Δ
         → Γ ⊢ γ ∘ idₛ ≡ⱼ γ ⇒ Ξ
-    SbEqExtVar : Γ ⊢ (drop 1) , Var 0  ⇒ Δ → Γ ⊢ idₛ  ⇒ Δ
-        →  Γ ⊢ (drop 1), Var 0 ≡ⱼ idₛ  ⇒ Δ
-    SbEqDropExt : Δ ⊢ drop 1 ⇒ Ξ → Γ ⊢ γ , a ⇒ Δ
-        → Γ ⊢ drop 1 ∘ (γ , a)≡ⱼ γ ⇒ Ξ
+    SbEqExtVar : Γ ⊢ (drop 1) ▶ Var 0  ⇒ Δ → Γ ⊢ idₛ  ⇒ Δ
+        →  Γ ⊢ (drop 1) ▶ Var 0 ≡ⱼ idₛ  ⇒ Δ
+    SbEqDropExt : Δ ⊢ drop 1 ⇒ Ξ → Γ ⊢ γ ▶ a ⇒ Δ
+        → Γ ⊢ drop 1 ∘ (γ ▶ a)≡ⱼ γ ⇒ Ξ
     SbEqDropComp : Δ ⊢ drop x ⇒ Ξ → Γ ⊢ drop 1 ⇒ Δ
         → Γ ⊢ drop x ∘ drop 1 ≡ⱼ drop (suc x)  ⇒ Ξ 
-    SbEqExtComp : Δ ⊢ δ , a ⇒ Ξ → Γ ⊢ γ ⇒ Δ
-        → Γ ⊢ (δ , a) ∘ γ ≡ⱼ(δ ∘ γ , (a [ γ ]ₑ))  ⇒ Ξ
+    SbEqExtComp : Δ ⊢ δ ▶ a ⇒ Ξ → Γ ⊢ γ ⇒ Δ
+        → Γ ⊢ (δ ▶ a) ∘ γ ≡ⱼ((δ ∘ γ) ▶ (a [ γ ]ₑ))  ⇒ Ξ
 
 open _⊢_≡ⱼ_⇒_
     
@@ -146,12 +146,12 @@ data _⊢_≡ⱼ_∷_ where
     TmEqTrans : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ b ≡ⱼ c ∷ A
         → Γ ⊢ a ≡ⱼ c ∷ A
 ---- Congruence
-    TmEqLam : Γ ⊢ A → Γ , A ⊢ a ≡ⱼ b ∷ B -- Γ ⊢ A required by ContextConv
+    TmEqLam : Γ ⊢ A → Γ ▷ A ⊢ a ≡ⱼ b ∷ B -- Γ ⊢ A required by ContextConv
         → Γ ⊢ (Lam a) ≡ⱼ (Lam b) ∷ Pi A B
-    TmEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ U l₁ → Γ , A ⊢ C ≡ⱼ D ∷ U l₂ -- Γ ⊢ A required by ContextConv
+    TmEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ U l₁ → Γ ▷ A ⊢ C ≡ⱼ D ∷ U l₂ -- Γ ⊢ A required by ContextConv
         → Γ ⊢ (Pi A C) ≡ⱼ (Pi B D) ∷ U (l₁ ⊔ l₂)
     TmEqApp : Γ ⊢ (Pi A B) → Γ ⊢ f ≡ⱼ g ∷ (Pi A B) → Γ ⊢ a ≡ⱼ b ∷ A
-        → Γ ⊢ (f ∙ a) ≡ⱼ (g ∙ b) ∷ (B [ idₛ , a ]ₑ)
+        → Γ ⊢ (f ∙ a) ≡ⱼ (g ∙ b) ∷ (B [ idₛ ▶ a ]ₑ)
     TmEqSubst : Δ ⊢ A → Δ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ (a [ γ₁ ]ₑ) ≡ⱼ (b [ γ₂ ]ₑ) ∷ (A [ γ₁ ]ₑ)
     TmEqConv : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ A ≡ⱼ B
@@ -159,8 +159,8 @@ data _⊢_≡ⱼ_∷_ where
 ---- Subst Computation
     TmEqSubstId : Γ ⊢ a ∷ A
         → Γ ⊢ a [ idₛ ]ₑ ≡ⱼ a ∷ A
-    TmEqSubstVarExt : Δ ⊢ Var 0 ∷ A → Γ ⊢ γ , a ⇒ Δ
-        → Γ ⊢ (Var 0) [ γ , a ]ₑ ≡ⱼ a ∷ (A [ γ , a ]ₑ)
+    TmEqSubstVarExt : Δ ⊢ Var 0 ∷ A → Γ ⊢ γ ▶ a ⇒ Δ
+        → Γ ⊢ (Var 0) [ γ ▶ a ]ₑ ≡ⱼ a ∷ (A [ γ ▶ a ]ₑ)
     TmEqSubstVarDrop : Δ ⊢ Var x ∷ A → Γ ⊢ drop y ⇒ Δ
         → Γ ⊢ (Var x) [ drop y ]ₑ ≡ⱼ Var (x + y) ∷ (A [ drop y ]ₑ)
     TmEqLamSubst : Δ ⊢ Lam a ∷ Pi A B → Γ ⊢ γ ⇒ Δ
@@ -175,10 +175,10 @@ data _⊢_≡ⱼ_∷_ where
         → Γ ⊢ (U l [ γ ]ₑ) ≡ⱼ U l ∷ U (lsuc l₁)
 
 ---- β rules
-    TmEqPiBeta : Γ ⊢ A → Γ , A ⊢ b ∷ B → Γ ⊢ a ∷ A
-        → Γ ⊢ (Lam b) ∙ a ≡ⱼ (b [ idₛ , a ]ₑ) ∷ (B [ idₛ , a ]ₑ)
+    TmEqPiBeta : Γ ⊢ A → Γ ▷ A ⊢ b ∷ B → Γ ⊢ a ∷ A
+        → Γ ⊢ (Lam b) ∙ a ≡ⱼ (b [ idₛ ▶ a ]ₑ) ∷ (B [ idₛ ▶ a ]ₑ)
 ---- η rules
     TmEqPiEta : Γ ⊢ f ∷ (Pi A B)
-        → Γ ⊢ f ≡ⱼ (Lam ((f [ drop 1 ]ₑ) ∙ Var 0)) ∷ (B [ idₛ , a ]ₑ)
+        → Γ ⊢ f ≡ⱼ (Lam ((f [ drop 1 ]ₑ) ∙ Var 0)) ∷ (B [ idₛ ▶ a ]ₑ)
 
 open _⊢_≡ⱼ_∷_

@@ -5,9 +5,7 @@ open import Otus.Syntax.Untyped.Universe
 open import Otus.Syntax.Untyped.Context
 open import Otus.Syntax.Untyped.Term
 
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
-open import Relation.Binary.PropositionalEquality hiding (cong)
-
+open import Relation.Binary.PropositionalEquality
 open ≡-Reasoning
 --- Universe
 
@@ -41,12 +39,12 @@ open ≡-Reasoning
   ∎  -- cong lsuc (⊔-assoc {l₁} {l₂} {l₃})
 
 --- Context
-,-cong : ∀ { Γ Δ : Context } → { A B : Term } → Γ ≡ Δ → A ≡ B → Γ , A ≡ Δ , B
-,-cong refl refl = refl
+▷-cong : ∀ { Γ Δ : Context } → { A B : Term } → Γ ≡ Δ → A ≡ B → Γ ▷ A ≡ Δ ▷ B
+▷-cong refl refl = refl
 
 ⧺-identity : {Γ : Context}  → ε ⧺ Γ ≡ Γ
 ⧺-identity {ε}  = refl
-⧺-identity {Γ , A} = ,-cong (⧺-identity {Γ}) refl
+⧺-identity {Γ ▷ A} = ▷-cong (⧺-identity {Γ}) refl
 
 Γ⧺-cong : ∀ { Δ Ξ : Context } (Γ : Context) → Δ ≡ Ξ → Γ ⧺ Δ ≡ Γ ⧺ Ξ
 Γ⧺-cong _ refl = refl
@@ -54,28 +52,27 @@ open ≡-Reasoning
 ⧺Γ-cong : ∀ { Δ Ξ : Context } (Γ : Context) → Δ ≡ Ξ → Δ ⧺ Γ ≡ Ξ ⧺ Γ
 ⧺Γ-cong _ refl = refl
 
-Γ⧺-ext : ∀ (Γ Δ : Context) → {B : Term} → Γ ⧺ Δ , B ≡ (Γ ⧺ Δ), B
+Γ⧺-ext : ∀ (Γ Δ : Context) → {B : Term} → Γ ⧺ Δ ▷ B ≡ (Γ ⧺ Δ)▷ B
 Γ⧺-ext Γ ε = refl
-Γ⧺-ext Γ (Δ , A) {B} = begin
-    Γ ⧺ Δ , A , B
+Γ⧺-ext Γ (Δ ▷ A) {B} = begin
+    Γ ⧺ Δ ▷ A ▷ B
   ≡⟨⟩ 
-    (Γ ⧺ Δ) , A , B
-  ≡⟨ ,-cong ( Γ⧺-ext Γ Δ ) refl ⟩
-    (Γ ⧺ Δ , A) , B
+    (Γ ⧺ Δ) ▷ A ▷ B
+  ≡⟨ ▷-cong ( Γ⧺-ext Γ Δ ) refl ⟩
+    (Γ ⧺ Δ ▷ A) ▷ B
   ∎
 
 ⧺-assoc : ∀ {Γ : Context} → (Δ Ξ : Context)  → Γ ⧺ Δ ⧺ Ξ ≡ Γ ⧺ (Δ ⧺ Ξ)
 ⧺-assoc {Γ} Δ ε  = refl 
--- (Γ ⧺ Δ) , B ⧺ Ξ , C ≡ Γ ⧺ ((Δ , B ⧺ Ξ) , C)
-⧺-assoc {Γ} Δ (Ξ , C) = begin
-    Γ ⧺ Δ ⧺ (Ξ , C) 
+⧺-assoc {Γ} Δ (Ξ ▷ C) = begin
+    Γ ⧺ Δ ⧺ (Ξ ▷ C) 
   ≡⟨⟩ 
-    (Γ ⧺ Δ ⧺ Ξ) , C
-  ≡⟨ ,-cong (⧺-assoc Δ Ξ ) refl ⟩ 
-    (Γ ⧺ (Δ ⧺ Ξ)) , C
+    (Γ ⧺ Δ ⧺ Ξ) ▷ C
+  ≡⟨ ▷-cong (⧺-assoc Δ Ξ ) refl ⟩ 
+    (Γ ⧺ (Δ ⧺ Ξ)) ▷ C
   ≡⟨⟩ 
-    Γ ⧺ ((Δ ⧺ Ξ) , C)
+    Γ ⧺ ((Δ ⧺ Ξ) ▷ C)
   ≡⟨⟩ 
-    Γ ⧺ (Δ ⧺ (Ξ , C))
+    Γ ⧺ (Δ ⧺ (Ξ ▷ C))
   ∎
  

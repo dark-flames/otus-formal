@@ -1,14 +1,10 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Presuppositions where
 
+open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Inversion.Base
-
-open import Data.Nat hiding (_⊔_)
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; J)
-open import Data.Product renaming (_,_ to pair)
-open import Function.Base using (id)
 
 private
   variable
@@ -27,26 +23,26 @@ substEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ × ⊢ Δ
 tyEqWfCtx : Γ ⊢ A ≡ⱼ B → ⊢ Γ
 tmEqWfCtx : Γ ⊢ a ≡ⱼ b ∷ A → ⊢ Γ
 
-ctxExt : Γ ⊢ A → ⊢ Γ , A
+ctxExt : Γ ⊢ A → ⊢ Γ ▷ A
 ctxExt Γ⊢A = CExt (tyWfCtx Γ⊢A) Γ⊢A
 
 -- substWfCtx : Γ ⊢ δ ⇒ Δ → ⊢ Γ × ⊢ Δ
 substWfCtx sb with sb
-...| SbId ⊢Γ = pair ⊢Γ ⊢Γ
+...| SbId ⊢Γ = ⊢Γ , ⊢Γ
 ...| SbDropˢ Γ⇒Δ Γ⊢A = let 
-    pair ⊢Γ ⊢Δ = substWfCtx Γ⇒Δ
-  in pair (CExt ⊢Γ Γ⊢A) ⊢Δ
+    ⊢Γ , ⊢Δ = substWfCtx Γ⇒Δ
+  in (CExt ⊢Γ Γ⊢A) , ⊢Δ
 ...| SbExt Γ⇒Δ Δ⊢A Γ⊢a∷Aγ = let 
-    pair ⊢Γ ⊢Δ = substWfCtx Γ⇒Δ
-    ⊢Δ,A = (CExt ⊢Δ Δ⊢A)
-  in pair ⊢Γ ⊢Δ,A
-...| SbComp Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substWfCtx Γ⇒Δ)) (proj₂ (substWfCtx Δ⇒Ξ))
-...| SbConv Γ⇒Δ₁ ⊢Δ₁≡Δ₂ = pair (proj₁ (substWfCtx Γ⇒Δ₁)) (proj₂ (ctxEqWfCtx ⊢Δ₁≡Δ₂))
+    ⊢Γ , ⊢Δ = substWfCtx Γ⇒Δ
+    ⊢Δ▷A = (CExt ⊢Δ Δ⊢A)
+  in ⊢Γ , ⊢Δ▷A
+...| SbComp Δ⇒Ξ Γ⇒Δ = proj₁₂ (substWfCtx Γ⇒Δ) (substWfCtx Δ⇒Ξ)
+...| SbConv Γ⇒Δ₁ ⊢Δ₁≡Δ₂ = proj₁₂ (substWfCtx Γ⇒Δ₁) (ctxEqWfCtx ⊢Δ₁≡Δ₂)
 
 
 -- tyWfCtx : Γ ⊢ A → ⊢ Γ
 tyWfCtx ty with ty
-...| TyPi Γ⊢A Γ,A⊢B = tyWfCtx Γ⊢A 
+...| TyPi Γ⊢A Γ▷A⊢B = tyWfCtx Γ⊢A 
 ...| TyU ⊢Γ = ⊢Γ
 ...| TySubst _ Γ⇒Δ = proj₁ (substWfCtx Γ⇒Δ)
 ...| TyRussel Γ⊢A∷U = tmWfCtx Γ⊢A∷U
@@ -55,7 +51,7 @@ tyWfCtx ty with ty
 tmWfCtx tm with tm
 ...| TmVarᶻ Γ⊢A = ctxExt Γ⊢A
 ...| TmVarˢ Γ⊢VarX∷A Γ⊢B = CExt (tmWfCtx Γ⊢VarX∷A) Γ⊢B
-...| TmLam _ Γ,A⊢b∷B = proj₁ (ctxExtInversion (tmWfCtx Γ,A⊢b∷B))
+...| TmLam _ Γ▷A⊢b∷B = proj₁ (ctxExtInversion (tmWfCtx Γ▷A⊢b∷B))
 ...| TmPi Γ⊢A∷U _ = tmWfCtx Γ⊢A∷U
 ...| TmApp _ Γ⊢a∷A = tmWfCtx Γ⊢a∷A
 ...| TmSubst _ Γ⇒Δ = proj₁ (substWfCtx Γ⇒Δ)
@@ -66,10 +62,10 @@ tmWfCtx tm with tm
 
 -- ctxEqWfCtx : ⊢ Γ ≡ⱼ Δ → ⊢ Γ × ⊢ Δ
 ctxEqWfCtx eq with eq
-...| CEqRefl ⊢Γ = pair ⊢Γ ⊢Γ
+...| CEqRefl ⊢Γ = ⊢Γ , ⊢Γ
 ...| CEqExt ⊢Γ≡Δ Γ⊢A Δ⊢B _ = let 
-    pair ⊢Γ ⊢Δ = ctxEqWfCtx ⊢Γ≡Δ
-  in pair (CExt ⊢Γ Γ⊢A) (CExt ⊢Δ Δ⊢B)
+    ⊢Γ , ⊢Δ = ctxEqWfCtx ⊢Γ≡Δ
+  in (CExt ⊢Γ Γ⊢A) , (CExt ⊢Δ Δ⊢B)
 
 -- substEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ × ⊢ Δ
 substEqWfCtx eq with eq
@@ -77,17 +73,17 @@ substEqWfCtx eq with eq
 ...| SbEqSym Γ⊢γ₂≡γ₁⇒Δ = substEqWfCtx Γ⊢γ₂≡γ₁⇒Δ
 ...| SbEqTrans Γ⊢γ₁≡γ₂⇒Δ _ = substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ
 ...| SbEqExt Γ⊢γ₁≡γ₂⇒Δ Δ⊢A _ = let 
-    pair ⊢Γ ⊢Δ = substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ
-  in pair ⊢Γ (CExt ⊢Δ Δ⊢A)
-...| SbEqComp Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substEqWfCtx Γ⇒Δ)) (proj₂ (substEqWfCtx Δ⇒Ξ))
-...| SbEqConv Γ⊢γ₁≡γ₂⇒Δ₁ ⊢Δ₁≡Δ₂ = pair (proj₁ (substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ₁)) (proj₂ (ctxEqWfCtx ⊢Δ₁≡Δ₂))
-...| SbEqCompAssoc Ξ⇒Θ _ Γ⇒Δ = pair (proj₁ (substWfCtx Γ⇒Δ)) (proj₂ (substWfCtx Ξ⇒Θ))
-...| SbEqIdₗ Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substWfCtx Γ⇒Δ)) (proj₂ (substWfCtx Δ⇒Ξ))
-...| SbEqIdᵣ Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substWfCtx Γ⇒Δ)) (proj₂ (substWfCtx Δ⇒Ξ))
+    ⊢Γ , ⊢Δ = substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ
+  in ⊢Γ , (CExt ⊢Δ Δ⊢A)
+...| SbEqComp Δ⇒Ξ Γ⇒Δ = proj₁₂ (substEqWfCtx Γ⇒Δ) (substEqWfCtx Δ⇒Ξ)
+...| SbEqConv Γ⊢γ₁≡γ₂⇒Δ₁ ⊢Δ₁≡Δ₂ = proj₁₂ (substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ₁) (ctxEqWfCtx ⊢Δ₁≡Δ₂)
+...| SbEqCompAssoc Ξ⇒Θ _ Γ⇒Δ = proj₁₂ (substWfCtx Γ⇒Δ) (substWfCtx Ξ⇒Θ)
+...| SbEqIdₗ Δ⇒Ξ Γ⇒Δ = proj₁₂ (substWfCtx Γ⇒Δ) (substWfCtx Δ⇒Ξ)
+...| SbEqIdᵣ Δ⇒Ξ Γ⇒Δ = proj₁₂ (substWfCtx Γ⇒Δ) (substWfCtx Δ⇒Ξ)
 ...| SbEqExtVar Γ⇒Δ _ = substWfCtx Γ⇒Δ
-...| SbEqDropExt Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substWfCtx Γ⇒Δ)) (proj₂ (substWfCtx Δ⇒Ξ))
-...| SbEqDropComp Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substWfCtx Γ⇒Δ)) (proj₂ (substWfCtx Δ⇒Ξ))
-...| SbEqExtComp Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substWfCtx Γ⇒Δ)) (proj₂ (substWfCtx Δ⇒Ξ))
+...| SbEqDropExt Δ⇒Ξ Γ⇒Δ = proj₁₂ (substWfCtx Γ⇒Δ) (substWfCtx Δ⇒Ξ)
+...| SbEqDropComp Δ⇒Ξ Γ⇒Δ = proj₁₂ (substWfCtx Γ⇒Δ) (substWfCtx Δ⇒Ξ)
+...| SbEqExtComp Δ⇒Ξ Γ⇒Δ = proj₁₂ (substWfCtx Γ⇒Δ) (substWfCtx Δ⇒Ξ)
 
 -- tyWfCtx : Γ ⊢ A → ⊢ Γ
 tyEqWfCtx ty with ty
@@ -107,13 +103,13 @@ tmEqWfCtx tm with tm
 ...| TmEqRefl Γ⊢a∷A = tmWfCtx Γ⊢a∷A
 ...| TmEqSym Γ⊢b≡a∷A = tmEqWfCtx Γ⊢b≡a∷A
 ...| TmEqTrans Γ⊢a≡b∷A _ = tmEqWfCtx Γ⊢a≡b∷A
-...| TmEqLam _ Γ,A⊢a≡b∷B = proj₁ (ctxExtInversion (tmEqWfCtx Γ,A⊢a≡b∷B))
+...| TmEqLam _ Γ▷A⊢a≡b∷B = proj₁ (ctxExtInversion (tmEqWfCtx Γ▷A⊢a≡b∷B))
 ...| TmEqApp _ _ Γ⊢a≡b∷A = tmEqWfCtx Γ⊢a≡b∷A
 ...| TmEqPi _ Γ⊢A≡B∷U _ = tmEqWfCtx Γ⊢A≡B∷U
 ...| TmEqSubst _ _ Γ⊢γ₁≡γ₂⇒Δ = proj₁ (substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ)
 ...| TmEqConv Γ⊢a≡b∷A _ = tmEqWfCtx Γ⊢a≡b∷A
 ...| TmEqSubstId Γ⊢a∷A = tmWfCtx Γ⊢a∷A
-...| TmEqSubstVarExt _ Γ⊢γ,a⇒Δ = proj₁ (substWfCtx Γ⊢γ,a⇒Δ)
+...| TmEqSubstVarExt _ Γ⊢γ▶a⇒Δ = proj₁ (substWfCtx Γ⊢γ▶a⇒Δ)
 ...| TmEqSubstVarDrop _ Γ⊢dropX⇒Δ = proj₁ (substWfCtx Γ⊢dropX⇒Δ)
 ...| TmEqLamSubst _ Γ⇒Δ = proj₁ (substWfCtx Γ⇒Δ)
 ...| TmEqAppSubst _ Γ⇒Δ = proj₁ (substWfCtx Γ⇒Δ)

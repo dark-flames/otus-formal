@@ -1,12 +1,10 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Reasoning where
 
+open import Otus.Utils
 open import Otus.Syntax.Untyped hiding (_∘_)
 open import Otus.Syntax.Typed.Base
 
-open import Data.Unit using (⊤; tt)
-open import Function.Base using (id)
-open import Data.Product renaming (_,_ to pair)
 
 module BeginSyntax
     ( Param :  Set)
@@ -28,7 +26,7 @@ module PBeginSyntax
 
   infix 1 _⊢begin_
 
-  _⊢begin_ : ∀ {ep a b} → (bp : BParam) →  Relation (pair bp ep) a b → Relation (pair bp ep) a b
+  _⊢begin_ : ∀ {ep a b} → (bp : BParam) →  Relation (bp , ep) a b → Relation (bp , ep) a b
   bp ⊢begin aRb = aRb
 
 module ≡Syntax
@@ -85,7 +83,7 @@ module ContextEqReasoning where
 
 module TyEqReasoning where
   TyEq : (Context × ⊤) → Term → Term → Set
-  TyEq (pair Γ _) A B = Γ ⊢ A ≡ⱼ B
+  TyEq (Γ , _) A B = Γ ⊢ A ≡ⱼ B
 
   open PBeginSyntax Context ⊤ Term TyEq public
   open ≡Syntax (Context × ⊤) Term TyEq TyEqSym TyEqTrans public
@@ -93,7 +91,7 @@ module TyEqReasoning where
 
 module TmEqReasoning where
   TmEq : (Context × Term) → Term → Term → Set
-  TmEq (pair Γ A) a b = Γ ⊢ a ≡ⱼ b ∷ A
+  TmEq (Γ , A) a b = Γ ⊢ a ≡ⱼ b ∷ A
 
   sym : ∀ {p : (Context × Term)} {a b} 
     → (proj₁ p) ⊢ a ≡ⱼ b ∷ (proj₂ p) 
@@ -117,7 +115,7 @@ module TmEqReasoning where
 
 module SbEqReasoning where
   SbEq : (Context × Context) → Substitution → Substitution → Set
-  SbEq (pair Γ Δ) γ δ = Γ ⊢ γ ≡ⱼ δ ⇒ Δ
+  SbEq (Γ , Δ) γ δ = Γ ⊢ γ ≡ⱼ δ ⇒ Δ
 
   sym : ∀ {p : (Context × Context)} {γ δ} 
     → (proj₁ p) ⊢ γ ≡ⱼ δ ⇒ (proj₂ p) 

@@ -1,16 +1,14 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Typed.Properties.Context where
 
+open import Otus.Utils
 open import Otus.Syntax.Untyped hiding (_∘_)
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Context.Base
 open import Otus.Syntax.Typed.Properties.Context.Fundamental
 open import Otus.Syntax.Typed.Properties.Presuppositions
 
-open import Data.Nat hiding (_⊔_)
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; J)
-open import Data.Product renaming (_,_ to pair)
-open import Function.Base using (id; _∘_)
+open FunComp
 
 private
   variable

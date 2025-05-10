@@ -33,10 +33,12 @@ ctxExt Γ⊢A = CExt (tyWfCtx Γ⊢A) Γ⊢A
 -- substWfCtx : Γ ⊢ δ ⇒ Δ → ⊢ Γ × ⊢ Δ
 substWfCtx sb with sb
 ...| SbId ⊢Γ = pair ⊢Γ ⊢Γ
-...| SbDropˢ Γ⇒Δ Γ⊢A = let pair ⊢Γ ⊢Δ = substWfCtx Γ⇒Δ
+...| SbDropˢ Γ⇒Δ Γ⊢A = let 
+    pair ⊢Γ ⊢Δ = substWfCtx Γ⇒Δ
   in pair (CExt ⊢Γ Γ⊢A) ⊢Δ
-...| SbExt Γ⇒Δ Δ⊢A Γ⊢a∷Aγ = let pair ⊢Γ ⊢Δ = substWfCtx Γ⇒Δ
-  in let ⊢Δ,A = (CExt ⊢Δ Δ⊢A)
+...| SbExt Γ⇒Δ Δ⊢A Γ⊢a∷Aγ = let 
+    pair ⊢Γ ⊢Δ = substWfCtx Γ⇒Δ
+    ⊢Δ,A = (CExt ⊢Δ Δ⊢A)
   in pair ⊢Γ ⊢Δ,A
 ...| SbComp Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substWfCtx Γ⇒Δ)) (proj₂ (substWfCtx Δ⇒Ξ))
 ...| SbConv Γ⇒Δ₁ ⊢Δ₁≡Δ₂ = pair (proj₁ (substWfCtx Γ⇒Δ₁)) (proj₂ (ctxEqWfCtx ⊢Δ₁≡Δ₂))
@@ -65,7 +67,8 @@ tmWfCtx tm with tm
 -- ctxEqWfCtx : ⊢ Γ ≡ⱼ Δ → ⊢ Γ × ⊢ Δ
 ctxEqWfCtx eq with eq
 ...| CEqRefl ⊢Γ = pair ⊢Γ ⊢Γ
-...| CEqExt ⊢Γ≡Δ Γ⊢A Δ⊢B _ = let pair ⊢Γ ⊢Δ = ctxEqWfCtx ⊢Γ≡Δ
+...| CEqExt ⊢Γ≡Δ Γ⊢A Δ⊢B _ = let 
+    pair ⊢Γ ⊢Δ = ctxEqWfCtx ⊢Γ≡Δ
   in pair (CExt ⊢Γ Γ⊢A) (CExt ⊢Δ Δ⊢B)
 
 -- substEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ × ⊢ Δ
@@ -73,7 +76,8 @@ substEqWfCtx eq with eq
 ...| SbEqRefl Γ⇒Δ = substWfCtx Γ⇒Δ
 ...| SbEqSym Γ⊢γ₂≡γ₁⇒Δ = substEqWfCtx Γ⊢γ₂≡γ₁⇒Δ
 ...| SbEqTrans Γ⊢γ₁≡γ₂⇒Δ _ = substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ
-...| SbEqExt Γ⊢γ₁≡γ₂⇒Δ Δ⊢A _ = let pair ⊢Γ ⊢Δ = substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ
+...| SbEqExt Γ⊢γ₁≡γ₂⇒Δ Δ⊢A _ = let 
+    pair ⊢Γ ⊢Δ = substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ
   in pair ⊢Γ (CExt ⊢Δ Δ⊢A)
 ...| SbEqComp Δ⇒Ξ Γ⇒Δ = pair (proj₁ (substEqWfCtx Γ⇒Δ)) (proj₂ (substEqWfCtx Δ⇒Ξ))
 ...| SbEqConv Γ⊢γ₁≡γ₂⇒Δ₁ ⊢Δ₁≡Δ₂ = pair (proj₁ (substEqWfCtx Γ⊢γ₁≡γ₂⇒Δ₁)) (proj₂ (ctxEqWfCtx ⊢Δ₁≡Δ₂))

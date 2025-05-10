@@ -18,19 +18,22 @@ private
     f a b c A B C T : Term
 
 displayMap : Γ ⊢ A → Γ , A ⊢ drop 1 ⇒ Γ
-displayMap Γ⊢A = let ⊢Γ = tyWfCtx Γ⊢A
+displayMap Γ⊢A = let 
+    ⊢Γ = tyWfCtx Γ⊢A
   in SbDropˢ (SbId ⊢Γ) Γ⊢A
 
 section : Γ ⊢ A → Γ ⊢ a ∷ A → Γ ⊢ idₛ , a ⇒ Γ , A
-section Γ⊢A Γ⊢a∷A = let ⊢Γ = tyWfCtx Γ⊢A
-  in let Γ⊢Aid≡A = TyEqSubstId Γ⊢A
-  in let Γ⊢aid∷A = TmTyConv Γ⊢a∷A (TyEqSym Γ⊢Aid≡A)
+section Γ⊢A Γ⊢a∷A = let 
+    ⊢Γ = tyWfCtx Γ⊢A
+    Γ⊢Aid≡A = TyEqSubstId Γ⊢A
+    Γ⊢aid∷A = TmTyConv Γ⊢a∷A (TyEqSym Γ⊢Aid≡A)
   in SbExt (SbId ⊢Γ) Γ⊢A Γ⊢aid∷A
 
 liftSubst : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Γ , (A [ γ ]ₑ) ⊢ lift γ ⇒ Δ , A
-liftSubst Γ⊢γ⇒Δ Δ⊢A = let Γ⊢Aγ = TySubst Δ⊢A Γ⊢γ⇒Δ
-  in let Γ,Aγ⊢drop1⇒Γ = displayMap Γ⊢Aγ
-  in let Γ,Aγ⊢γ∘drop1⇒Δ = SbComp Γ⊢γ⇒Δ Γ,Aγ⊢drop1⇒Γ
-  in let Γ,Aγ⊢Aγdrop≡A[γ∘drop] = TyEqSubstSubst Γ⊢γ⇒Δ Γ,Aγ⊢drop1⇒Γ Δ⊢A
-  in let Γ,Aγ⊢var∷↑A = TmTyConv (TmVarᶻ Γ⊢Aγ) Γ,Aγ⊢Aγdrop≡A[γ∘drop]
+liftSubst Γ⊢γ⇒Δ Δ⊢A = let 
+    Γ⊢Aγ = TySubst Δ⊢A Γ⊢γ⇒Δ
+    Γ,Aγ⊢drop1⇒Γ = displayMap Γ⊢Aγ
+    Γ,Aγ⊢γ∘drop1⇒Δ = SbComp Γ⊢γ⇒Δ Γ,Aγ⊢drop1⇒Γ
+    Γ,Aγ⊢Aγdrop≡A[γ∘drop] = TyEqSubstSubst Γ⊢γ⇒Δ Γ,Aγ⊢drop1⇒Γ Δ⊢A
+    Γ,Aγ⊢var∷↑A = TmTyConv (TmVarᶻ Γ⊢Aγ) Γ,Aγ⊢Aγdrop≡A[γ∘drop]
   in SbExt Γ,Aγ⊢γ∘drop1⇒Δ Δ⊢A Γ,Aγ⊢var∷↑A

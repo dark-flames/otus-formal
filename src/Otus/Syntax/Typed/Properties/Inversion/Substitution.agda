@@ -24,8 +24,9 @@ private
 
 
 dropInversion : Γ ⊢ drop (suc x) ⇒ Δ → CtxExtInversion Γ
-dropInversion (SbDropˢ Γ⊢dropX⇒Δ Γ⊢A) = let pair Γ A = tyInversion Γ⊢A
-  in let ⊢Γ,A = ctxExt Γ⊢A
+dropInversion (SbDropˢ Γ⊢dropX⇒Δ Γ⊢A) = let 
+    pair Γ A = tyInversion Γ⊢A
+    ⊢Γ,A = ctxExt Γ⊢A
   in record {
     Γ' = Γ;
     A = A;
@@ -36,23 +37,26 @@ dropInversion (SbConv Γ⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂) = dropInversion Γ⊢
 
 idInversion : Γ ⊢ idₛ ⇒ Δ → ⊢ Γ ≡ⱼ Δ
 idInversion (SbId ⊢Γ) = CEqRefl ⊢Γ
-idInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let ⊢Γ≡Δ₁ = idInversion Γ⊢γ⇒Δ₁
+idInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let 
+    ⊢Γ≡Δ₁ = idInversion Γ⊢γ⇒Δ₁
   in ctxEqTrans ⊢Γ≡Δ₁ ⊢Δ₁≡Δ₂
 
 drop1Inversion : Γ ⊢ drop 1 ⇒ Δ → Σ[ inv ∈ (CtxExtInversion Γ) ] ⊢ (CtxExtInversion.Γ' inv) ≡ⱼ Δ
-drop1Inversion Γ⊢drop1⇒Δ@(SbDropˢ Γ⊢id⇒Δ Γ⊢A) = let ⊢Γ≡Δ = idInversion Γ⊢id⇒Δ
+drop1Inversion Γ⊢drop1⇒Δ@(SbDropˢ Γ⊢id⇒Δ Γ⊢A) = let 
+    ⊢Γ≡Δ = idInversion Γ⊢id⇒Δ
   in pair (dropInversion Γ⊢drop1⇒Δ)  ⊢Γ≡Δ
-drop1Inversion (SbConv Γ⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂) = let pair inv ⊢Γ'≡Δ₁ = drop1Inversion Γ⊢dropX⇒Δ₁
+drop1Inversion (SbConv Γ⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂) = let 
+    pair inv ⊢Γ'≡Δ₁ = drop1Inversion Γ⊢dropX⇒Δ₁
   in pair inv (ctxEqTrans ⊢Γ'≡Δ₁ ⊢Δ₁≡Δ₂)
 
 substExtInversion : Γ ⊢ γ , a ⇒ Δ 
   → Σ[ inv ∈ (CtxExtInversion Δ) ] (Γ ⊢ γ ⇒ (CtxExtInversion.Γ' inv) × Γ ⊢ a ∷ ((CtxExtInversion.A inv) [ γ ]ₑ))
-substExtInversion (SbExt Γ⊢γ⇒Δ Δ⊢A Γ⊢a∷Aγ) = let pair Δ A = tyInversion Δ⊢A
-  in let ⊢Δ,A = ctxExt Δ⊢A
-  in let inv = ctxExtInv Δ A Δ⊢A (ctxEqRefl ⊢Δ,A)
+substExtInversion (SbExt Γ⊢γ⇒Δ Δ⊢A Γ⊢a∷Aγ) = let 
+    pair Δ A = tyInversion Δ⊢A
+    ⊢Δ,A = ctxExt Δ⊢A
+    inv = ctxExtInv Δ A Δ⊢A (ctxEqRefl ⊢Δ,A)
   in pair inv (pair Γ⊢γ⇒Δ Γ⊢a∷Aγ)
-substExtInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let pair (ctxExtInv Δ A Δ⊢A ⊢Δ₁≡Δ,A) (pair Γ⊢γ⇒Δ₁ Γ⊢a∷Aγ) = substExtInversion Γ⊢γ⇒Δ₁
-  in let inv = ctxExtInv Δ A Δ⊢A (ctxEqTrans (ctxEqSym ⊢Δ₁≡Δ₂) ⊢Δ₁≡Δ,A)
+substExtInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let 
+    pair (ctxExtInv Δ A Δ⊢A ⊢Δ₁≡Δ,A) (pair Γ⊢γ⇒Δ₁ Γ⊢a∷Aγ) = substExtInversion Γ⊢γ⇒Δ₁
+    inv = ctxExtInv Δ A Δ⊢A (ctxEqTrans (ctxEqSym ⊢Δ₁≡Δ₂) ⊢Δ₁≡Δ,A)
   in pair inv (pair Γ⊢γ⇒Δ₁ Γ⊢a∷Aγ)
-
-  

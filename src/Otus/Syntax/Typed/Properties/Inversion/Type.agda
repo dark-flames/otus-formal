@@ -22,7 +22,8 @@ private
 
 piTyInversion : Γ ⊢ Pi A B → Γ ⊢ A × Γ , A ⊢ B
 piTyInversion (TyPi Γ⊢A Γ,A⊢B) = pair Γ⊢A Γ,A⊢B
-piTyInversion (TyRussel Γ⊢PiAB∷T) = let pair inv (pair Γ⊢T≡Ul (pair Γ⊢A∷Ul₁ Γ,A⊢B∷Ul₂)) = piTmInversion Γ⊢PiAB∷T
+piTyInversion (TyRussel Γ⊢PiAB∷T) = let 
+    pair inv (pair Γ⊢T≡Ul (pair Γ⊢A∷Ul₁ Γ,A⊢B∷Ul₂)) = piTmInversion Γ⊢PiAB∷T
   in pair (TyRussel Γ⊢A∷Ul₁) (TyRussel Γ,A⊢B∷Ul₂)
 
 

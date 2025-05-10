@@ -3,8 +3,8 @@ module Otus.Syntax.Untyped.Context where
 
 open import Otus.Syntax.Untyped.Term
 
-infixl 30 _▷_
-infixl 29 _⧺_
+infixl 6 _▷_
+infixl 5 _⧺_
 
 data Context : Set where
     ε : Context

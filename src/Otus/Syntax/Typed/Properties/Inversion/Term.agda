@@ -42,7 +42,7 @@ piTmInversion (TmTyConv Γ⊢PiAB∷G Γ⊢G≡T) = let
 
 varTmInversion : Γ ⊢ Var 0 ∷ T 
   → Σ[ inv ∈ CtxExtInversion Γ ]
-    (Γ ⊢ T ≡ⱼ ((CtxExtInversion.A inv) [ drop 1 ]ₑ))
+    Γ ⊢ T ≡ⱼ (CtxExtInversion.A inv) [ drop 1 ]ₑ
 varTmInversion (TmVarᶻ Γ⊢A) = let 
     ⊢Γ = tyWfCtx Γ⊢A
     ⊢Γ▷A = CExt ⊢Γ Γ⊢A
@@ -56,7 +56,7 @@ varTmInversion (TmTyConv Γ⊢var∷G Γ⊢G≡T) = let
 
 varTmInversion' : Γ ⊢ Var x ∷ T 
   → Σ[ inv ∈ VarExistence Γ x ]
-    (Γ ⊢ T ≡ⱼ ((VarExistence.A inv) [ drop (suc x) ]ₑ))
+    Γ ⊢ T ≡ⱼ (VarExistence.A inv) [ drop (suc x) ]ₑ
 varTmInversion' (TmVarᶻ {Γ} {A} Γ⊢A) = let 
     Γ▷A⊢drop⇒Γ = displayMap Γ⊢A
     inv = varExist Γ A Γ⊢A Γ▷A⊢drop⇒Γ
@@ -73,9 +73,9 @@ varTmInversion' (TmVarˢ {Γ} {x} {T} {B} Γ⊢VarX∷T Γ⊢B) = let
         T [ drop 1 ]ₑ
       ≡⟨ TyEqSubst Γ⊢T≡A[dropSX] (SbEqRefl Γ▷B⊢drop⇒Γ) ⟩
         A [ drop (1 + x) ]ₑ [ drop 1 ]ₑ
-      ≡⟨ (TyEqSubstSubst Γ⊢dropSx⇒Γ' Γ▷B⊢drop⇒Γ Γ'⊢A) ⟩
+      ≡⟨ TyEqSubstSubst Γ⊢dropSx⇒Γ' Γ▷B⊢drop⇒Γ Γ'⊢A ⟩
         A [ drop (1 + x) ∘ drop 1 ]ₑ
-      ≡⟨ TyEqSubst (TyEqRefl Γ'⊢A) (SbEqDropComp Γ⊢dropSx⇒Γ' Γ▷B⊢drop⇒Γ) ∥
+      ≡⟨ TyEqSubst (TyEqRefl Γ'⊢A) (SbEqDropComp Γ⊢dropSx⇒Γ' Γ▷B⊢drop⇒Γ) |⟩
         A [ drop (2 + x) ]ₑ
       ∎
   in inv , Γ▷B⊢T[drop1]≡A[dropSSX]

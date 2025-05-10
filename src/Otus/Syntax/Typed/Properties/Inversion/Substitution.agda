@@ -33,7 +33,7 @@ idInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let
   in ctxEqTrans ⊢Γ≡Δ₁ ⊢Δ₁≡Δ₂
 
 drop1Inversion : Γ ⊢ drop 1 ⇒ Δ 
-  → Σ[ inv ∈ (CtxExtInversion Γ) ] 
+  → Σ[ inv ∈ CtxExtInversion Γ ] 
     ⊢ (CtxExtInversion.Γ' inv) ≡ⱼ Δ
 drop1Inversion Γ⊢drop1⇒Δ@(SbDropˢ Γ⊢id⇒Δ Γ⊢A) = let 
     ⊢Γ≡Δ = idInversion Γ⊢id⇒Δ
@@ -43,9 +43,9 @@ drop1Inversion (SbConv Γ⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂) = let
   in inv , (ctxEqTrans ⊢Γ'≡Δ₁ ⊢Δ₁≡Δ₂)
 
 substExtInversion : Γ ⊢ γ ▶ a ⇒ Δ 
-  → Σ[ inv ∈ (CtxExtInversion Δ) ] 
-    Γ ⊢ γ ⇒ (CtxExtInversion.Γ' inv) ×
-    Γ ⊢ a ∷ ((CtxExtInversion.A inv) [ γ ]ₑ)
+  → Σ[ inv ∈ CtxExtInversion Δ ] 
+    Γ ⊢ γ ⇒ CtxExtInversion.Γ' inv ×
+    Γ ⊢ a ∷ (CtxExtInversion.A inv) [ γ ]ₑ
 substExtInversion (SbExt Γ⊢γ⇒Δ Δ⊢A Γ⊢a∷Aγ) = let 
     ⊢Δ▷A = ctxExt Δ⊢A
     inv = ctxExtInv _ _ Δ⊢A (ctxEqRefl ⊢Δ▷A)

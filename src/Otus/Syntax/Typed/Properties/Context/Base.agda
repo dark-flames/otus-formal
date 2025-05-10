@@ -14,6 +14,7 @@ private
 {-
 Binary Logical Relation between Context
 -}
+infix 4 ⊢_≃_
 
 data ⊢_≃_ : Context → Context → Set where
   CConvEmpty : ⊢ ε ≃ ε

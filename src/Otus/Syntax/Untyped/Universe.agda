@@ -5,7 +5,7 @@ data ULevel : Set where
     lzero : ULevel
     lsuc  : ULevel → ULevel
 
-infixl 6 _⊔_ 
+infixl 10 _⊔_ 
 
 _⊔_  : ULevel → ULevel → ULevel
 lzero ⊔ l₂ = l₂

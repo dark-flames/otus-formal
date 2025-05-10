@@ -4,6 +4,7 @@ module Otus.Syntax.Typed.Properties.DefEq where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
+open import Otus.Syntax.Typed.Reasoning
 open import Otus.Syntax.Typed.Properties.Presuppositions
 open import Otus.Syntax.Typed.Properties.Context
 open import Otus.Syntax.Typed.Properties.Inversion
@@ -216,7 +217,7 @@ tmEqWf eq with eq
     Γ⊢Aid≡A = TyEqSubstId Γ⊢A
     Γ⊢aid∷A = TmTyConv Γ⊢aid∷Aid Γ⊢Aid≡A
   in Γ⊢aid∷A , Γ⊢a∷A
-...| TmEqSubstVarExt Δ⊢var∷A Γ⊢γ▶a⇒Δ = let 
+...| TmEqSubstVarExt {Δ} {A} {Γ} {γ} {a} Δ⊢var∷A Γ⊢γ▶a⇒Δ = let 
     ctxExtInv Δ₁ B₁ Δ₁⊢B₁ ⊢Δ≡Δ₁▶B₁ , Γ⊢γ⇒Δ₁ , Γ⊢a∷B₁[γ] = substExtInversion Γ⊢γ▶a⇒Δ
     ctxExtInv Δ₂ B₂ Δ₂⊢B₂ ⊢Δ≡Δ₂▶B₂ , Δ⊢A≡B₂[drop] = varTmInversion Δ⊢var∷A
     ⊢Δ₁▶B₁≡Δ₂▶B₂ = ctxEqTrans (ctxEqSym ⊢Δ≡Δ₁▶B₁) ⊢Δ≡Δ₂▶B₂
@@ -224,11 +225,19 @@ tmEqWf eq with eq
     Γ⊢γ▶a⇒Δ₂▶B₂ = SbConv Γ⊢γ▶a⇒Δ ⊢Δ≡Δ₂▶B₂
     Δ₂▶B₂⊢drop⇒Δ₂ = displayMap Δ₂⊢B₂
     Δ₂▶B₂⊢A≡B₂[drop] = tyEqStability ⊢Δ≡Δ₂▶B₂ Δ⊢A≡B₂[drop]
-    Γ⊢A[γ▶a]≡B₂[drop][γ▶a] = TyEqSubst Δ₂▶B₂⊢A≡B₂[drop] (SbEqRefl Γ⊢γ▶a⇒Δ₂▶B₂)
-    Γ⊢B₂[drop][γ▶a]≡B₂[drop∘[γ▶a]] = TyEqSubstSubst Δ₂▶B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▶B₂ Δ₂⊢B₂
-    Γ⊢B₂[drop∘[γ▶a]]≡B₂[γ] = TyEqSubst (TyEqRefl Δ₂⊢B₂) (SbEqDropExt Δ₂▶B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▶B₂)
-    Γ⊢B₂[γ]≡B₁[γ] = TyEqSym (TyEqSubst Δ₁⊢B₁≡B₂ (SbEqRefl Γ⊢γ⇒Δ₁))
-    Γ⊢A[γ▶a]≡B₁[γ] = TyEqTrans (TyEqTrans Γ⊢A[γ▶a]≡B₂[drop][γ▶a] Γ⊢B₂[drop][γ▶a]≡B₂[drop∘[γ▶a]]) (TyEqTrans Γ⊢B₂[drop∘[γ▶a]]≡B₂[γ] Γ⊢B₂[γ]≡B₁[γ])
+    open TyEqReasoning
+    Γ⊢A[γ▶a]≡B₁[γ] = 
+      Γ ⊢begin
+        A [ γ ▶ a ]ₑ
+      ≡⟨ TyEqSubst Δ₂▶B₂⊢A≡B₂[drop] (SbEqRefl Γ⊢γ▶a⇒Δ₂▶B₂) ⟩
+        B₂ [ drop 1 ]ₑ [ γ ▶ a ]ₑ
+      ≡⟨ TyEqSubstSubst Δ₂▶B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▶B₂ Δ₂⊢B₂ ⟩
+        B₂ [ (drop 1) ∘ γ ▶ a ]ₑ
+      ≡⟨ TyEqSubst (TyEqRefl Δ₂⊢B₂) (SbEqDropExt Δ₂▶B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▶B₂) ⟩
+        B₂ [ γ ]ₑ
+      ≡⟨ TyEqSubst Δ₁⊢B₁≡B₂ (SbEqRefl Γ⊢γ⇒Δ₁) ⟨|
+        B₁ [ γ ]ₑ
+      ∎
     Γ⊢a∷A[γ▶a] = TmTyConv Γ⊢a∷B₁[γ] (TyEqSym Γ⊢A[γ▶a]≡B₁[γ])
   in TmSubst Δ⊢var∷A Γ⊢γ▶a⇒Δ , Γ⊢a∷A[γ▶a]
-...| TmEqSubstVarDrop  Δ⊢varX∷A Γ⊢dropY⇒Δ = {!   !}
+...| TmEqSubstVarDrop  Δ⊢varX∷A Γ⊢dropY⇒Δ = {!   !} 

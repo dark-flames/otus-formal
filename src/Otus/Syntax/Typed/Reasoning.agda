@@ -57,13 +57,19 @@ module EndSyntax
   ( Param :  Set)
   ( Obj : Set )
   ( Relation :  Param → Obj → Obj → Set)
+  ( sym :  ∀ {p : Param} {a b : Obj} → Relation p a b → Relation p b a )
   where
   
-  infixr 3 step-≡-∎
-  step-≡-∎ : ∀ {p} → (a : Obj) → (b : Obj) → Relation p a b → Relation p a b
-  step-≡-∎ _ _ aRb = aRb
+  infix 3 step-≡-⟨-∎ step-≡-⟩-∎
+  
+  step-≡-⟨-∎ : ∀ {p} → (a : Obj) → (b : Obj) → Relation p a b → Relation p a b
+  step-≡-⟨-∎ _ _ aRb = aRb
 
-  syntax step-≡-∎ x y xRy = x ≡⟨ xRy ∥ y ∎
+  step-≡-⟩-∎ : ∀ {p} → (a : Obj) → (b : Obj) → Relation p b a → Relation p a b
+  step-≡-⟩-∎ _ _ bRa = sym bRa
+
+  syntax step-≡-⟨-∎ x y xRy = x ≡⟨ xRy |⟩ y ∎
+  syntax step-≡-⟩-∎ x y yRx = x ≡⟨ yRx ⟨| y ∎
 
 module ContextEqReasoning where
   open import Otus.Syntax.Typed.Properties.Context
@@ -78,7 +84,7 @@ module ContextEqReasoning where
 
   open BeginSyntax ⊤ Context ContextEq public
   open ≡Syntax ⊤ Context ContextEq sym trans public
-  open EndSyntax ⊤ Context ContextEq public
+  open EndSyntax ⊤ Context ContextEq sym public
   
 
 module TyEqReasoning where
@@ -87,7 +93,7 @@ module TyEqReasoning where
 
   open PBeginSyntax Context ⊤ Term TyEq public
   open ≡Syntax (Context × ⊤) Term TyEq TyEqSym TyEqTrans public
-  open EndSyntax (Context × ⊤) Term TyEq public
+  open EndSyntax (Context × ⊤) Term TyEq TyEqSym public
 
 module TmEqReasoning where
   TmEq : (Context × Term) → Term → Term → Set
@@ -106,11 +112,16 @@ module TmEqReasoning where
   open PBeginSyntax Context  Term Term TmEq public
   open ≡Syntax (Context × Term) Term TmEq sym trans public
   
-  infixr 3 step-≡-∎
-  step-≡-∎ : ∀ {Γ} → (a b : Term) → (A : Term) → Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ≡ⱼ b ∷ A
-  step-≡-∎ _ _ _ aRb = aRb
+  infix 3 step-≡-⟨-∎ step-≡-⟩-∎
+  
+  step-≡-⟨-∎ : ∀ {Γ} → (a b : Term) → (A : Term) → Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ≡ⱼ b ∷ A
+  step-≡-⟨-∎ _ _ _ aRb = aRb
 
-  syntax step-≡-∎ x y A xRy = x ≡⟨ xRy ∥ y ∷ A ∎
+  step-≡-⟩-∎ : ∀ {Γ} → (a b : Term) → (A : Term) → Γ ⊢ b ≡ⱼ a ∷ A → Γ ⊢ a ≡ⱼ b ∷ A
+  step-≡-⟩-∎ _ _ _ bRa = TmEqSym bRa
+
+  syntax step-≡-⟨-∎ x y A xRy = x ≡⟨ xRy |⟩ y ∎ ∷ A
+  syntax step-≡-⟩-∎ x y A yRx = x ≡⟨ yRx ⟨| y ∎ ∷ A
 
 
 module SbEqReasoning where
@@ -130,8 +141,13 @@ module SbEqReasoning where
   open PBeginSyntax Context Context Substitution SbEq public
   open ≡Syntax (Context × Context) Substitution SbEq sym trans public
 
-  infixr 3 step-≡-∎
-  step-≡-∎ : ∀ {Γ} → (a b : Substitution) → (Δ : Context) → Γ ⊢ a ≡ⱼ b ⇒ Δ → Γ ⊢ a ≡ⱼ b ⇒ Δ
-  step-≡-∎ _ _ _ aRb = aRb
+  infix 3 step-≡-⟨-∎ step-≡-⟩-∎
+  
+  step-≡-⟨-∎ : ∀ {Γ} → (a b : Substitution) → (Δ : Context) → Γ ⊢ a ≡ⱼ b ⇒ Δ → Γ ⊢ a ≡ⱼ b ⇒ Δ
+  step-≡-⟨-∎ _ _ _ aRb = aRb
 
-  syntax step-≡-∎ x y Δ xRy = x ≡⟨ xRy ∥ y ⇒ Δ ∎
+  step-≡-⟩-∎ : ∀ {Γ} → (a b : Substitution) → (Δ : Context) → Γ ⊢ b ≡ⱼ a ⇒ Δ → Γ ⊢ a ≡ⱼ b ⇒ Δ
+  step-≡-⟩-∎ _ _ _ bRa = SbEqSym bRa
+
+  syntax step-≡-⟨-∎ x y Δ xRy = x ≡⟨ xRy |⟩ y ∎ ⇒ Δ
+  syntax step-≡-⟩-∎ x y Δ yRx = x ≡⟨ yRx ⟨| y ∎ ⇒ Δ

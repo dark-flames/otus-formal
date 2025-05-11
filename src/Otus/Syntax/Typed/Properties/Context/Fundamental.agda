@@ -4,8 +4,8 @@ module Otus.Syntax.Typed.Properties.Context.Fundamental where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
+open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Context.Base
-
 
 private
   variable
@@ -54,21 +54,21 @@ ctxConvWf (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B
 
 -- weakenCtxConv : ⊢ Γ ≃ Δ → ⊢ Γ ≡ⱼ Δ
 weakenCtxConv CConvEmpty = CEqRefl CEmp
-weakenCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) = CEqExt (weakenCtxConv ⊢Γ≃Δ) Γ⊢A Δ⊢B Γ⊢A≡B
+weakenCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) = CEqExt (weakenCtxConv ⊢Γ≃Δ) Γ⊢A Γ⊢B Γ⊢A≡B
 
 -- weakenCtxConv' : ⊢ Γ ≃ Δ → ⊢ Δ ≡ⱼ Γ
 weakenCtxConv' CConvEmpty = CEqRefl CEmp
-weakenCtxConv' (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) = CEqExt (weakenCtxConv' ⊢Γ≃Δ) Δ⊢B Γ⊢A (TyEqSym Δ⊢A≡B)
+weakenCtxConv' (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) = CEqExt (weakenCtxConv' ⊢Γ≃Δ) Δ⊢B Δ⊢A (TyEqSym Δ⊢A≡B)
 
 
 -- tmCtxConv : ⊢ Γ ≃ Δ → Γ ⊢ a ∷ A → Δ ⊢ a ∷ A
 tmCtxConv (CConvEmpty) = id
 tmCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) (TmVarᶻ _) = let 
-    Δ▷B⊢var∷B = TmVarᶻ Δ⊢B
+    Δ▷B⊢Var0∷B = TmVarᶻ Δ⊢B
     ⊢Δ = proj₂ (ctxConvWf ⊢Γ≃Δ)
     Δ▷B⇒Δ = SbDropˢ (SbId ⊢Δ) Δ⊢B
-    Δ▷B⊢B≡A = TyEqSubst (TyEqSym Δ⊢A≡B)  (SbEqRefl Δ▷B⇒Δ)
-  in TmTyConv Δ▷B⊢var∷B Δ▷B⊢B≡A
+    Δ▷B⊢B≡A = tyEqSubst₁ (TyEqSym Δ⊢A≡B) Δ▷B⇒Δ
+  in TmTyConv Δ▷B⊢Var0∷B Δ▷B⊢B≡A
 tmCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) (TmVarˢ Γ⊢VarX∷C _) = let
     Δ⊢VarX∷C = tmCtxConv ⊢Γ≃Δ Γ⊢VarX∷C 
   in TmVarˢ Δ⊢VarX∷C Δ⊢B
@@ -159,7 +159,7 @@ substEqCtxConv  ⊢Γ≃Δ eq with eq
 ...| SbEqIdₗ Ξ₁⊢id⇒Ξ₂ Γ⊢γ⇒Ξ₁ = SbEqIdₗ Ξ₁⊢id⇒Ξ₂ (substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ₁)
 ...| SbEqExtVar Γ⊢drop▶var⇒Ξ Γ⊢id⇒Ξ = SbEqExtVar (substCtxConv ⊢Γ≃Δ Γ⊢drop▶var⇒Ξ) (substCtxConv ⊢Γ≃Δ Γ⊢id⇒Ξ)
 ...| SbEqDropExt Ξ⊢drop⇒Θ Γ⊢γ▶a⇒Ξ = SbEqDropExt Ξ⊢drop⇒Θ (substCtxConv ⊢Γ≃Δ Γ⊢γ▶a⇒Ξ)
-...| SbEqDropComp Ξ⊢drop⇒Θ Γ⊢id⇒Ξ = SbEqDropComp Ξ⊢drop⇒Θ (substCtxConv ⊢Γ≃Δ Γ⊢id⇒Ξ)
+...| SbEqDropComp Ξ⊢dropX⇒Θ Γ⊢drop1⇒Ξ = SbEqDropComp Ξ⊢dropX⇒Θ (substCtxConv ⊢Γ≃Δ Γ⊢drop1⇒Ξ)
 ...| SbEqExtComp Ξ⊢δ▶a⇒Θ Γ⊢γ⇒Ξ = SbEqExtComp Ξ⊢δ▶a⇒Θ (substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 
 -- tmEqCtxConv : ⊢ Γ ≃ Δ → Γ ⊢ a ≡ⱼ b ∷ A → Δ ⊢ a ≡ⱼ b ∷ A
@@ -183,9 +183,9 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
     Δ⊢a≡b∷A = tmEqCtxConv ⊢Γ≃Δ Γ⊢a≡b∷A
     Δ⊢PiAB = tyCtxConv ⊢Γ≃Δ Γ⊢PiAB
   in TmEqApp Δ⊢PiAB Δ⊢f≡g∷PiAB Δ⊢a≡b∷A
-...| TmEqSubst Ξ⊢A Ξ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Ξ = let 
+...| TmEqSubst Ξ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Ξ = let 
     Δ⊢γ₁≡γ₂⇒Ξ = substEqCtxConv ⊢Γ≃Δ Γ⊢γ₁≡γ₂⇒Ξ
-  in TmEqSubst Ξ⊢A Ξ⊢a≡b∷A Δ⊢γ₁≡γ₂⇒Ξ
+  in TmEqSubst Ξ⊢a≡b∷A Δ⊢γ₁≡γ₂⇒Ξ
 ...| TmEqConv Γ⊢a≡b∷A Γ⊢A≡B = let 
     Δ⊢A≡B = tyEqCtxConv ⊢Γ≃Δ Γ⊢A≡B
     Δ⊢a≡b∷A = tmEqCtxConv ⊢Γ≃Δ Γ⊢a≡b∷A
@@ -193,12 +193,12 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TmEqSubstId Γ⊢a∷A = let 
     Δ⊢a∷A = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A
   in TmEqSubstId Δ⊢a∷A
-...| TmEqSubstVarExt Ξ⊢var0∷A Γ⊢γ▶a⇒Ξ = let 
+...| TmEqSubstVarExt Ξ⊢Var0∷A Γ⊢γ▶a⇒Ξ = let 
     Δ⊢γ▶a⇒Ξ = substCtxConv ⊢Γ≃Δ Γ⊢γ▶a⇒Ξ
-  in TmEqSubstVarExt Ξ⊢var0∷A Δ⊢γ▶a⇒Ξ
-...| TmEqSubstVarDrop Ξ⊢varx∷A Γ⊢dropy⇒Ξ = let 
+  in TmEqSubstVarExt Ξ⊢Var0∷A Δ⊢γ▶a⇒Ξ
+...| TmEqSubstVarDrop Ξ⊢VarX∷A Γ⊢dropy⇒Ξ = let 
     Δ⊢dropy⇒Ξ = substCtxConv ⊢Γ≃Δ Γ⊢dropy⇒Ξ
-  in TmEqSubstVarDrop Ξ⊢varx∷A Δ⊢dropy⇒Ξ
+  in TmEqSubstVarDrop Ξ⊢VarX∷A Δ⊢dropy⇒Ξ
 ...| TmEqLamSubst Ξ⊢lama∷PiAB Γ⊢γ⇒Ξ = let 
     Δ⊢γ⇒Ξ = substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmEqLamSubst Ξ⊢lama∷PiAB Δ⊢γ⇒Ξ
@@ -208,9 +208,9 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TmEqAppSubst Ξ⊢fa∷A Γ⊢γ⇒Ξ = let 
     Δ⊢γ⇒Ξ = substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmEqAppSubst Ξ⊢fa∷A Δ⊢γ⇒Ξ
-...| TmEqSubstComp Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ Θ⊢a∷A = let 
+...| TmEqSubstSubst Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ Θ⊢a∷A = let 
     Δ⊢γ⇒Ξ = substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
-  in TmEqSubstComp Ξ⊢δ⇒Θ Δ⊢γ⇒Ξ Θ⊢a∷A
+  in TmEqSubstSubst Ξ⊢δ⇒Θ Δ⊢γ⇒Ξ Θ⊢a∷A
 ...| TmEqUSubst Γ⊢γ⇒Ξ = let 
     Δ⊢γ⇒Ξ = substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmEqUSubst Δ⊢γ⇒Ξ
@@ -226,11 +226,10 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
 
 -- ctxConvFundamental : ⊢ Γ ≡ⱼ Δ → ⊢ Γ ≃ Δ
 ctxConvFundamental (CEqRefl ⊢Γ) = ctxConvRefl ⊢Γ
-ctxConvFundamental (CEqExt ⊢Γ≡Δ Γ⊢A Δ⊢B Γ⊢A≡B) = let 
+ctxConvFundamental (CEqExt ⊢Γ≡Δ Γ⊢A Γ⊢B Γ⊢A≡B) = let 
     ⊢Γ≃Δ = ctxConvFundamental ⊢Γ≡Δ
-    ⊢Δ≃Γ = ctxConvSym ⊢Γ≃Δ
-    Γ⊢B = tyCtxConv ⊢Δ≃Γ Δ⊢B
     Δ⊢A = tyCtxConv ⊢Γ≃Δ Γ⊢A
+    Δ⊢B = tyCtxConv ⊢Γ≃Δ Γ⊢B
     Δ⊢A≡B = tyEqCtxConv  ⊢Γ≃Δ Γ⊢A≡B
   in CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B
 

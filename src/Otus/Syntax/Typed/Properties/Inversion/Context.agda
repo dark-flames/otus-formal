@@ -16,24 +16,6 @@ record CtxExtInversion ( Γ : Context ) : Set where
     Γ'⊢A : Γ' ⊢ A
     ⊢Γ≡Γ'▷A : ⊢ Γ ≡ⱼ Γ' ▷ A
 
-record CtxSplit ( Γ : Context ) : Set where
-  constructor ctxExtInv
-  field
-    Γ₁ : Context
-    A : Term
-    Γ₂ : Context
-    Γ₁⊢A : Γ₁ ⊢ A
-    ⊢Γ₁▷A⧺Γ₂ : ⊢ Γ₁ ▷ A ⧺ Γ₂
-    ⊢Γ≡Γ₁▷A⧺Γ₂ : ⊢ Γ ≡ⱼ Γ₁ ▷ A ⧺ Γ₂
-
-
-record VarExistence ( Γ : Context ) ( x : ℕ ) : Set where
-  constructor varExist 
-  field
-    Γ' : Context
-    A : Term
-    Γ'⊢A : Γ' ⊢ A
-    Γ⊢dropSx⇒Γ'▷A : Γ ⊢ drop (suc x) ⇒ Γ'
 
 private
   variable

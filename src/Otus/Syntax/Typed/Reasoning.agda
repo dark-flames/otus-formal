@@ -50,7 +50,7 @@ module ≡Syntax
 
   syntax step-≡-⟩ x xRy yRz  = x ≡⟨ xRy ⟩ yRz
   syntax step-≡-∣ x xRy     = x ≡⟨⟩ xRy
-  syntax step-≡-⟨ x yRz yRx = x ≡⟨ yRx ⟨ yRz
+  syntax step-≡-⟨ x yRx yRz  = x ≡⟨ yRx ⟨ yRz
 
 
 module EndSyntax
@@ -109,7 +109,7 @@ module TmEqReasoning where
     → (proj₁ p) ⊢ a ≡ⱼ c ∷ (proj₂ p)
   trans Γ⊢a≡b∷A Γ⊢b≡c∷A = TmEqTrans Γ⊢a≡b∷A Γ⊢b≡c∷A
 
-  open PBeginSyntax Context  Term Term TmEq public
+  open PBeginSyntax Context Term Term TmEq public
   open ≡Syntax (Context × Term) Term TmEq sym trans public
   
   infix 3 step-≡-⟨-∎ step-≡-⟩-∎
@@ -120,8 +120,8 @@ module TmEqReasoning where
   step-≡-⟩-∎ : ∀ {Γ} → (a b : Term) → (A : Term) → Γ ⊢ b ≡ⱼ a ∷ A → Γ ⊢ a ≡ⱼ b ∷ A
   step-≡-⟩-∎ _ _ _ bRa = TmEqSym bRa
 
-  syntax step-≡-⟨-∎ x y A xRy = x ≡⟨ xRy |⟩ y ∎ ∷ A
-  syntax step-≡-⟩-∎ x y A yRx = x ≡⟨ yRx ⟨| y ∎ ∷ A
+  syntax step-≡-⟨-∎ x y A xRy = x ≡⟨ xRy |⟩ y ∎∷ A
+  syntax step-≡-⟩-∎ x y A yRx = x ≡⟨ yRx ⟨| y ∎∷ A
 
 
 module SbEqReasoning where
@@ -136,11 +136,11 @@ module SbEqReasoning where
   trans : ∀ {p : (Context × Context)} {γ δ ξ} 
     → (proj₁ p) ⊢ γ ≡ⱼ δ ⇒ (proj₂ p) → (proj₁ p) ⊢ δ ≡ⱼ ξ ⇒ (proj₂ p) 
     → (proj₁ p) ⊢ γ ≡ⱼ ξ ⇒ (proj₂ p)
-  trans Γ⊢γ≡δ⇒Δ Γ⊢δ⇒ξ∷Δ = SbEqTrans Γ⊢γ≡δ⇒Δ Γ⊢δ⇒ξ∷Δ
+  trans Γ⊢γ≡δ⇒Δ Γ⊢δ≡ξ⇒Δ = SbEqTrans Γ⊢γ≡δ⇒Δ Γ⊢δ≡ξ⇒Δ
 
   open PBeginSyntax Context Context Substitution SbEq public
   open ≡Syntax (Context × Context) Substitution SbEq sym trans public
-
+  -- open EndSyntax (Context × Context) Substitution SbEq sym public
   infix 3 step-≡-⟨-∎ step-≡-⟩-∎
   
   step-≡-⟨-∎ : ∀ {Γ} → (a b : Substitution) → (Δ : Context) → Γ ⊢ a ≡ⱼ b ⇒ Δ → Γ ⊢ a ≡ⱼ b ⇒ Δ
@@ -149,5 +149,5 @@ module SbEqReasoning where
   step-≡-⟩-∎ : ∀ {Γ} → (a b : Substitution) → (Δ : Context) → Γ ⊢ b ≡ⱼ a ⇒ Δ → Γ ⊢ a ≡ⱼ b ⇒ Δ
   step-≡-⟩-∎ _ _ _ bRa = SbEqSym bRa
 
-  syntax step-≡-⟨-∎ x y Δ xRy = x ≡⟨ xRy |⟩ y ∎ ⇒ Δ
-  syntax step-≡-⟩-∎ x y Δ yRx = x ≡⟨ yRx ⟨| y ∎ ⇒ Δ
+  syntax step-≡-⟨-∎ x y Δ xRy = x ≡⟨ xRy |⟩ y ∎⇒ Δ
+  syntax step-≡-⟩-∎ x y Δ yRx = x ≡⟨ yRx ⟨| y ∎⇒ Δ

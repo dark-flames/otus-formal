@@ -62,3 +62,6 @@ substEqStability ⊢Γ≡Δ = substEqCtxConv (ctxConvFundamental ⊢Γ≡Δ)
 
 substEqStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ
 substEqStability' ⊢Γ≡Δ = substEqStability (ctxEqSym ⊢Γ≡Δ)
+
+ctxEqWfCtx : ⊢ Γ ≡ⱼ Δ → ⊢ Γ × ⊢ Δ
+ctxEqWfCtx ⊢Γ≡Δ = ctxConvWf (ctxConvFundamental ⊢Γ≡Δ)

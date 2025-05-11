@@ -8,7 +8,7 @@ open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Presuppositions
 open import Otus.Syntax.Typed.Properties.Inversion.Base
 open import Otus.Syntax.Typed.Properties.Inversion.Context
-open import Otus.Syntax.Typed.Reasoning
+open import Otus.Syntax.Typed.Reason
 
 record ULevelConjInversion : Set where
   constructor uLvlConjInv
@@ -48,6 +48,7 @@ piTmInversion (TmTyConv Γ⊢PiAB∷G Γ⊢G≡T) = let
     inv , Γ⊢G≡Ul , Γ⊢A∷Ul₁ , Γ▷A⊢B∷Ul₂ = piTmInversion Γ⊢PiAB∷G
     Γ⊢T≡Ul = TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡Ul
   in inv , Γ⊢T≡Ul , Γ⊢A∷Ul₁ , Γ▷A⊢B∷Ul₂
+
 varTmInversion : Γ ⊢ Var x ∷ T 
   → Σ[ inv ∈ VarExistence Γ x ]
     Γ ⊢ T ≡ⱼ (VarExistence.A inv) [ drop (suc x) ]ₑ
@@ -71,10 +72,11 @@ varTmInversion (TmVarˢ {Γ} {x} {T} {B} Γ⊢VarX∷T Γ⊢B) = let
         A [ drop (1 + x) ]ₑ [ drop 1 ]ₑ
       ≡⟨ TyEqSubstSubst Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ Γ'⊢A ⟩
         A [ drop (1 + x) ∘ drop 1 ]ₑ
-      ≡⟨ tyEqSubst₂ Γ'⊢A (SbEqDropComp Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ) |⟩
+      ≡⟨ tyEqSubst₂ Γ'⊢A (SbEqDropComp Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ) ⟩∣
         A [ drop (2 + x) ]ₑ
       ∎
   in inv , Γ▷B⊢T[drop1]≡A[dropSSX]
 varTmInversion (TmTyConv Γ⊢VarX∷G Γ⊢G≡T) = let
     inv , Γ⊢G≡A[dropX] = varTmInversion Γ⊢VarX∷G
-  in inv , (TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡A[dropX]) 
+  in inv , (TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡A[dropX])
+

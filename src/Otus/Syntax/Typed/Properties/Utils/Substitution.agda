@@ -28,7 +28,8 @@ section Γ⊢A Γ⊢a∷A = let
     Γ⊢aid∷A = TmTyConv Γ⊢a∷A (TyEqSym Γ⊢Aid≡A)
   in SbExt (SbId ⊢Γ) Γ⊢A Γ⊢aid∷A
 
-liftSubst : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Γ ▷ (A [ γ ]ₑ) ⊢ lift γ ⇒ Δ ▷ A
+liftSubst : Γ ⊢ γ ⇒ Δ → Δ ⊢ A 
+  → Γ ▷ (A [ γ ]ₑ) ⊢ lift γ ⇒ Δ ▷ A
 liftSubst Γ⊢γ⇒Δ Δ⊢A = let 
     Γ⊢Aγ = TySubst Δ⊢A Γ⊢γ⇒Δ
     Γ▷Aγ⊢drop1⇒Γ = displayMap Γ⊢Aγ

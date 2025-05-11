@@ -8,6 +8,7 @@ open import Otus.Syntax.Typed.Properties.Presuppositions
 
 private
   variable
+    l₁ l₂ : ULevel
     x y : ℕ
     Γ Δ Ξ : Context
     γ γ₁ γ₂ δ δ₁ δ₂ : Substitution
@@ -28,3 +29,6 @@ tyEqSubst₁ Δ⊢A≡B Γ⊢γ⇒Δ = TyEqSubst Δ⊢A≡B (SbEqRefl Γ⊢γ⇒
 tyEqSubst₂ : Δ ⊢ A → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
     → Γ ⊢ A [ γ₁ ]ₑ ≡ⱼ A [ γ₂ ]ₑ
 tyEqSubst₂ Δ⊢A Γ⊢γ₁≡γ₂⇒Δ = TyEqSubst (TyEqRefl Δ⊢A) Γ⊢γ₁≡γ₂⇒Δ
+
+tyUnivCong : ⊢ Γ → l₁ ≡ l₂ → Γ ⊢ U l₁ ≡ⱼ U l₂
+tyUnivCong ⊢Γ refl = TyEqRefl (TyU ⊢Γ)

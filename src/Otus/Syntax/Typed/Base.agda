@@ -101,7 +101,7 @@ data _⊢_≡ⱼ_ where
         → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ)
     TyEqUSubst : Δ ⊢ U l → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l
-    TyEqSubstSubst : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ A
+    TyEqSubstSubst : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ A -- resort
         → Γ ⊢  A [ δ ]ₑ [ γ ]ₑ ≡ⱼ A [ δ ∘ γ ]ₑ
     TyEqSubstId : Γ ⊢ A
         → Γ ⊢ A [ idₛ ]ₑ ≡ⱼ A
@@ -164,7 +164,7 @@ data _⊢_≡ⱼ_∷_ where
     TmEqSubstVarExt : Δ ⊢ Var 0 ∷ A → Γ ⊢ γ ▶ a ⇒ Δ
         → Γ ⊢ Var 0 [ γ ▶ a ]ₑ ≡ⱼ a ∷ A [ γ ▶ a ]ₑ
     TmEqSubstVarDrop : Δ ⊢ Var x ∷ A → Γ ⊢ drop y ⇒ Δ
-        → Γ ⊢ Var x [ drop y ]ₑ ≡ⱼ Var (x + y) ∷ (A [ drop y ]ₑ)
+        → Γ ⊢ Var x [ drop y ]ₑ ≡ⱼ Var (y + x) ∷ (A [ drop y ]ₑ)
     TmEqLamSubst : Δ ⊢ Lam a ∷ Pi A B → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Lam a [ γ ]ₑ ≡ⱼ Lam (a [ lift γ ]ₑ) ∷ Pi A B [ γ ]ₑ
     TmEqPiSubst : Δ ⊢ Pi A B ∷ U l → Γ ⊢ γ ⇒ Δ
@@ -174,7 +174,7 @@ data _⊢_≡ⱼ_∷_ where
     TmEqSubstSubst :  Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ a ∷ A
         → Γ ⊢ a [ δ ]ₑ [ γ ]ₑ ≡ⱼ a [ δ ∘ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
     TmEqUSubst : Γ ⊢ γ ⇒ Δ
-        → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l ∷ U (lsuc l₁)
+        → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l ∷ U (lsuc l)
 
 ---- β rules
     TmEqPiBeta : Γ ⊢ A → Γ ▷ A ⊢ b ∷ B → Γ ⊢ a ∷ A

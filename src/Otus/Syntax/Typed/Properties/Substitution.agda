@@ -4,11 +4,12 @@ module Otus.Syntax.Typed.Properties.Substitution where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Reasoning
+open import Otus.Syntax.Typed.Reason
 open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Presuppositions
 open import Otus.Syntax.Typed.Properties.Context
 open import Otus.Syntax.Typed.Properties.Inversion
+open import Otus.Syntax.Typed.Properties.Heterogeneous
 
 
 private
@@ -43,7 +44,7 @@ dropCompEq {_} { x } {Ξ} {_} { suc y } Δ⊢dropX⇒Ξ (SbDropˢ {Γ} {_} {_} {
         drop (y + x) ∘ drop 1
       ≡⟨ SbEqDropComp Γ⊢dropY+X⇒Ξ Γ▷A⊢drop1⇒Γ ⟩
         drop (1 + (y + x))
-      ≡⟨ substEqDrop Γ▷A⊢drop1+Y+X⇒Ξ refl ⟨|
+      ≡⟨ substEqDrop Γ▷A⊢drop1+Y+X⇒Ξ refl ⟨∣
         drop (1 + y + x)
       ∎⇒ Ξ
   in Γ▷A⊢drop1+Y+X⇒Ξ , Γ▷A⊢dropX∘drop1+Y≡drop1+Y+X⇒Ξ
@@ -51,19 +52,43 @@ dropCompEq {_} { x } {Ξ} {_} { suc y } Δ₂⊢dropX⇒Ξ (SbConv Γ⊢dropSY�
     Δ₁⊢dropX⇒Ξ = substStability' ⊢Δ₁≡Δ₂ Δ₂⊢dropX⇒Ξ
   in dropCompEq Δ₁⊢dropX⇒Ξ Γ⊢dropSY⇒Δ₁
 
-{-
+
 liftVar : Δ ⊢ A → Δ ⊢ Var x ∷ A → Γ ⊢ drop y ⇒ Δ
-  → Γ ⊢ Var x [ drop y ]ₑ ≡ⱼ Var (y + x) ∷ A [ drop y ]ₑ
+  → Γ ⊢ Var (y + x) ∷ A [ drop y ]ₑ
 liftVar {Δ} {A} {x} {Γ} {zero} Δ⊢A Δ⊢VarX∷A Γ⊢id⇒Δ = let
     ⊢Γ≡Δ = idInversion Γ⊢id⇒Δ
     Γ⊢VarX∷A = tmStability' ⊢Γ≡Δ Δ⊢VarX∷A
     Γ⊢A = tyStability' ⊢Γ≡Δ Δ⊢A
-    Γ⊢A≡A[id] = TyEqSubstId Γ⊢A
-  in TmEqConv (TmEqSubstId Γ⊢VarX∷A) (TyEqSym Γ⊢A≡A[id])
-liftVar {Δ} {A} {x} {Γ} {suc y} Δ⊢A Δ⊢VarX∷A Γ⊢dropSY⇒Δ = let 
+    Γ⊢A[id]≡A = TyEqSubstId Γ⊢A
+  in tmTyConv' Γ⊢VarX∷A Γ⊢A[id]≡A
+liftVar {Δ} {A} {x} {Γ} {suc y} Δ⊢A Δ⊢VarX∷A Γ⊢dropSY⇒Δ = let
     dropSucInv Γ' B Γ'⊢B ⊢Γ≡Γ'▷B Γ'⊢dropY⇒Δ = dropSucInversion Γ⊢dropSY⇒Δ
     Γ⊢drop1⇒Γ' = substStability' ⊢Γ≡Γ'▷B (displayMap Γ'⊢B)
-    Γ'⊢VarX[dropY]≡VarY+X∷A[dropY] = liftVar Δ⊢A Δ⊢VarX∷A Γ'⊢dropY⇒Δ
-    Γ⊢VarX[dropY][drop1]≡VarY[drop1]+X∷A[dropY][drop1] = 
-      TmEqSubst {!   !} Γ'⊢VarX[dropY]≡VarY+X∷A[dropY] (SbEqRefl Γ⊢drop1⇒Γ')
-  in {!   !}-}
+    Γ'⊢VarY+X∷A[dropY] = liftVar Δ⊢A Δ⊢VarX∷A Γ'⊢dropY⇒Δ
+    Γ'▷B⊢VarS[Y+X]∷A[dropY][drop1] = TmVarˢ Γ'⊢VarY+X∷A[dropY] Γ'⊢B
+    Γ⊢VarS[Y+X]∷A[dropY][drop1] = tmStability' ⊢Γ≡Γ'▷B Γ'▷B⊢VarS[Y+X]∷A[dropY][drop1]
+    open TyEqReasoning
+    Γ⊢A[dropY][drop1]≡A[dropSY] = 
+      Γ ⊢begin
+        A [ drop y ]ₑ [ drop 1 ]ₑ
+      ≡⟨ TyEqSubstSubst Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ' Δ⊢A ⟩
+        A [ drop y ∘ drop 1 ]ₑ
+      ≡⟨ tyEqSubst₂ Δ⊢A (SbEqDropComp Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ') ⟩∣
+        A [ drop (1 + y) ]ₑ
+      ∎
+  in tmTyConv Γ⊢VarS[Y+X]∷A[dropY][drop1] Γ⊢A[dropY][drop1]≡A[dropSY]
+
+{-
+Γ⊢VarX[dropSY]≡VarS[Y+X]∷A[dropSY] =
+      Γ ⊢begin
+        Var x [ drop (1 + y) ]ₑ ∷ A [ drop (1 + y) ]ₑ
+      ≡⟨∣ hEqSubst₂ Δ⊢A Δ⊢VarX∷A (SbEqDropComp Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ') ∙⟨
+        Var x [ drop y ∘ drop 1 ]ₑ ∷ A [ drop y ∘ drop 1 ]ₑ
+      ≡⟨∣ hEqSubstSubst Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ' Δ⊢A Δ⊢VarX∷A ∙⟨
+        Var x [ drop y ]ₑ [ drop 1 ]ₑ ∷ A [ drop y ]ₑ [ drop 1 ]ₑ
+      ≡⟨ tmEqSubst₁ (TmEqSubstVarDrop Δ⊢VarX∷A Γ'⊢dropY⇒Δ) Γ⊢drop1⇒Γ' ⟩
+        Var (y + x) [ drop 1 ]ₑ ∷ A [ drop y ]ₑ [ drop 1 ]ₑ
+      ≡⟨ {!   !} ⟩ ? ∣
+        Var (1 + (y + x)) ∷ ?
+      ∎
+-}

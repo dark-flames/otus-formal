@@ -34,17 +34,17 @@ dropCompEq {_} { x } {Ξ} {_} { suc y } Δ⊢dropX⇒Ξ (SbDropˢ {Γ} {_} {_} {
     Γ▷A⊢drop1+Y+X⇒Ξ = SbDropˢ Γ⊢dropY+X⇒Ξ Γ⊢A
     open SbEqReasoning
     Γ▷A⊢dropX∘drop1+Y≡drop1+Y+X⇒Ξ = 
-      Γ ▷ A ⊢begin
+      Γ ▷ A ⊢begin-sb
         drop x ∘ drop (1 + y)
-      ≡⟨ substEqComp₂ Δ⊢dropX⇒Ξ (SbEqDropComp Γ⊢dropY⇒Δ Γ▷A⊢drop1⇒Γ) ⟨
+      sb-≡⟨ substEqComp₂ Δ⊢dropX⇒Ξ (SbEqDropComp Γ⊢dropY⇒Δ Γ▷A⊢drop1⇒Γ) ⟨
         drop x ∘ (drop y ∘ drop 1)
-      ≡⟨ SbEqCompAssoc Δ⊢dropX⇒Ξ Γ⊢dropY⇒Δ Γ▷A⊢drop1⇒Γ ⟨
+      sb-≡⟨ SbEqCompAssoc Δ⊢dropX⇒Ξ Γ⊢dropY⇒Δ Γ▷A⊢drop1⇒Γ ⟨
         drop x ∘ drop y ∘ drop 1
-      ≡⟨ substEqComp₁ Γ⊢dropX∘dropY≡dropY+X⇒Ξ Γ▷A⊢drop1⇒Γ ⟩
+      sb-≡⟨ substEqComp₁ Γ⊢dropX∘dropY≡dropY+X⇒Ξ Γ▷A⊢drop1⇒Γ ⟩
         drop (y + x) ∘ drop 1
-      ≡⟨ SbEqDropComp Γ⊢dropY+X⇒Ξ Γ▷A⊢drop1⇒Γ ⟩
+      sb-≡⟨ SbEqDropComp Γ⊢dropY+X⇒Ξ Γ▷A⊢drop1⇒Γ ⟩
         drop (1 + (y + x))
-      ≡⟨ substEqDrop Γ▷A⊢drop1+Y+X⇒Ξ refl ⟨∣
+      sb-≡⟨ substEqDrop Γ▷A⊢drop1+Y+X⇒Ξ refl ⟨∣
         drop (1 + y + x)
       ∎⇒ Ξ
   in Γ▷A⊢drop1+Y+X⇒Ξ , Γ▷A⊢dropX∘drop1+Y≡drop1+Y+X⇒Ξ
@@ -64,31 +64,15 @@ liftVar {Δ} {A} {x} {Γ} {zero} Δ⊢A Δ⊢VarX∷A Γ⊢id⇒Δ = let
 liftVar {Δ} {A} {x} {Γ} {suc y} Δ⊢A Δ⊢VarX∷A Γ⊢dropSY⇒Δ = let
     dropSucInv Γ' B Γ'⊢B ⊢Γ≡Γ'▷B Γ'⊢dropY⇒Δ = dropSucInversion Γ⊢dropSY⇒Δ
     Γ⊢drop1⇒Γ' = substStability' ⊢Γ≡Γ'▷B (displayMap Γ'⊢B)
-    Γ'⊢VarY+X∷A[dropY] = liftVar Δ⊢A Δ⊢VarX∷A Γ'⊢dropY⇒Δ
-    Γ'▷B⊢VarS[Y+X]∷A[dropY][drop1] = TmVarˢ Γ'⊢VarY+X∷A[dropY] Γ'⊢B
-    Γ⊢VarS[Y+X]∷A[dropY][drop1] = tmStability' ⊢Γ≡Γ'▷B Γ'▷B⊢VarS[Y+X]∷A[dropY][drop1]
-    open TyEqReasoning
-    Γ⊢A[dropY][drop1]≡A[dropSY] = 
-      Γ ⊢begin
-        A [ drop y ]ₑ [ drop 1 ]ₑ
-      ≡⟨ TyEqSubstSubst Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ' Δ⊢A ⟩
-        A [ drop y ∘ drop 1 ]ₑ
-      ≡⟨ tyEqSubst₂ Δ⊢A (SbEqDropComp Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ') ⟩∣
-        A [ drop (1 + y) ]ₑ
-      ∎
-  in tmTyConv Γ⊢VarS[Y+X]∷A[dropY][drop1] Γ⊢A[dropY][drop1]≡A[dropSY]
-
-{-
-Γ⊢VarX[dropSY]≡VarS[Y+X]∷A[dropSY] =
-      Γ ⊢begin
-        Var x [ drop (1 + y) ]ₑ ∷ A [ drop (1 + y) ]ₑ
-      ≡⟨∣ hEqSubst₂ Δ⊢A Δ⊢VarX∷A (SbEqDropComp Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ') ∙⟨
-        Var x [ drop y ∘ drop 1 ]ₑ ∷ A [ drop y ∘ drop 1 ]ₑ
-      ≡⟨∣ hEqSubstSubst Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ' Δ⊢A Δ⊢VarX∷A ∙⟨
-        Var x [ drop y ]ₑ [ drop 1 ]ₑ ∷ A [ drop y ]ₑ [ drop 1 ]ₑ
-      ≡⟨ tmEqSubst₁ (TmEqSubstVarDrop Δ⊢VarX∷A Γ'⊢dropY⇒Δ) Γ⊢drop1⇒Γ' ⟩
-        Var (y + x) [ drop 1 ]ₑ ∷ A [ drop y ]ₑ [ drop 1 ]ₑ
-      ≡⟨ {!   !} ⟩ ? ∣
-        Var (1 + (y + x)) ∷ ?
-      ∎
--}
+    in begin
+      by-⟨ liftVar Δ⊢A Δ⊢VarX∷A Γ'⊢dropY⇒Δ ⟩
+      Γ' ⊢ Var (y + x) ∷ A [ drop y ]ₑ 
+    ⎯⎯⎯⎯⟨ Tm-Var-ext Γ'⊢B ⟩
+      Γ' ▷ B ⊢ Var (1 + (y + x)) ∷ A [ drop y ]ₑ [ drop 1 ]ₑ
+    ⎯⎯⎯⎯⟨ Tm-Stability' ⊢Γ≡Γ'▷B ⟩
+      Γ ⊢ Var (1 + (y + x)) ∷ A [ drop y ]ₑ [ drop 1 ]ₑ
+    ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqSubstSubst Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ' Δ⊢A) ⟩
+      Γ ⊢ Var (1 + (y + x)) ∷ A [ drop y ∘ drop 1 ]ₑ
+    ⎯⎯⎯⎯⟨ Tm-TyConv-by (tyEqSubst₂ Δ⊢A (SbEqDropComp Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ')) ⟩
+      Γ ⊢ Var (1 + (y + x)) ∷ A [ drop (1 + y) ]ₑ
+    ∎

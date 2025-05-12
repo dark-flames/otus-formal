@@ -52,6 +52,12 @@ hEqFund Γ⊢A Γ⊢a≡b∷A = HEqₗ (TyEqRefl Γ⊢A) Γ⊢a≡b∷A
 hEqFund' : Γ ⊢ A → Γ ⊢ b ≡ⱼ a ∷ A → Γ ⊢ a ∷ A ≡ⱼ b ∷ A
 hEqFund' Γ⊢A Γ⊢b≡a∷A = HEqₗ (TyEqRefl Γ⊢A) (TmEqSym Γ⊢b≡a∷A)
 
+hEqTyEq : Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+hEqTyEq Γ⊢a∷A Γ⊢A≡B = HEqₗ Γ⊢A≡B (TmEqRefl Γ⊢a∷A)
+
+hEqTyEq' : Γ ⊢ a ∷ A → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+hEqTyEq' Γ⊢a∷A Γ⊢B≡A = HEqₗ (TyEqSym Γ⊢B≡A) (TmEqRefl Γ⊢a∷A)
+
 hEqConvₗ : Γ ⊢ A ≡ⱼ C → Γ ⊢ a ∷ A ≡ⱼ b ∷ B →  Γ ⊢ a ∷ C ≡ⱼ b ∷ B 
 hEqConvₗ Γ⊢A≡C Γ⊢a∷A≡b∷B = let
     Γ⊢A≡B , Γ⊢a≡b∷A = hEqCoeₗ Γ⊢a∷A≡b∷B

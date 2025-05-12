@@ -295,25 +295,25 @@ tmEqWf eq with eq
     Γ⊢aid∷A = TmTyConv Γ⊢aid∷Aid Γ⊢Aid≡A
   in Γ⊢aid∷A , Γ⊢a∷A
 ...| TmEqSubstVarExt {Δ} {A} {Γ} {γ} {a} Δ⊢Var0∷A Γ⊢γ▶a⇒Δ = let 
-    ctxExtInv Δ₁ B₁ Δ₁⊢B₁ ⊢Δ≡Δ₁▶B₁ , Γ⊢γ⇒Δ₁ , Γ⊢a∷B₁[γ] = substExtInversion Γ⊢γ▶a⇒Δ
-    varExist Δ₂ B₂ Δ₂⊢B₂ Δ⊢drop1⇒Δ₂ Δ⊢id⇒Δ₂▶B₂ , Δ⊢A≡B₂[drop1] = varTmInversion Δ⊢Var0∷A
-    ⊢Δ≡Δ₂▶B₂ = idInversion Δ⊢id⇒Δ₂▶B₂
-    ⊢Δ₁▶B₁≡Δ₂▶B₂ = ctxEqTrans (ctxEqSym ⊢Δ≡Δ₁▶B₁) ⊢Δ≡Δ₂▶B₂
-    ⊢Δ₁≡Δ₂ , Δ₁⊢B₁≡B₂ = ctxEqExtInversion ⊢Δ₁▶B₁≡Δ₂▶B₂
-    Γ⊢γ▶a⇒Δ₂▶B₂ = SbConv Γ⊢γ▶a⇒Δ ⊢Δ≡Δ₂▶B₂
-    Δ₂▶B₂⊢drop⇒Δ₂ = displayMap Δ₂⊢B₂
-    Δ₂▶B₂⊢A≡B₂[drop1] = tyEqStability ⊢Δ≡Δ₂▶B₂ Δ⊢A≡B₂[drop1]
+    ctxExtInv Δ₁ B₁ Δ₁⊢B₁ ⊢Δ≡Δ₁▷B₁ , Γ⊢γ⇒Δ₁ , Γ⊢a∷B₁[γ] = substExtInversion Γ⊢γ▶a⇒Δ
+    varExist Δ₂ B₂ Δ₂⊢B₂ Δ⊢drop1⇒Δ₂ Δ⊢id⇒Δ₂▷B₂ , Δ⊢A≡B₂[drop1] = varTmInversion Δ⊢Var0∷A
+    ⊢Δ≡Δ₂▷B₂ = idInversion Δ⊢id⇒Δ₂▷B₂
+    ⊢Δ₁▷B₁≡Δ₂▷B₂ = ctxEqTrans (ctxEqSym ⊢Δ≡Δ₁▷B₁) ⊢Δ≡Δ₂▷B₂
+    ⊢Δ₁≡Δ₂ , Δ₁⊢B₁≡B₂ = ctxEqExtInversion ⊢Δ₁▷B₁≡Δ₂▷B₂
+    Γ⊢γ▶a⇒Δ₂▷B₂ = SbConv Γ⊢γ▶a⇒Δ ⊢Δ≡Δ₂▷B₂
+    Δ₂▷B₂⊢drop⇒Δ₂ = displayMap Δ₂⊢B₂
+    Δ₂▷B₂⊢A≡B₂[drop1] = tyEqStability ⊢Δ≡Δ₂▷B₂ Δ⊢A≡B₂[drop1]
     open TyEqReasoning
     Γ⊢A[γ▶a]≡B₁[γ] = 
-      Γ ⊢begin
+      Γ ⊢begin-ty
         A [ γ ▶ a ]ₑ
-      ≡⟨ tyEqSubst₁ Δ₂▶B₂⊢A≡B₂[drop1] Γ⊢γ▶a⇒Δ₂▶B₂ ⟩
+      ty-≡⟨ tyEqSubst₁ Δ₂▷B₂⊢A≡B₂[drop1] Γ⊢γ▶a⇒Δ₂▷B₂ ⟩
         B₂ [ drop 1 ]ₑ [ γ ▶ a ]ₑ
-      ≡⟨ TyEqSubstSubst Δ₂▶B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▶B₂ Δ₂⊢B₂ ⟩
+      ty-≡⟨ TyEqSubstSubst Δ₂▷B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▷B₂ Δ₂⊢B₂ ⟩
         B₂ [ (drop 1) ∘ γ ▶ a ]ₑ
-      ≡⟨ tyEqSubst₂ Δ₂⊢B₂ (SbEqDropExt Δ₂▶B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▶B₂) ⟩
+      ty-≡⟨ tyEqSubst₂ Δ₂⊢B₂ (SbEqDropExt Δ₂▷B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▷B₂) ⟩
         B₂ [ γ ]ₑ
-      ≡⟨ tyEqSubst₁ Δ₁⊢B₁≡B₂ Γ⊢γ⇒Δ₁ ⟨∣
+      ty-≡⟨ tyEqSubst₁ Δ₁⊢B₁≡B₂ Γ⊢γ⇒Δ₁ ⟨∣
         B₁ [ γ ]ₑ
       ∎
     Γ⊢a∷A[γ▶a] = TmTyConv Γ⊢a∷B₁[γ] (TyEqSym Γ⊢A[γ▶a]≡B₁[γ])
@@ -332,11 +332,11 @@ tmEqWf eq with eq
     Γ⊢Lam-a[liftγ]∷PiC[γ][D[liftγ]] = TmLam Γ⊢C[γ] Γ▷C[γ]⊢a[liftγ]∷D[liftγ]
     open TyEqReasoning
     Γ⊢PiC[γ][D[liftγ]]≡PiAB[γ] = 
-      Γ ⊢begin
+      Γ ⊢begin-ty
         Pi (C [ γ ]ₑ) (D [ lift γ ]ₑ)
-      ≡⟨ TyEqPiSubst Δ⊢PiCD Γ⊢γ⇒Δ ⟨
+      ty-≡⟨ TyEqPiSubst Δ⊢PiCD Γ⊢γ⇒Δ ⟨
         Pi C D [ γ ]ₑ
-      ≡⟨ tyEqSubst₁ Δ⊢PiAB≡PiCD Γ⊢γ⇒Δ ⟨∣
+      ty-≡⟨ tyEqSubst₁ Δ⊢PiAB≡PiCD Γ⊢γ⇒Δ ⟨∣
         Pi A B [ γ ]ₑ
       ∎
   in TmSubst Δ⊢Lam-a∷PiAB Γ⊢γ⇒Δ , TmTyConv Γ⊢Lam-a[liftγ]∷PiC[γ][D[liftγ]] Γ⊢PiC[γ][D[liftγ]]≡PiAB[γ]
@@ -356,15 +356,15 @@ tmEqWf eq with eq
     Γ⊢Ul₁⊔l₂≡Ul' = tyUnivCong (substWfCtx Γ⊢γ⇒Δ) l₁⊔l₂≡l'
     open TyEqReasoning
     Γ⊢Ul≡Ul₁⊔l₂ =  
-      Γ ⊢begin
+      Γ ⊢begin-ty
         U l
-      ≡⟨ TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ ⟨  
+      ty-≡⟨ TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ ⟨  
         U l [ γ ]ₑ
-      ≡⟨ tyEqSubst₁ Δ⊢Ul≡Ul' Γ⊢γ⇒Δ ⟩
+      ty-≡⟨ tyEqSubst₁ Δ⊢Ul≡Ul' Γ⊢γ⇒Δ ⟩
         U l' [ γ ]ₑ
-      ≡⟨ tyEqSubst₁ (tyUnivCong ⊢Δ l₁⊔l₂≡l') Γ⊢γ⇒Δ ⟨
+      ty-≡⟨ tyEqSubst₁ (tyUnivCong ⊢Δ l₁⊔l₂≡l') Γ⊢γ⇒Δ ⟨
         U (l₁ ⊔ l₂) [ γ ]ₑ
-      ≡⟨ TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ ⟩∣
+      ty-≡⟨ TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ ⟩∣
         U (l₁ ⊔ l₂)
       ∎
   in TmTyConv Γ⊢PiAB[γ]∷Ul[γ] Γ⊢Ul[γ]≡Ul , tmTyConv' Γ⊢PiA[γ]B[liftγ]∷Ul₁⊔l₂ Γ⊢Ul≡Ul₁⊔l₂
@@ -374,58 +374,89 @@ tmEqWf eq with eq
     ⊢Δ = tyWfCtx Δ⊢A
     ⊢Γ = substWfCtx Γ⊢γ⇒Δ
     Γ⊢A[γ] = TySubst Δ⊢A Γ⊢γ⇒Δ
-    Γ⊢f[γ]∷PiAB[γ] = TmSubst Δ⊢f∷PiAB Γ⊢γ⇒Δ
     Γ⊢a[γ]∷A[γ] = TmSubst Δ⊢a∷A Γ⊢γ⇒Δ
-    Γ⊢f[γ]∷PiA[γ]B[liftγ] = tmTyConv Γ⊢f[γ]∷PiAB[γ] (TyEqPiSubst Δ⊢PiAB Γ⊢γ⇒Δ)
-    Γ⊢f[γ]∙a[γ]∷B[liftγ][id▶a[γ]] = TmApp Γ⊢f[γ]∷PiA[γ]B[liftγ] Γ⊢a[γ]∷A[γ]
     Δ⊢id▶a⇒Δ▷A = section Δ⊢A Δ⊢a∷A
     Γ⊢id▶a[γ]⇒Γ▷A[γ] = section Γ⊢A[γ] Γ⊢a[γ]∷A[γ]
     Γ▷A[γ]⊢liftγ⇒Δ▷A = liftSubst Γ⊢γ⇒Δ Δ⊢A
     Γ▷A[γ]⊢drop1⇒Γ = displayMap Γ⊢A[γ]
-    Γ⊢A[γ∘id]≡A[γ] = tyEqSubst₂ Δ⊢A (SbEqIdᵣ Γ⊢γ⇒Δ (SbId ⊢Γ))
-    Γ⊢a[γ]∷A[γ∘id] = tmTyConv' Γ⊢a[γ]∷A[γ] Γ⊢A[γ∘id]≡A[γ]
-    Γ⊢drop1∘id▶a[γ]≡id⇒Γ = SbEqDropExt Γ▷A[γ]⊢drop1⇒Γ Γ⊢id▶a[γ]⇒Γ▷A[γ]
-    Γ⊢γ∘drop1∘id▶a[γ]≡γ∘[drop1∘id▶a[γ]]⇒Γ = SbEqCompAssoc Γ⊢γ⇒Δ Γ▷A[γ]⊢drop1⇒Γ Γ⊢id▶a[γ]⇒Γ▷A[γ]
-    Γ⊢γ∘[drop1∘id▶a[γ]]≡γ∘id⇒Γ = substEqComp₂ Γ⊢γ⇒Δ Γ⊢drop1∘id▶a[γ]≡id⇒Γ
-    Γ⊢γ∘[drop1∘id▶a[γ]]≡γ⇒Γ = SbEqTrans Γ⊢γ∘[drop1∘id▶a[γ]]≡γ∘id⇒Γ (SbEqIdᵣ Γ⊢γ⇒Δ (SbId ⊢Γ))
-    Γ⊢γ∘drop1∘id▶a[γ]≡γ⇒Γ = SbEqTrans Γ⊢γ∘drop1∘id▶a[γ]≡γ∘[drop1∘id▶a[γ]]⇒Γ Γ⊢γ∘[drop1∘id▶a[γ]]≡γ⇒Γ
-    Γ▷A[γ]⊢γ∘drop1⇒Δ = SbComp Γ⊢γ⇒Δ Γ▷A[γ]⊢drop1⇒Γ 
-    Γ⊢γ∘drop1∘id▶a[γ]ₑ⇒Δ = (SbComp Γ▷A[γ]⊢γ∘drop1⇒Δ Γ⊢id▶a[γ]⇒Γ▷A[γ])
-    Γ⊢Var0[id▶a[γ]]≡a[γ]∷A[γ][drop1][id▶a[γ]] = TmEqSubstVarExt (TmVarᶻ Γ⊢A[γ]) Γ⊢id▶a[γ]⇒Γ▷A[γ]
-      
+    Γ⊢A[γ][drop1][id▶a[γ]] = TySubst (TySubst Γ⊢A[γ] Γ▷A[γ]⊢drop1⇒Γ) Γ⊢id▶a[γ]⇒Γ▷A[γ]
+    open SbEqReasoning
     open TyEqReasoning
-    Γ⊢A[γ][drop1][id▶a[γ]]≡A[γ∘drop1∘id▶a[γ]] =
-      Γ ⊢begin
-        A [ γ ]ₑ [ drop 1 ]ₑ [ idₛ ▶ a [ γ ]ₑ ]ₑ
-      ≡⟨ tyEqSubst₁ (TyEqSubstSubst Γ⊢γ⇒Δ Γ▷A[γ]⊢drop1⇒Γ Δ⊢A) Γ⊢id▶a[γ]⇒Γ▷A[γ] ⟩
-        A [ γ ∘ drop 1 ]ₑ [ idₛ ▶ a [ γ ]ₑ ]ₑ
-      ≡⟨ TyEqSubstSubst Γ▷A[γ]⊢γ∘drop1⇒Δ Γ⊢id▶a[γ]⇒Γ▷A[γ] Δ⊢A ⟩∣
-        A [ γ ∘ drop 1 ∘ idₛ ▶ a [ γ ]ₑ ]ₑ
+    open TmHEqReasoning
+    Γ⊢γ∘drop1∘id▶a[γ]≡id∘γ⇒Δ = 
+      Γ ⊢begin-sb
+        γ ∘ drop 1 ∘ idₛ ▶ a [ γ ]ₑ
+      sb-≡⟨ SbEqCompAssoc Γ⊢γ⇒Δ Γ▷A[γ]⊢drop1⇒Γ Γ⊢id▶a[γ]⇒Γ▷A[γ] ⟩
+        γ ∘ (drop 1 ∘ idₛ ▶ a [ γ ]ₑ)
+      sb-≡⟨ substEqComp₂ Γ⊢γ⇒Δ (SbEqDropExt Γ▷A[γ]⊢drop1⇒Γ Γ⊢id▶a[γ]⇒Γ▷A[γ]) ⟩
+        γ ∘ idₛ
+      sb-≡⟨ SbEqIdᵣ Γ⊢γ⇒Δ (SbId ⊢Γ) ⟩
+        γ
+      sb-≡⟨ SbEqIdₗ (SbId ⊢Δ) Γ⊢γ⇒Δ ⟨∣
+        idₛ ∘ γ
+      ∎⇒ Δ
+    Γ⊢a[γ]≡Var0[id▶a[γ]]∷A[γ∘drop1∘id▶a[id∘γ]] = 
+      Γ ⊢begin-heqₗ
+        a [ γ ]ₑ ∷ (A [ idₛ ∘ γ ]ₑ)
+      heq-≡⟨∷ tyEqSubst₂ Δ⊢A Γ⊢γ∘drop1∘id▶a[γ]≡id∘γ⇒Δ ∷⟨
+        a [ γ ]ₑ  ∷ A [ γ ∘ drop 1 ∘ idₛ ▶ a [ γ ]ₑ ]ₑ
+      heq-≡⟨∷ TyEqSubstSubst (SbComp Γ⊢γ⇒Δ Γ▷A[γ]⊢drop1⇒Γ) Γ⊢id▶a[γ]⇒Γ▷A[γ] Δ⊢A ∷⟨
+        a [ γ ]ₑ  ∷ A [ γ ∘ drop 1 ]ₑ [ idₛ ▶ a [ γ ]ₑ ]ₑ
+      heq-≡⟨∷ tyEqSubst₁ (TyEqSubstSubst Γ⊢γ⇒Δ Γ▷A[γ]⊢drop1⇒Γ Δ⊢A) Γ⊢id▶a[γ]⇒Γ▷A[γ] ∷⟨
+        a [ γ ]ₑ  ∷ A [ γ ]ₑ [ drop 1 ]ₑ [ idₛ ▶ a [ γ ]ₑ ]ₑ
+      heq-≡⟨ TmEqSubstVarExt (TmVarᶻ Γ⊢A[γ]) Γ⊢id▶a[γ]⇒Γ▷A[γ] ⟨ Γ⊢A[γ][drop1][id▶a[γ]] ∣
+        Var 0 [ idₛ ▶ a [ γ ]ₑ ]ₑ ∷ A [ γ ]ₑ [ drop 1 ]ₑ [ idₛ ▶ a [ γ ]ₑ ]ₑ
       ∎
-    Γ⊢Var0[id▶a[γ]]≡a[γ]∷A[γ∘drop1∘id▶a[γ]] = tmEqConv Γ⊢Var0[id▶a[γ]]≡a[γ]∷A[γ][drop1][id▶a[γ]] Γ⊢A[γ][drop1][id▶a[γ]]≡A[γ∘drop1∘id▶a[γ]]
+    Γ⊢liftγ∘id▶a[γ]≡id▶a∘γ⇒Δ▷A = 
+      Γ ⊢begin-sb
+        lift γ ∘ idₛ ▶ a [ γ ]ₑ
+      sb-≡⟨ SbEqExtComp Γ▷A[γ]⊢liftγ⇒Δ▷A Γ⊢id▶a[γ]⇒Γ▷A[γ] ⟩
+        (γ ∘ drop 1 ∘ idₛ ▶ a [ γ ]ₑ) ▶ (Var 0 [ idₛ ▶ a [ γ ]ₑ ]ₑ)
+      sb-≡⟨ SbEqExt (SbEqSym Γ⊢γ∘drop1∘id▶a[γ]≡id∘γ⇒Δ) Δ⊢A Γ⊢a[γ]≡Var0[id▶a[γ]]∷A[γ∘drop1∘id▶a[id∘γ]] ⟨
+        (idₛ ∘ γ) ▶ a [ γ ]ₑ
+      sb-≡⟨ SbEqExtComp Δ⊢id▶a⇒Δ▷A Γ⊢γ⇒Δ ⟨∣
+        idₛ ▶ a ∘ γ
+      ∎⇒ Δ ▷ A
     Γ⊢B[liftγ][id▶a]≡T[γ] = 
-      Γ ⊢begin 
+      Γ ⊢begin-ty
         B [ lift γ ]ₑ [ idₛ ▶ a [ γ ]ₑ ]ₑ
-      ≡⟨ TyEqSubstSubst Γ▷A[γ]⊢liftγ⇒Δ▷A Γ⊢id▶a[γ]⇒Γ▷A[γ] Δ▷A⊢B ⟩
+      ty-≡⟨ TyEqSubstSubst Γ▷A[γ]⊢liftγ⇒Δ▷A Γ⊢id▶a[γ]⇒Γ▷A[γ] Δ▷A⊢B ⟩
         B [ lift γ ∘ idₛ ▶ a [ γ ]ₑ ]ₑ
-      ≡⟨ tyEqSubst₂ Δ▷A⊢B (SbEqExtComp Γ▷A[γ]⊢liftγ⇒Δ▷A Γ⊢id▶a[γ]⇒Γ▷A[γ]) ⟩
-        B [ (γ ∘ drop 1 ∘ idₛ ▶ a [ γ ]ₑ) ▶ (Var 0 [ idₛ ▶ a [ γ ]ₑ ]ₑ) ]ₑ
-      ≡⟨ tyEqSubst₂ Δ▷A⊢B (substEqExt₂ Γ⊢γ∘drop1∘id▶a[γ]ₑ⇒Δ Δ⊢A Γ⊢Var0[id▶a[γ]]≡a[γ]∷A[γ∘drop1∘id▶a[γ]]) ⟩
-        B [ (γ ∘ drop 1 ∘ idₛ ▶ a [ γ ]ₑ) ▶ a [ γ ]ₑ ]ₑ
-      ≡⟨ tyEqSubst₂ Δ▷A⊢B (substEqExt₁ (SbEqSym Γ⊢γ∘drop1∘id▶a[γ]≡γ⇒Γ) Δ⊢A Γ⊢a[γ]∷A[γ]) ⟨
-        B [ γ ▶ a [ γ ]ₑ ]ₑ
-      ≡⟨ tyEqSubst₂ Δ▷A⊢B (substEqExt₁ (SbEqSym (SbEqIdₗ (SbId ⊢Δ) Γ⊢γ⇒Δ)) Δ⊢A Γ⊢a[γ]∷A[γ]) ⟩
-        B [ (idₛ ∘ γ) ▶ a [ γ ]ₑ ]ₑ
-      ≡⟨ tyEqSubst₂ Δ▷A⊢B (SbEqExtComp Δ⊢id▶a⇒Δ▷A Γ⊢γ⇒Δ) ⟨
+      ty-≡⟨ tyEqSubst₂ Δ▷A⊢B Γ⊢liftγ∘id▶a[γ]≡id▶a∘γ⇒Δ▷A ⟩
         B [ idₛ ▶ a ∘ γ ]ₑ
-      ≡⟨ TyEqSubstSubst Δ⊢id▶a⇒Δ▷A Γ⊢γ⇒Δ Δ▷A⊢B ⟨
+      ty-≡⟨ TyEqSubstSubst Δ⊢id▶a⇒Δ▷A Γ⊢γ⇒Δ Δ▷A⊢B ⟨
         B [ idₛ ▶ a ]ₑ [ γ ]ₑ
-      ≡⟨ tyEqSubst₁ Δ⊢T≡B[id▶a] Γ⊢γ⇒Δ ⟨∣
+      ty-≡⟨ tyEqSubst₁ Δ⊢T≡B[id▶a] Γ⊢γ⇒Δ ⟨∣
         T [ γ ]ₑ
       ∎
-  in (TmSubst Δ⊢f∙a∷T Γ⊢γ⇒Δ) , (TmTyConv Γ⊢f[γ]∙a[γ]∷B[liftγ][id▶a[γ]] Γ⊢B[liftγ][id▶a]≡T[γ])
+    Γ⊢f[γ]∙a[γ]∷T[γ] =
+      begin
+        by-⟨ Δ⊢f∷PiAB ⟩ Δ ⊢ f ∷ Pi A B 
+      ⎯⎯⎯⎯⟨ Tm-Subst-by Γ⊢γ⇒Δ ⟩
+        Γ ⊢ f [ γ ]ₑ ∷ Pi A B [ γ ]ₑ
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqPiSubst Δ⊢PiAB Γ⊢γ⇒Δ) ⟩
+        Γ ⊢ f [ γ ]ₑ ∷ Pi (A [ γ ]ₑ) (B [ lift γ ]ₑ)
+      ⎯⎯⎯⎯⟨ Tm-App-on  Γ⊢a[γ]∷A[γ] ⟩
+        Γ ⊢ (f [ γ ]ₑ) ∙ (a [ γ ]ₑ) ∷ B [ lift γ ]ₑ [ idₛ ▶ a [ γ ]ₑ ]ₑ
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by Γ⊢B[liftγ][id▶a]≡T[γ] ⟩
+        Γ ⊢ (f [ γ ]ₑ) ∙ (a [ γ ]ₑ) ∷ T [ γ ]ₑ
+      ∎
+  in (TmSubst Δ⊢f∙a∷T Γ⊢γ⇒Δ) , Γ⊢f[γ]∙a[γ]∷T[γ]
+...| TmEqSubstSubst {Δ} {δ} {Ξ} {Γ} {γ} {a} {A} Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢a∷A = let
+    Ξ⊢A = tmWfTy Ξ⊢a∷A
+    Γ⊢a[δ∘γ]∷A[δ][γ] = 
+      begin
+        (by-⟨ Δ⊢δ⇒Ξ ⟩ Δ ⊢ δ ⇒ Ξ) , (by-⟨ Γ⊢γ⇒Δ ⟩ Γ ⊢ γ ⇒ Δ)
+      ⎯⎯⎯⎯⟨ Sb-Comp ⟩
+        Γ ⊢ δ ∘ γ ⇒ Ξ
+      ⎯⎯⎯⎯⟨ Tm-Subst-on Ξ⊢a∷A ⟩
+        Γ ⊢ a [ δ ∘ γ ]ₑ ∷ A [ δ ∘ γ ]ₑ
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by' (TyEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢A) ⟩
+        Γ ⊢ a [ δ ∘ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
+      ∎
+  in (TmSubst (TmSubst Ξ⊢a∷A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ), Γ⊢a[δ∘γ]∷A[δ][γ]
 ...| TmEqUSubst Γ⊢γ⇒Δ = let
     ⊢Γ = substWfCtx Γ⊢γ⇒Δ
     ⊢Δ = substWfCodomain Γ⊢γ⇒Δ
     Γ⊢Ul∷USl[γ] = TmSubst (TmU ⊢Δ) Γ⊢γ⇒Δ
-  in TmTyConv Γ⊢Ul∷USl[γ] (TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ) , TmU ⊢Γ  
+  in TmTyConv Γ⊢Ul∷USl[γ] (TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ) , TmU ⊢Γ    

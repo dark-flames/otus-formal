@@ -66,13 +66,13 @@ varTmInversion (TmVarˢ {Γ} {x} {T} {B} Γ⊢VarX∷T Γ⊢B) = let
     inv = varExist Γ' A Γ'⊢A Γ▷B⊢dropSSX⇒Γ' Γ▷B⊢dropSX⇒Γ'▷A
     open TyEqReasoning
     Γ▷B⊢T[drop1]≡A[dropSSX] = 
-      Γ ▷ B ⊢begin
+      Γ ▷ B ⊢begin-ty
         T [ drop 1 ]ₑ
-      ≡⟨ tyEqSubst₁ Γ⊢T≡A[dropSX] Γ▷B⊢drop⇒Γ ⟩
+      ty-≡⟨ tyEqSubst₁ Γ⊢T≡A[dropSX] Γ▷B⊢drop⇒Γ ⟩
         A [ drop (1 + x) ]ₑ [ drop 1 ]ₑ
-      ≡⟨ TyEqSubstSubst Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ Γ'⊢A ⟩
+      ty-≡⟨ TyEqSubstSubst Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ Γ'⊢A ⟩
         A [ drop (1 + x) ∘ drop 1 ]ₑ
-      ≡⟨ tyEqSubst₂ Γ'⊢A (SbEqDropComp Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ) ⟩∣
+      ty-≡⟨ tyEqSubst₂ Γ'⊢A (SbEqDropComp Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ) ⟩∣
         A [ drop (2 + x) ]ₑ
       ∎
   in inv , Γ▷B⊢T[drop1]≡A[dropSSX]

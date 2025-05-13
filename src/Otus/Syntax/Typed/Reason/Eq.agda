@@ -124,7 +124,7 @@ module TmEqReasoning where
   syntax step-≡-⟩-∎ x y A yRx = x ≡⟨ yRx ⟨∣ y ∎∷ A
 
 module TmHEqReasoning where
-  open import Otus.Syntax.Typed.Properties.Heterogeneous
+  open import Otus.Syntax.Typed.Properties.Heter
 
   TmHEq : (Context × (Term × Term)) → Term → Term → Set
   TmHEq (Γ , (A , B)) a b = Γ ⊢ a ∷ A ≡ⱼ b ∷ B

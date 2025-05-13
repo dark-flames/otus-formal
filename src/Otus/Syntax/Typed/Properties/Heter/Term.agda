@@ -1,5 +1,5 @@
 {-# OPTIONS --without-K --safe #-}
-module Otus.Syntax.Typed.Properties.Heterogeneous where
+module Otus.Syntax.Typed.Properties.Heter.Term where
 
 open import Otus.Utils
 open import Otus.Syntax.Untyped
@@ -73,7 +73,6 @@ hEqConvᵣ : Γ ⊢ B ≡ⱼ C → Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ a �
 hEqConvᵣ Γ⊢B≡C Γ⊢a∷A≡b∷B = let
     Γ⊢A≡B , Γ⊢a≡b∷B = hEqCoeᵣ Γ⊢a∷A≡b∷B
   in HEqᵣ (TyEqTrans Γ⊢A≡B Γ⊢B≡C) (tmEqConv Γ⊢a≡b∷B Γ⊢B≡C)
-
 
 hEqSym : Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ b ∷ B ≡ⱼ a ∷ A
 hEqSym (HEqₗ  Γ⊢A≡B Γ⊢a≡b∷A) = HEqᵣ (TyEqSym Γ⊢A≡B) (TmEqSym Γ⊢a≡b∷A)

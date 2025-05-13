@@ -120,7 +120,7 @@ module TmEqReasoning where
   syntax tm-step-≡-⟩-∎ x y A yRx = x tm-≡⟨ yRx ⟨∣ y ∎∷ A
 
 module TmHEqReasoning where
-  open import Otus.Syntax.Typed.Properties.Heterogeneous
+  open import Otus.Syntax.Typed.Properties.Heter
 
   infix 1 _⊢begin-heq_ _⊢begin-heqₗ_ _⊢begin-heqᵣ_
 

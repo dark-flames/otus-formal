@@ -122,7 +122,7 @@ substEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
       ⎯⎯⎯⎯⟨ Sb-Conv-by' ⊢Γ≡Γ'▷B  ⟩
         Γ ⊢ drop 1 ▶ Var 0 ⇒ Γ
       ∎
-    ) , (SbId (tmWfCtx Γ⊢Var0∷A))
+    ) , (SbId ⊢Γ)
 ...| SbEqDropExt Δ⊢drop1⇒Ξ Γ⊢γ▶a⇒Δ = let 
     Γ⊢drop1∘[γ▶a]⇒Ξ = SbComp Δ⊢drop1⇒Ξ Γ⊢γ▶a⇒Δ
     ctxExtInv _ _ Δ'⊢A ⊢Δ≡Δ'▷A , Γ⊢γ⇒Δ' , Γ⊢a∷Aγ = substExtInversion Γ⊢γ▶a⇒Δ

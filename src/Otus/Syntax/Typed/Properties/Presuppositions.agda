@@ -51,7 +51,7 @@ tmWfCtx tm with tm
 ...| TmTyConv Γ⊢a∷A _ = tmWfCtx Γ⊢a∷A
 
 
--- substEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ × ⊢ Δ
+-- substEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ
 substEqWfCtx eq with eq
 ...| SbEqRefl Γ⇒Δ = substWfCtx Γ⇒Δ
 ...| SbEqSym Γ⊢γ₂≡γ₁⇒Δ = substEqWfCtx Γ⊢γ₂≡γ₁⇒Δ
@@ -62,7 +62,7 @@ substEqWfCtx eq with eq
 ...| SbEqCompAssoc Ξ⇒Θ _ Γ⇒Δ = substWfCtx Γ⇒Δ
 ...| SbEqIdₗ _ Γ⇒Δ = substWfCtx Γ⇒Δ
 ...| SbEqIdᵣ _ Γ⇒Δ = substWfCtx Γ⇒Δ
-...| SbEqExtVar Γ⇒Δ _ = substWfCtx Γ⇒Δ
+...| SbEqExtVar Γ⊢Var0∷A = tmWfCtx Γ⊢Var0∷A
 ...| SbEqDropExt _ Γ⇒Δ = substWfCtx Γ⇒Δ
 ...| SbEqDropComp _ Γ⇒Δ = substWfCtx Γ⇒Δ
 ...| SbEqExtComp _ Γ⇒Δ = substWfCtx Γ⇒Δ

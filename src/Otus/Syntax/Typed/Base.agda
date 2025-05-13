@@ -98,7 +98,7 @@ data _⊢_≡ⱼ_ where
         → Γ ⊢ A ≡ⱼ B
 ---- Subst Computation
     TyEqPiSubst : Δ ⊢ Pi A B → Γ ⊢ γ ⇒ Δ
-        → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ)
+        → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ) -- (γ ∘ drop 1) ▶ Var 0
     TyEqUSubst : Δ ⊢ U l → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l
     TyEqSubstSubst : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ A -- resort
@@ -128,8 +128,8 @@ data _⊢_≡ⱼ_⇒_ where
         → Γ ⊢ idₛ ∘ γ ≡ⱼ γ ⇒ Ξ
     SbEqIdᵣ : Δ ⊢ γ ⇒ Ξ → Γ ⊢ idₛ ⇒ Δ
         → Γ ⊢ γ ∘ idₛ ≡ⱼ γ ⇒ Ξ
-    SbEqExtVar : Γ ⊢ drop 1 ▶ Var 0  ⇒ Δ → Γ ⊢ idₛ  ⇒ Δ
-        →  Γ ⊢ drop 1 ▶ Var 0 ≡ⱼ idₛ  ⇒ Δ
+    SbEqExtVar : Γ ⊢ Var 0 ∷ A
+        →  Γ ⊢ drop 1 ▶ Var 0 ≡ⱼ idₛ  ⇒ Γ
     SbEqDropExt : Δ ⊢ drop 1 ⇒ Ξ → Γ ⊢ γ ▶ a ⇒ Δ
         → Γ ⊢ drop 1 ∘ γ ▶ a ≡ⱼ γ ⇒ Ξ
     SbEqDropComp : Δ ⊢ drop x ⇒ Ξ → Γ ⊢ drop 1 ⇒ Δ

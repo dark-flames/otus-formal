@@ -157,7 +157,7 @@ substEqCtxConv  ⊢Γ≃Δ eq with eq
 ...| SbEqCompAssoc Ξ₂⊢ξ⇒Ξ₃ Ξ₁⊢δ⇒Ξ₂ Γ⊢γ⇒Ξ₁ = SbEqCompAssoc Ξ₂⊢ξ⇒Ξ₃ Ξ₁⊢δ⇒Ξ₂ (substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ₁)
 ...| SbEqIdᵣ Ξ₁⊢γ⇒Ξ₂ Γ⊢id⇒Ξ₁ = SbEqIdᵣ Ξ₁⊢γ⇒Ξ₂ (substCtxConv ⊢Γ≃Δ Γ⊢id⇒Ξ₁)
 ...| SbEqIdₗ Ξ₁⊢id⇒Ξ₂ Γ⊢γ⇒Ξ₁ = SbEqIdₗ Ξ₁⊢id⇒Ξ₂ (substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ₁)
-...| SbEqExtVar Γ⊢drop▶var⇒Ξ Γ⊢id⇒Ξ = SbEqExtVar (substCtxConv ⊢Γ≃Δ Γ⊢drop▶var⇒Ξ) (substCtxConv ⊢Γ≃Δ Γ⊢id⇒Ξ)
+...| SbEqExtVar Γ⊢Var0∷A = SbEqConv (SbEqExtVar (tmCtxConv ⊢Γ≃Δ Γ⊢Var0∷A)) (weakenCtxConv' ⊢Γ≃Δ)
 ...| SbEqDropExt Ξ⊢drop⇒Θ Γ⊢γ▶a⇒Ξ = SbEqDropExt Ξ⊢drop⇒Θ (substCtxConv ⊢Γ≃Δ Γ⊢γ▶a⇒Ξ)
 ...| SbEqDropComp Ξ⊢dropX⇒Θ Γ⊢drop1⇒Ξ = SbEqDropComp Ξ⊢dropX⇒Θ (substCtxConv ⊢Γ≃Δ Γ⊢drop1⇒Ξ)
 ...| SbEqExtComp Ξ⊢δ▶a⇒Θ Γ⊢γ⇒Ξ = SbEqExtComp Ξ⊢δ▶a⇒Θ (substCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)

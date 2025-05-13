@@ -78,6 +78,7 @@ Tm-TyConv-by Γ⊢A≡B Γ⊢a∷A = tmTyConv Γ⊢a∷A Γ⊢A≡B
 Tm-TyConv-by' : Γ ⊢ B ≡ⱼ A →  Γ ⊢ a ∷ A
     → Γ ⊢ a ∷ B
 Tm-TyConv-by' Γ⊢B≡A Γ⊢a∷A = tmTyConv' Γ⊢a∷A Γ⊢B≡A 
+
 Tm-Stability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ a ∷ A
     → Δ ⊢ a ∷ A
 Tm-Stability = tmStability
@@ -175,7 +176,7 @@ module TmHEqReasoning where
 
   infixr 3 heter-step-≡-⟩-∎ heter-step-≡-⟨-∎
   infixr 3 homo-step-≡-⟩-∎ homo-step-≡-⟨-∎
-  infixr 3 conv-step-≡-⟩-∎ conv-step-≡-⟨-∎
+  infixr 3 conv-step-≡-⟩-A∎ conv-step-≡-⟨-A∎ conv-step-≡-⟩-B∎ conv-step-≡-⟨-B∎
 
   homo-step-≡-⟩-∎ : (a b A B : Term) → Γ ⊢ A → Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A ≡ⱼ b ∷ A
   homo-step-≡-⟩-∎ _ _ _ _ = hEqFund
@@ -189,18 +190,26 @@ module TmHEqReasoning where
   heter-step-≡-⟨-∎ : (a b A B : Term) → Γ ⊢ b ∷ B ≡ⱼ a ∷ A → Γ ⊢ a ∷ A ≡ⱼ b ∷ B 
   heter-step-≡-⟨-∎ _ _ _ _ Γ⊢b∷B≡a∷A = hEqSym Γ⊢b∷B≡a∷A
 
-  conv-step-≡-⟩-∎ : (a A B : Term) → Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
-  conv-step-≡-⟩-∎ _ _ _ = hEqTyEq
+  conv-step-≡-⟩-A∎ : (a A B : Term) → Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+  conv-step-≡-⟩-A∎ _ _ _ = hEqTyEqₗ
 
-  conv-step-≡-⟨-∎ : (a A B : Term) → Γ ⊢ a ∷ A → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
-  conv-step-≡-⟨-∎ _ _ _ = hEqTyEq'
+  conv-step-≡-⟩-B∎ : (a A B : Term) → Γ ⊢ a ∷ B → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+  conv-step-≡-⟩-B∎ _ _ _ = hEqTyEqᵣ
+
+  conv-step-≡-⟨-A∎ : (a A B : Term) → Γ ⊢ a ∷ A → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+  conv-step-≡-⟨-A∎ _ _ _ = hEqTyEqₗ'
+
+  conv-step-≡-⟨-B∎ : (a A B : Term) → Γ ⊢ a ∷ B → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+  conv-step-≡-⟨-B∎ _ _ _ = hEqTyEqᵣ'
 
   syntax homo-step-≡-⟩-∎  x y X Y j x≡y   = x ∷ X heq-≡⟨ x≡y ⟩ j ∣ y ∷ Y ∎
   syntax homo-step-≡-⟨-∎  x y X Y j y≡x   = x ∷ X heq-≡⟨ y≡x ⟨ j ∣ y ∷ Y ∎
   syntax heter-step-≡-⟩-∎ x y X Y x≡y     = x ∷ X heq-≡⟨ x≡y ⟩∣ y ∷ Y ∎
   syntax heter-step-≡-⟨-∎ x y X Y y≡x     = x ∷ X heq-≡⟨ y≡x ⟨∣ y ∷ Y ∎
-  syntax conv-step-≡-⟩-∎  x X Y j X≡Y     = x ∷ X heq-≡⟨∷ X≡Y ∷⟩∣ j ∣ ∎∷ Y
-  syntax conv-step-≡-⟨-∎  x X Y j Y≡X     = x ∷ X heq-≡⟨∷ Y≡X ∷⟨∣ j ∣ ∎∷ Y
+  syntax conv-step-≡-⟩-A∎  x X Y jX X≡Y     = x ∷ X heq-≡⟨∷ X≡Y ∷⟩∣ jX ⟨∎∷ Y
+  syntax conv-step-≡-⟨-A∎  x X Y jX Y≡X     = x ∷ X heq-≡⟨∷ Y≡X ∷⟨∣ jX ⟨∎∷ Y
+  syntax conv-step-≡-⟩-B∎  x X Y jY X≡Y     = x ∷ X heq-≡⟨∷ X≡Y ∷⟩∣ jY ⟩∎∷ Y
+  syntax conv-step-≡-⟨-B∎  x X Y jY Y≡X     = x ∷ X heq-≡⟨∷ Y≡X ∷⟨∣ jY ⟩∎∷ Y
 
 
 

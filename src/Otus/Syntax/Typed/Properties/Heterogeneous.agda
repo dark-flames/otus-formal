@@ -52,11 +52,17 @@ hEqFund Γ⊢A Γ⊢a≡b∷A = HEqₗ (TyEqRefl Γ⊢A) Γ⊢a≡b∷A
 hEqFund' : Γ ⊢ A → Γ ⊢ b ≡ⱼ a ∷ A → Γ ⊢ a ∷ A ≡ⱼ b ∷ A
 hEqFund' Γ⊢A Γ⊢b≡a∷A = HEqₗ (TyEqRefl Γ⊢A) (TmEqSym Γ⊢b≡a∷A)
 
-hEqTyEq : Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
-hEqTyEq Γ⊢a∷A Γ⊢A≡B = HEqₗ Γ⊢A≡B (TmEqRefl Γ⊢a∷A)
+hEqTyEqₗ : Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+hEqTyEqₗ Γ⊢a∷A Γ⊢A≡B = HEqₗ Γ⊢A≡B (TmEqRefl Γ⊢a∷A)
 
-hEqTyEq' : Γ ⊢ a ∷ A → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
-hEqTyEq' Γ⊢a∷A Γ⊢B≡A = HEqₗ (TyEqSym Γ⊢B≡A) (TmEqRefl Γ⊢a∷A)
+hEqTyEqᵣ : Γ ⊢ a ∷ B → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+hEqTyEqᵣ Γ⊢a∷B Γ⊢A≡B = HEqᵣ Γ⊢A≡B(TmEqRefl Γ⊢a∷B)
+
+hEqTyEqₗ' : Γ ⊢ a ∷ A → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+hEqTyEqₗ' Γ⊢a∷A Γ⊢B≡A = HEqₗ (TyEqSym Γ⊢B≡A) (TmEqRefl Γ⊢a∷A)
+
+hEqTyEqᵣ' : Γ ⊢ a ∷ B → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
+hEqTyEqᵣ' Γ⊢a∷B Γ⊢B≡A = HEqᵣ (TyEqSym Γ⊢B≡A) (TmEqRefl Γ⊢a∷B)
 
 hEqConvₗ : Γ ⊢ A ≡ⱼ C → Γ ⊢ a ∷ A ≡ⱼ b ∷ B →  Γ ⊢ a ∷ C ≡ⱼ b ∷ B 
 hEqConvₗ Γ⊢A≡C Γ⊢a∷A≡b∷B = let

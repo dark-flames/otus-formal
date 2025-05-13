@@ -14,7 +14,7 @@ infix 3 intro
 intro : (Prop : Set) → Prop → Prop
 intro _ proof = proof
 
-syntax intro P proof = by-⟨ proof ⟩ P 
+syntax intro P proof = intro-⟨ proof ⟩ P 
 
 infix 3 begin_
 

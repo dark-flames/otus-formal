@@ -1,5 +1,5 @@
-{-# OPTIONS --without-K #-}
-module Otus.Syntax.Typed.Properties.DefEq where
+{-# OPTIONS --without-K  --safe #-}
+module Otus.Syntax.Typed.Properties.Core where
 
 open import Otus.Utils
 open import Otus.Syntax.Untyped

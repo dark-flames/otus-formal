@@ -79,6 +79,14 @@ Tm-TyConv-by' : Γ ⊢ B ≡ⱼ A →  Γ ⊢ a ∷ A
     → Γ ⊢ a ∷ B
 Tm-TyConv-by' Γ⊢B≡A Γ⊢a∷A = tmTyConv' Γ⊢a∷A Γ⊢B≡A 
 
+Tm-TyConv-on : Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B
+    → Γ ⊢ a ∷ B
+Tm-TyConv-on = TmTyConv
+
+Tm-TyConv-on' : Γ ⊢ a ∷ A → Γ ⊢ B ≡ⱼ A
+    → Γ ⊢ a ∷ B
+Tm-TyConv-on' Γ⊢a∷A Γ⊢B≡A = TmTyConv Γ⊢a∷A (TyEqSym Γ⊢B≡A)
+
 Tm-Stability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ a ∷ A
     → Δ ⊢ a ∷ A
 Tm-Stability = tmStability

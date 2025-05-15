@@ -188,6 +188,7 @@ substDropCompComm {_} { x } {Ξ} {Γ} { suc y } Δ⊢drop-x⇒Ξ Γ⊢drop-sy⇒
     ∎⇒ Ξ
   )
 
+
 liftVar : Δ ⊢ A → Δ ⊢ Var x ∷ A → Γ ⊢ drop y ⇒ Δ
   → Γ ⊢ Var (y + x) ∷ A [ drop y ]ₑ
 liftVar {Δ} {A} {x} {Γ} {zero} Δ⊢A Δ⊢VarX∷A Γ⊢id⇒Δ = let
@@ -211,6 +212,27 @@ liftVar {Δ} {A} {x} {Γ} {suc y} Δ⊢A Δ⊢VarX∷A Γ⊢dropSY⇒Δ = let
     ⎯⎯⎯⎯⟨ Tm-TyConv-by (tyEqSubst₂ Δ⊢A (SbEqDropComp Γ'⊢dropY⇒Δ Γ⊢drop1⇒Γ')) ⟩
       Γ ⊢ Var (1 + (y + x)) ∷ A [ drop (1 + y) ]ₑ
     ∎ 
+
+sbExpand : Γ ⊢ γ ⇒ Δ ▷ A
+    → Γ ⊢ γ ≡ⱼ (drop 1 ∘ γ) ▶ Var 0 [ γ ]ₑ ⇒ (Δ ▷ A)
+sbExpand {Γ} {γ} {Δ} {A} Γ⊢γ⇒Δ▷A = let
+    ⊢Δ▷A = substWfCodomain Γ⊢γ⇒Δ▷A
+    ⊢Δ , Δ⊢A = ctxExtInversion ⊢Δ▷A
+    Δ▷A⊢Var0∷A[drop1] = TmVarᶻ Δ⊢A
+    Δ▷A⊢drop1⇒Δ = displayMap Δ⊢A
+    Δ▷A⊢drop1▶Var0⇒Δ▷A = SbExt Δ▷A⊢drop1⇒Δ Δ⊢A Δ▷A⊢Var0∷A[drop1]
+    Δ▷A⊢drop1▶Var0≡id⇒Δ▷A = SbEqExtVar Δ▷A⊢Var0∷A[drop1]
+    open SbEqReasoning
+  in 
+    Γ ⊢begin-sb
+        γ
+      sb-≡⟨ SbEqIdₗ (SbId ⊢Δ▷A) Γ⊢γ⇒Δ▷A ⟨
+        idₛ ∘ γ
+      sb-≡⟨ substEqComp₁ Δ▷A⊢drop1▶Var0≡id⇒Δ▷A Γ⊢γ⇒Δ▷A ⟨
+        drop 1 ▶ Var 0 ∘ γ
+      sb-≡⟨ SbEqExtComp Δ▷A⊢drop1▶Var0⇒Δ▷A  Γ⊢γ⇒Δ▷A ⟩∣
+        (drop 1 ∘ γ) ▶ Var 0 [ γ ]ₑ
+      ∎⇒ Δ ▷ A
 
 liftSectionCommute : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Δ ⊢ a ∷ A
     → Γ ⊢ lift γ ∘ idₛ ▶ a [ γ ]ₑ ≡ⱼ idₛ ▶ a ∘ γ ⇒ Δ ▷ A
@@ -254,6 +276,8 @@ liftSectionCommute {Γ} {γ} {Δ} {A} {a} Γ⊢γ⇒Δ Δ⊢A Δ⊢a∷A = let
   in
     Γ ⊢begin-sb
       lift γ ∘ idₛ ▶ a [ γ ]ₑ
+    sb-≡⟨⟩
+      ((γ ∘ drop 1) ▶ Var 0) ∘ idₛ ▶ a [ γ ]ₑ
     sb-≡⟨ SbEqExtComp Γ▷A[γ]⊢liftγ⇒Δ▷A Γ⊢id▶a[γ]⇒Γ▷A[γ] ⟩
       (γ ∘ drop 1 ∘ idₛ ▶ a [ γ ]ₑ) ▶ (Var 0 [ idₛ ▶ a [ γ ]ₑ ]ₑ)
     sb-≡⟨ SbEqExt (SbEqSym Γ⊢γ∘drop1∘id▶a[γ]≡id∘γ⇒Δ) Δ⊢A Γ⊢a[γ]≡Var0[id▶a[γ]]∷A[γ∘drop1∘id▶a[id∘γ]] ⟨ -- sym hack

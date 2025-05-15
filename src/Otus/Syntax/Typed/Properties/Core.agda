@@ -139,16 +139,22 @@ substEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
     Γ'▷A⊢dropSX⇒Ξ = SbDropˢ Γ'⊢dropX⇒Ξ Γ'⊢A
     Γ⊢dropSX⇒Ξ = substStability' ⊢Γ≡Γ'▷A Γ'▷A⊢dropSX⇒Ξ
   in Γ⊢dropX∘drop1⇒Ξ , Γ⊢dropSX⇒Ξ
-...| SbEqExtComp Δ⊢δ▶a⇒Ξ Γ⊢γ⇒Δ = let 
-    Γ⊢[δ▶a]∘γ⇒Ξ = SbComp Δ⊢δ▶a⇒Ξ Γ⊢γ⇒Δ
-    ctxExtInv _ _ Ξ'⊢A ⊢Ξ≡Ξ'▷A , Δ⊢δ⇒Ξ' , Δ⊢a∷Aδ = substExtInversion Δ⊢δ▶a⇒Ξ
-    Γ⊢δ∘γ⇒Ξ' = SbComp Δ⊢δ⇒Ξ' Γ⊢γ⇒Δ
-    Γ⊢aγ∷Aδγ = TmSubst Δ⊢a∷Aδ Γ⊢γ⇒Δ
-    Γ⊢Aδγ≡A[δ∘γ] = TyEqSubstSubst Δ⊢δ⇒Ξ' Γ⊢γ⇒Δ Ξ'⊢A
-    Γ⊢aγ∷A[δ∘γ] = TmTyConv Γ⊢aγ∷Aδγ Γ⊢Aδγ≡A[δ∘γ]
-    Γ⊢[δ∘γ]▶aγ⇒Ξ'▷A = SbExt Γ⊢δ∘γ⇒Ξ' Ξ'⊢A Γ⊢aγ∷A[δ∘γ]
-    Γ⊢[δ∘γ]▶aγ⇒Ξ = SbConv Γ⊢[δ∘γ]▶aγ⇒Ξ'▷A (ctxEqSym ⊢Ξ≡Ξ'▷A)
-  in Γ⊢[δ▶a]∘γ⇒Ξ , Γ⊢[δ∘γ]▶aγ⇒Ξ 
+...| SbEqExtComp {Δ} {δ} {a} {Ξ} {Γ} {γ} Δ⊢δ▶a⇒Ξ Γ⊢γ⇒Δ = let 
+    ctxExtInv Ξ₁ A Ξ₁⊢A ⊢Ξ≡Ξ₁▷A , Δ⊢δ⇒Ξ₁ , Δ⊢a∷Aδ = substExtInversion Δ⊢δ▶a⇒Ξ
+  in (SbComp Δ⊢δ▶a⇒Ξ Γ⊢γ⇒Δ) , (
+      begin
+        intro-⟨ Δ⊢a∷Aδ ⟩
+        Δ ⊢ a ∷ A [ δ ]ₑ
+      ⎯⎯⎯⎯⟨ Tm-Subst-by Γ⊢γ⇒Δ ⟩
+        Γ ⊢ a [ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqSubstSubst Δ⊢δ⇒Ξ₁ Γ⊢γ⇒Δ Ξ₁⊢A) ⟩
+        Γ ⊢ a [ γ ]ₑ ∷ A [ δ ∘ γ ]ₑ
+      ⎯⎯⎯⎯⟨ Sb-Ext-to (SbComp Δ⊢δ⇒Ξ₁ Γ⊢γ⇒Δ) Ξ₁⊢A ⟩
+        Γ ⊢ (δ ∘ γ) ▶ a [ γ ]ₑ  ⇒ Ξ₁ ▷ A
+      ⎯⎯⎯⎯⟨ Sb-Conv-by' ⊢Ξ≡Ξ₁▷A ⟩
+        Γ ⊢ (δ ∘ γ) ▶ a [ γ ]ₑ  ⇒ Ξ
+      ∎
+    ) 
 
 
 -- tyEqWf : Γ ⊢ A ≡ⱼ B → Γ ⊢ A × Γ ⊢ B

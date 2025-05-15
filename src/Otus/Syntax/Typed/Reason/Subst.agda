@@ -40,6 +40,10 @@ Sb-Dropₛ-ext : Γ ⊢ A → Γ ⊢ drop x ⇒ Δ
         → Γ ▷ A ⊢ drop (1 + x) ⇒ Δ
 Sb-Dropₛ-ext Γ⊢A Γ⊢drop-x⇒Δ = SbDropˢ Γ⊢drop-x⇒Δ Γ⊢A
 
+Sb-Ext-to : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ∷ (A [ γ ]ₑ)
+        → Γ ⊢ γ ▶ a ⇒ Δ ▷ A
+Sb-Ext-to = SbExt
+
 module SbEqReasoning where
   infix 1 _⊢begin-sb_
 

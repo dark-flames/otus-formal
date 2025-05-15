@@ -4,7 +4,7 @@ module Otus.Syntax.Typed.Properties.Heter.Term where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Context
 open import Otus.Syntax.Typed.Properties.Heter.Base
@@ -12,10 +12,8 @@ open import Otus.Syntax.Typed.Properties.Heter.Base
 
 private
   variable
-    l₁ l₂ : ULevel
-    x y : ℕ
     Γ Δ Ξ : Context
-    γ γ₁ γ₂ δ δ₁ δ₂ : Substitution
+    γ γ₁ γ₂ δ : Substitution
     A B C a b c : Term
 
 hTmEqWeakenTy : Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ A ≡ⱼ B

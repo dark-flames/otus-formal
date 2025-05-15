@@ -4,14 +4,14 @@ module Otus.Syntax.Typed.Properties.Utils.Term where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 
 
 private
   variable
     l₁ l₂ : ULevel
-    x y : ℕ
-    Γ Δ Ξ : Context
+    x : ℕ
+    Γ Δ : Context
     γ γ₁ γ₂ δ δ₁ δ₂ : Substitution
     A B C D a b : Term
 

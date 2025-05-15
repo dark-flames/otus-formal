@@ -11,8 +11,8 @@ private
   variable
     l l₁ l₂ : ULevel
     x y n : ℕ
-    Γ Γ₁ Γ₂ Γ₃ Δ Δ₁ Δ₂ Θ Ξ : Context
-    γ γ₁ γ₂ γ₃ δ δ₁ δ₂ δ₃ ξ : Substitution
+    Γ Γ₁ Γ₂ Δ Δ₁ Δ₂ Θ Ξ : Context
+    γ γ₁ γ₂ γ₃ δ δ₁ δ₂ ξ : Substitution
     A B C D : Term
     f g a b c d : Term
 

@@ -6,7 +6,7 @@ open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Context
 open import Otus.Syntax.Typed.Properties.Inversion.Base
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 
 record CtxExtInversion ( Γ : Context ) : Set where
   constructor ctxExtInv
@@ -19,7 +19,7 @@ record CtxExtInversion ( Γ : Context ) : Set where
 
 private
   variable
-    Γ Δ Ξ  : Context
+    Γ Δ : Context
     A B : Term
 
 ctxEqExtInversion : ⊢ Γ ▷ A ≡ⱼ Δ ▷ B →  ⊢ Γ ≡ⱼ Δ × Γ ⊢ A ≡ⱼ B

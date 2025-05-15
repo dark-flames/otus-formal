@@ -5,10 +5,10 @@ open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Utils
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Inversion.Base
 open import Otus.Syntax.Typed.Properties.Inversion.Context
-open import Otus.Syntax.Typed.Reason
+open import Otus.Syntax.Typed.Properties.Reason
 
 record ULevelConjInversion : Set where
   constructor uLvlConjInv
@@ -27,11 +27,9 @@ record VarExistence ( Γ : Context ) ( x : ℕ ) : Set where
 
 private
   variable
-    l l₁ l₂ : ULevel
-    x y : ℕ
-    Γ Δ Δ' Ξ Θ  : Context
-    γ γ₁ γ₂ δ δ₁ δ₂ : Substitution
-    f a b c A B T : Term
+    x : ℕ
+    Γ : Context
+    A B T : Term
 
 piTmInversion : Γ ⊢ Pi A B ∷ T 
   → Σ[ inv ∈ ULevelConjInversion ] 
@@ -53,18 +51,18 @@ varTmInversion : Γ ⊢ Var x ∷ T
   → Σ[ inv ∈ VarExistence Γ x ]
     Γ ⊢ T ≡ⱼ (VarExistence.A inv) [ drop (suc x) ]ₑ
 varTmInversion (TmVarᶻ Γ⊢A) = let 
-    Γ▷A⊢drop⇒Γ = displayMap Γ⊢A
+    Γ▷A⊢drop⇒Γ = display Γ⊢A
     ⊢Γ▷A = ctxExt Γ⊢A
     inv = varExist _ _ Γ⊢A Γ▷A⊢drop⇒Γ (SbId ⊢Γ▷A) 
     Γ▷A⊢A[drop1] = TySubst Γ⊢A Γ▷A⊢drop⇒Γ
   in inv , TyEqRefl Γ▷A⊢A[drop1]
 varTmInversion (TmVarˢ {Γ} {x} {T} {B} Γ⊢VarX∷T Γ⊢B) = let 
-    Γ▷B⊢drop⇒Γ = displayMap Γ⊢B
+    Γ▷B⊢drop⇒Γ = display Γ⊢B
     varExist Γ' A Γ'⊢A Γ⊢dropSX⇒Γ' Γ⊢dropX⇒Γ'▷A , Γ⊢T≡A[dropSX] = varTmInversion Γ⊢VarX∷T
     Γ▷B⊢dropSX⇒Γ'▷A = SbDropˢ Γ⊢dropX⇒Γ'▷A Γ⊢B
     Γ▷B⊢dropSSX⇒Γ' = SbDropˢ Γ⊢dropSX⇒Γ' Γ⊢B
     inv = varExist Γ' A Γ'⊢A Γ▷B⊢dropSSX⇒Γ' Γ▷B⊢dropSX⇒Γ'▷A
-    open TyEqReasoning
+    open TyEqReason
     Γ▷B⊢T[drop1]≡A[dropSSX] = 
       Γ ▷ B ⊢begin-ty
         T [ drop 1 ]ₑ

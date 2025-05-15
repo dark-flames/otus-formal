@@ -4,26 +4,25 @@ module Otus.Syntax.Typed.Properties.Core where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Reason
+open import Otus.Syntax.Typed.Properties.Reason
 open import Otus.Syntax.Typed.Properties.Utils
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Context
 open import Otus.Syntax.Typed.Properties.Inversion
-open import Otus.Syntax.Typed.Properties.Substitution
+open import Otus.Syntax.Typed.Properties.Subst
 
 private
   variable
-    l l₁ l₂ : ULevel
-    Γ Γ' Δ Ξ Θ  : Context
-    γ γ₁ γ₂ δ δ₁ δ₂ : Substitution
-    f a b c A B C T : Term
+    Γ Δ : Context
+    γ γ₁ γ₂ : Substitution
+    f a b A B T : Term
 
 tmWfTy : Γ ⊢ a ∷ A → Γ ⊢ A
 tmEqWfTy : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ A
 
 tyEqWf : Γ ⊢ A ≡ⱼ B → Γ ⊢ A × Γ ⊢ B
 tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
-substEqWf : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₁ ⇒ Δ × Γ ⊢ γ₂ ⇒ Δ
+sbEqWf : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₁ ⇒ Δ × Γ ⊢ γ₂ ⇒ Δ
 
 lamTmInversion : Γ ⊢ Lam a ∷ T
   → Σ[ A ∈ Term ] Σ[ B ∈ Term ]
@@ -55,11 +54,11 @@ appTmInversion (TmTyConv Γ⊢f∙a∷G Γ⊢G≡T) = let
 -- tmWfTy : Γ ⊢ a ∷ A → Γ ⊢ A
 tmWfTy tm with tm
 ...| TmVarᶻ Γ⊢A = let 
-    Γ▷A⊢drop1⇒Γ = displayMap Γ⊢A
+    Γ▷A⊢drop1⇒Γ = display Γ⊢A
   in TySubst Γ⊢A Γ▷A⊢drop1⇒Γ
 ...| TmVarˢ Γ⊢VarX∷A Γ⊢B = let 
     Γ⊢A = tmWfTy Γ⊢VarX∷A
-    Γ▷B⊢drop1⇒Γ = displayMap Γ⊢B
+    Γ▷B⊢drop1⇒Γ = display Γ⊢B
   in TySubst Γ⊢A Γ▷B⊢drop1⇒Γ
 ...| TmLam Γ⊢A Γ▷A⊢b∷B = TyPi Γ⊢A (tmWfTy Γ▷A⊢b∷B)
 ...| TmPi Γ⊢A∷U Γ▷A⊢B∷U = TyU (tmWfCtx Γ⊢A∷U)
@@ -75,23 +74,23 @@ tmWfTy tm with tm
 ...| TmTyConv _ Γ⊢A≡B = proj₂ (tyEqWf Γ⊢A≡B)
 
 
--- substEqWf : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₁ ⇒ Δ × Γ ⊢ γ₂ ⇒ Δ
-substEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
+-- sbEqWf : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₁ ⇒ Δ × Γ ⊢ γ₂ ⇒ Δ
+sbEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
 ...| SbEqRefl Γ⇒Δ = Γ⇒Δ , Γ⇒Δ
-...| SbEqSym Γ⊢γ₂≡γ₁⇒Δ = swap (substEqWf Γ⊢γ₂≡γ₁⇒Δ)
-...| SbEqTrans Γ⊢γ₁≡γ₂⇒Δ Γ⊢γ₂≡γ₃⇒Δ  = proj₁₂ (substEqWf Γ⊢γ₁≡γ₂⇒Δ) (substEqWf Γ⊢γ₂≡γ₃⇒Δ)
+...| SbEqSym Γ⊢γ₂≡γ₁⇒Δ = swap (sbEqWf Γ⊢γ₂≡γ₁⇒Δ)
+...| SbEqTrans Γ⊢γ₁≡γ₂⇒Δ Γ⊢γ₂≡γ₃⇒Δ  = proj₁₂ (sbEqWf Γ⊢γ₁≡γ₂⇒Δ) (sbEqWf Γ⊢γ₂≡γ₃⇒Δ)
 ...| SbEqExt Γ⊢γ₁≡γ₂⇒Δ Δ⊢A Γ⊢a≡b∷Aγ₁ = let 
     Γ⊢Aγ₁≡Aγ₂ = tyEqSubst₂ Δ⊢A Γ⊢γ₁≡γ₂⇒Δ
-    Γ⊢γ₁⇒Δ , Γ⊢γ₂⇒Δ = substEqWf Γ⊢γ₁≡γ₂⇒Δ
+    Γ⊢γ₁⇒Δ , Γ⊢γ₂⇒Δ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ
     Γ⊢a∷Aγ₁ , Γ⊢b∷Aγ₁ = tmEqWf Γ⊢a≡b∷Aγ₁
     Γ⊢b∷Aγ₂ = TmTyConv Γ⊢b∷Aγ₁ Γ⊢Aγ₁≡Aγ₂
   in SbExt Γ⊢γ₁⇒Δ Δ⊢A Γ⊢a∷Aγ₁ , SbExt Γ⊢γ₂⇒Δ Δ⊢A Γ⊢b∷Aγ₂
 ...| SbEqComp Δ⊢δ₁≡δ₂⇒Ξ Γ⊢γ₁≡γ₂⇒Δ = let 
-    Δ⊢δ₁⇒Ξ , Δ⊢δ₂⇒Ξ = substEqWf Δ⊢δ₁≡δ₂⇒Ξ
-    Γ⊢γ₁⇒Δ , Γ⊢γ₂⇒Δ = substEqWf Γ⊢γ₁≡γ₂⇒Δ
+    Δ⊢δ₁⇒Ξ , Δ⊢δ₂⇒Ξ = sbEqWf Δ⊢δ₁≡δ₂⇒Ξ
+    Γ⊢γ₁⇒Δ , Γ⊢γ₂⇒Δ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ
   in SbComp Δ⊢δ₁⇒Ξ Γ⊢γ₁⇒Δ , SbComp Δ⊢δ₂⇒Ξ Γ⊢γ₂⇒Δ
 ...| SbEqConv Γ⊢γ₁≡γ₂⇒Δ₁ ⊢Δ₁≡Δ₂ = let 
-    Γ⊢γ₁⇒Δ₁ , Γ⊢γ₂⇒Δ₁ = substEqWf Γ⊢γ₁≡γ₂⇒Δ₁
+    Γ⊢γ₁⇒Δ₁ , Γ⊢γ₂⇒Δ₁ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ₁
   in SbConv Γ⊢γ₁⇒Δ₁ ⊢Δ₁≡Δ₂ , SbConv Γ⊢γ₂⇒Δ₁ ⊢Δ₁≡Δ₂
 ...| SbEqCompAssoc Ξ⊢ξ⇒Θ Δ⊢δ⇒Ξ Γ⊢γ⇒Δ = let 
     Γ⊢ξ∘δ∘γ⇒Θ = SbComp (SbComp Ξ⊢ξ⇒Θ Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ
@@ -104,7 +103,7 @@ substEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
   in Γ⊢id∘γ⇒Ξ , Γ⊢γ⇒Ξ
 ...| SbEqIdᵣ Δ⊢γ⇒Ξ Γ⊢id⇒Δ = let 
     ⊢Γ≡Δ = idInversion Γ⊢id⇒Δ
-    Γ⊢γ⇒Ξ = substStability' ⊢Γ≡Δ Δ⊢γ⇒Ξ
+    Γ⊢γ⇒Ξ = sbStability' ⊢Γ≡Δ Δ⊢γ⇒Ξ
     Γ⊢γ∘id⇒Ξ = SbComp Δ⊢γ⇒Ξ Γ⊢id⇒Δ 
   in Γ⊢γ∘id⇒Ξ , Γ⊢γ⇒Ξ
 ...| SbEqExtVar {Γ} {A} Γ⊢Var0∷A = let
@@ -125,7 +124,7 @@ substEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
     ) , (SbId ⊢Γ)
 ...| SbEqDropExt Δ⊢drop1⇒Ξ Γ⊢γ▶a⇒Δ = let 
     Γ⊢drop1∘[γ▶a]⇒Ξ = SbComp Δ⊢drop1⇒Ξ Γ⊢γ▶a⇒Δ
-    ctxExtInv _ _ Δ'⊢A ⊢Δ≡Δ'▷A , Γ⊢γ⇒Δ' , Γ⊢a∷Aγ = substExtInversion Γ⊢γ▶a⇒Δ
+    ctxExtInv _ _ Δ'⊢A ⊢Δ≡Δ'▷A , Γ⊢γ⇒Δ' , Γ⊢a∷Aγ = sbExtInversion Γ⊢γ▶a⇒Δ
     ctxExtInv _ _ Δ''⊢A ⊢Δ≡Δ''▷A , ⊢Δ''≡Ξ = drop1Inversion Δ⊢drop1⇒Ξ
     ⊢Δ'▷A≡Δ''▷A = ctxEqTrans (ctxEqSym ⊢Δ≡Δ'▷A) ⊢Δ≡Δ''▷A
     ⊢Δ'≡Δ'' = proj₁ (ctxEqExtInversion ⊢Δ'▷A≡Δ''▷A)
@@ -135,12 +134,12 @@ substEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
 ...| SbEqDropComp Δ⊢dropX⇒Ξ Γ⊢drop1⇒Δ = let 
     Γ⊢dropX∘drop1⇒Ξ = SbComp Δ⊢dropX⇒Ξ Γ⊢drop1⇒Δ
     ctxExtInv _ _ Γ'⊢A ⊢Γ≡Γ'▷A , ⊢Γ'≡Δ = drop1Inversion Γ⊢drop1⇒Δ
-    Γ'⊢dropX⇒Ξ = substStability' ⊢Γ'≡Δ Δ⊢dropX⇒Ξ
+    Γ'⊢dropX⇒Ξ = sbStability' ⊢Γ'≡Δ Δ⊢dropX⇒Ξ
     Γ'▷A⊢dropSX⇒Ξ = SbDropˢ Γ'⊢dropX⇒Ξ Γ'⊢A
-    Γ⊢dropSX⇒Ξ = substStability' ⊢Γ≡Γ'▷A Γ'▷A⊢dropSX⇒Ξ
+    Γ⊢dropSX⇒Ξ = sbStability' ⊢Γ≡Γ'▷A Γ'▷A⊢dropSX⇒Ξ
   in Γ⊢dropX∘drop1⇒Ξ , Γ⊢dropSX⇒Ξ
 ...| SbEqExtComp {Δ} {δ} {a} {Ξ} {Γ} {γ} Δ⊢δ▶a⇒Ξ Γ⊢γ⇒Δ = let 
-    ctxExtInv Ξ₁ A Ξ₁⊢A ⊢Ξ≡Ξ₁▷A , Δ⊢δ⇒Ξ₁ , Δ⊢a∷Aδ = substExtInversion Δ⊢δ▶a⇒Ξ
+    ctxExtInv Ξ₁ A Ξ₁⊢A ⊢Ξ≡Ξ₁▷A , Δ⊢δ⇒Ξ₁ , Δ⊢a∷Aδ = sbExtInversion Δ⊢δ▶a⇒Ξ
   in (SbComp Δ⊢δ▶a⇒Ξ Γ⊢γ⇒Δ) , (
       begin
         intro-⟨ Δ⊢a∷Aδ ⟩
@@ -171,7 +170,7 @@ tyEqWf eq with eq
   in TyPi Γ⊢A Γ▷A⊢C , TyPi Γ⊢B Γ▷B⊢D
 ...| TyEqSubst Δ⊢A≡B Γ⊢γ₁≡γ₂⇒Δ = let 
     Δ⊢A , Δ⊢B = tyEqWf Δ⊢A≡B
-    Γ⊢γ₁⇒Δ , Γ⊢γ₂⇒Δ = substEqWf Γ⊢γ₁≡γ₂⇒Δ
+    Γ⊢γ₁⇒Δ , Γ⊢γ₂⇒Δ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ
   in TySubst Δ⊢A Γ⊢γ₁⇒Δ , TySubst Δ⊢B Γ⊢γ₂⇒Δ
 ...| TyEqRussel Γ⊢A≡B∷U = let 
     Γ⊢A∷U , Γ⊢B∷U = tmEqWf Γ⊢A≡B∷U
@@ -179,12 +178,12 @@ tyEqWf eq with eq
 ...| TyEqPiSubst Δ⊢PiAB Γ⊢γ⇒Δ = let 
     Δ⊢A , Δ▷A⊢B = piTyInversion Δ⊢PiAB
     Γ⊢Aγ = TySubst Δ⊢A Γ⊢γ⇒Δ
-    Γ▷Aγ⊢↑γ⇒Δ▷A = liftSubst Γ⊢γ⇒Δ Δ⊢A
+    Γ▷Aγ⊢↑γ⇒Δ▷A = liftSb Γ⊢γ⇒Δ Δ⊢A
     Γ▷Aγ⊢B[↑γ] = TySubst Δ▷A⊢B Γ▷Aγ⊢↑γ⇒Δ▷A
   in TySubst Δ⊢PiAB Γ⊢γ⇒Δ , TyPi Γ⊢Aγ Γ▷Aγ⊢B[↑γ]
 ...| TyEqUSubst Δ⊢U Γ⊢γ⇒Δ = let 
-    ⊢Γ = substWfCtx Γ⊢γ⇒Δ
-    ⊢Δ = substWfCodomain Γ⊢γ⇒Δ
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
+    ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
   in TySubst (TyU ⊢Δ) Γ⊢γ⇒Δ , TyU ⊢Γ
 ...| TyEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢A = let 
     Γ⊢Aδγ = TySubst (TySubst Ξ⊢A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ 
@@ -210,7 +209,7 @@ tmEqWfTy tm with tm
   in TySubst Γ▷A⊢B Γ⊢id▶a⇒Γ▷A
 ...| TmEqSubst Δ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Δ = let
     Δ⊢A = tmEqWfTy Δ⊢a≡b∷A
-    Γ⊢γ₁⇒Δ , _ = substEqWf Γ⊢γ₁≡γ₂⇒Δ
+    Γ⊢γ₁⇒Δ , _ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ
   in TySubst Δ⊢A Γ⊢γ₁⇒Δ
 ...| TmEqConv Γ⊢a≡b∷A Γ⊢A≡B = let
     _ , Γ⊢B = tyEqWf Γ⊢A≡B
@@ -226,7 +225,7 @@ tmEqWfTy tm with tm
     Δ⊢PiAB = tmWfTy Δ⊢LamA∷PiAB
   in TySubst Δ⊢PiAB Γ⊢γ⇒Δ
 ...| TmEqPiSubst Δ⊢PiAB∷Ul Γ⊢γ⇒Δ = let
-    ⊢Γ = substWfCtx Γ⊢γ⇒Δ
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
   in TyU ⊢Γ
 ...| TmEqAppSubst Δ⊢f∙a∷A Γ⊢γ⇒Δ = let
     Δ⊢A = tmWfTy Δ⊢f∙a∷A
@@ -235,7 +234,7 @@ tmEqWfTy tm with tm
     Ξ⊢A = tmWfTy Ξ⊢a∷A
   in TySubst (TySubst Ξ⊢A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ
 ...| TmEqUSubst Γ⊢γ⇒Δ = let
-    ⊢Γ = substWfCtx Γ⊢γ⇒Δ
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
   in TyU ⊢Γ
 ...| TmEqPiBeta Γ⊢A Γ▷A⊢b∷B Γ⊢a∷A = let
     Γ▷A⊢B = tmWfTy Γ▷A⊢b∷B
@@ -265,7 +264,7 @@ tmEqWf eq with eq
     Γ⊢a∷A , Γ⊢b∷A = tmEqWf Γ⊢a≡b∷A
     Γ⊢A , Γ▷A⊢B = piTyInversion Γ⊢PiAB
     Γ⊢a≡b∷Aid = tmEqConv' Γ⊢a≡b∷A (TyEqSubstId Γ⊢A)
-    Γ⊢id▶a≡id▶b⇒Γ▷A = substEqExt₂ (SbId ⊢Γ) Γ⊢A Γ⊢a≡b∷Aid
+    Γ⊢id▶a≡id▶b⇒Γ▷A = sbEqExt₂ (SbId ⊢Γ) Γ⊢A Γ⊢a≡b∷Aid
     Γ⊢fa∷B[id▶a] = TmApp Γ⊢f∷PiAB Γ⊢a∷A
     Γ⊢gb∷B[id▶b] = TmApp Γ⊢g∷PiAB Γ⊢b∷A
     Γ⊢B[id▶a]≡B[id▶b] = tyEqSubst₂ Γ▷A⊢B Γ⊢id▶a≡id▶b⇒Γ▷A
@@ -274,7 +273,7 @@ tmEqWf eq with eq
 ...| TmEqSubst Δ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Δ = let 
     Δ⊢A = tmEqWfTy Δ⊢a≡b∷A
     Δ⊢a∷A , Δ⊢b∷A = tmEqWf Δ⊢a≡b∷A
-    Γ⊢γ₁⇒Δ , Γ⊢γ₂⇒Δ = substEqWf Γ⊢γ₁≡γ₂⇒Δ
+    Γ⊢γ₁⇒Δ , Γ⊢γ₂⇒Δ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ
     Γ⊢a∷Aγ₁ = TmSubst Δ⊢a∷A Γ⊢γ₁⇒Δ
     Γ⊢b∷Aγ₂ = TmSubst Δ⊢b∷A Γ⊢γ₂⇒Δ
     Γ⊢Aγ₁≡Aγ₂ = tyEqSubst₂ Δ⊢A Γ⊢γ₁≡γ₂⇒Δ
@@ -290,15 +289,15 @@ tmEqWf eq with eq
     Γ⊢aid∷A = TmTyConv Γ⊢aid∷Aid Γ⊢Aid≡A
   in Γ⊢aid∷A , Γ⊢a∷A
 ...| TmEqSubstVarExt {Δ} {A} {Γ} {γ} {a} Δ⊢Var0∷A Γ⊢γ▶a⇒Δ = let 
-    ctxExtInv Δ₁ B₁ Δ₁⊢B₁ ⊢Δ≡Δ₁▷B₁ , Γ⊢γ⇒Δ₁ , Γ⊢a∷B₁[γ] = substExtInversion Γ⊢γ▶a⇒Δ
+    ctxExtInv Δ₁ B₁ Δ₁⊢B₁ ⊢Δ≡Δ₁▷B₁ , Γ⊢γ⇒Δ₁ , Γ⊢a∷B₁[γ] = sbExtInversion Γ⊢γ▶a⇒Δ
     varExist Δ₂ B₂ Δ₂⊢B₂ Δ⊢drop1⇒Δ₂ Δ⊢id⇒Δ₂▷B₂ , Δ⊢A≡B₂[drop1] = varTmInversion Δ⊢Var0∷A
     ⊢Δ≡Δ₂▷B₂ = idInversion Δ⊢id⇒Δ₂▷B₂
     ⊢Δ₁▷B₁≡Δ₂▷B₂ = ctxEqTrans (ctxEqSym ⊢Δ≡Δ₁▷B₁) ⊢Δ≡Δ₂▷B₂
     ⊢Δ₁≡Δ₂ , Δ₁⊢B₁≡B₂ = ctxEqExtInversion ⊢Δ₁▷B₁≡Δ₂▷B₂
     Γ⊢γ▶a⇒Δ₂▷B₂ = SbConv Γ⊢γ▶a⇒Δ ⊢Δ≡Δ₂▷B₂
-    Δ₂▷B₂⊢drop⇒Δ₂ = displayMap Δ₂⊢B₂
+    Δ₂▷B₂⊢drop⇒Δ₂ = display Δ₂⊢B₂
     Δ₂▷B₂⊢A≡B₂[drop1] = tyEqStability ⊢Δ≡Δ₂▷B₂ Δ⊢A≡B₂[drop1]
-    open TyEqReasoning
+    open TyEqReason
     Γ⊢A[γ▶a]≡B₁[γ] = 
       Γ ⊢begin-ty
         A [ γ ▶ a ]ₑ
@@ -321,11 +320,11 @@ tmEqWf eq with eq
     C , D , Δ⊢C , Δ▷C⊢D , Δ⊢PiAB≡PiCD , Δ▷C⊢a∷D = lamTmInversion Δ⊢Lam-a∷PiAB
     Γ⊢C[γ] = TySubst Δ⊢C Γ⊢γ⇒Δ
     Δ⊢PiCD = TyPi Δ⊢C Δ▷C⊢D
-    Γ▷C[γ]⊢drop1⇒Γ = displayMap Γ⊢C[γ]
-    Γ▷C[γ]⊢liftγ⇒Δ▷C = liftSubst Γ⊢γ⇒Δ Δ⊢C
+    Γ▷C[γ]⊢drop1⇒Γ = display Γ⊢C[γ]
+    Γ▷C[γ]⊢liftγ⇒Δ▷C = liftSb Γ⊢γ⇒Δ Δ⊢C
     Γ▷C[γ]⊢a[liftγ]∷D[liftγ] = TmSubst Δ▷C⊢a∷D Γ▷C[γ]⊢liftγ⇒Δ▷C
     Γ⊢Lam-a[liftγ]∷PiC[γ][D[liftγ]] = TmLam Γ⊢C[γ] Γ▷C[γ]⊢a[liftγ]∷D[liftγ]
-    open TyEqReasoning
+    open TyEqReason
     Γ⊢PiC[γ][D[liftγ]]≡PiAB[γ] = 
       Γ ⊢begin-ty
         Pi (C [ γ ]ₑ) (D [ lift γ ]ₑ)
@@ -344,12 +343,12 @@ tmEqWf eq with eq
     ⊢Δ▷A = ctxExt Δ⊢A
     Γ⊢A[γ] = TySubst Δ⊢A Γ⊢γ⇒Δ
     ⊢Γ▷A[γ] = ctxExt Γ⊢A[γ]
-    Γ▷A[γ]⊢liftγ⇒Δ▷A = liftSubst Γ⊢γ⇒Δ Δ⊢A
+    Γ▷A[γ]⊢liftγ⇒Δ▷A = liftSb Γ⊢γ⇒Δ Δ⊢A
     Γ⊢A[γ]∷Ul₁ = (TmTyConv (TmSubst Δ⊢A∷Ul₁ Γ⊢γ⇒Δ) (TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ)) 
     Γ▷A[γ]⊢B[liftγ]∷Ul₂ = (TmTyConv (TmSubst Δ▷A⊢B∷Ul₂ Γ▷A[γ]⊢liftγ⇒Δ▷A) (TyEqUSubst (TyU ⊢Δ▷A) Γ▷A[γ]⊢liftγ⇒Δ▷A)) 
     Γ⊢PiA[γ]B[liftγ]∷Ul₁⊔l₂ = TmPi Γ⊢A[γ]∷Ul₁ Γ▷A[γ]⊢B[liftγ]∷Ul₂
-    Γ⊢Ul₁⊔l₂≡Ul' = tyUnivCong (substWfCtx Γ⊢γ⇒Δ) l₁⊔l₂≡l'
-    open TyEqReasoning
+    Γ⊢Ul₁⊔l₂≡Ul' = tyUnivCong (sbWfCtx Γ⊢γ⇒Δ) l₁⊔l₂≡l'
+    open TyEqReason
     Γ⊢Ul≡Ul₁⊔l₂ =  
       Γ ⊢begin-ty
         U l
@@ -367,13 +366,13 @@ tmEqWf eq with eq
     A , B , Δ⊢PiAB , Δ⊢f∷PiAB , Δ⊢a∷A , Δ⊢T≡B[id▶a] = appTmInversion Δ⊢f∙a∷T
     Δ⊢A , Δ▷A⊢B = piTyInversion Δ⊢PiAB
     ⊢Δ = tyWfCtx Δ⊢A
-    ⊢Γ = substWfCtx Γ⊢γ⇒Δ
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
     Γ⊢A[γ] = TySubst Δ⊢A Γ⊢γ⇒Δ
     Γ⊢a[γ]∷A[γ] = TmSubst Δ⊢a∷A Γ⊢γ⇒Δ
     Δ⊢id▶a⇒Δ▷A = section Δ⊢A Δ⊢a∷A
     Γ⊢id▶a[γ]⇒Γ▷A[γ] = section Γ⊢A[γ] Γ⊢a[γ]∷A[γ]
-    Γ▷A[γ]⊢liftγ⇒Δ▷A = liftSubst Γ⊢γ⇒Δ Δ⊢A
-    open TyEqReasoning
+    Γ▷A[γ]⊢liftγ⇒Δ▷A = liftSb Γ⊢γ⇒Δ Δ⊢A
+    open TyEqReason
     Γ⊢liftγ∘id▶a[γ]≡id▶a∘γ⇒Δ▷A = liftSectionCommute Γ⊢γ⇒Δ Δ⊢A Δ⊢a∷A
     Γ⊢B[liftγ][id▶a]≡T[γ] = 
       Γ ⊢begin-ty
@@ -415,8 +414,8 @@ tmEqWf eq with eq
       ∎
   in TmSubst (TmSubst Ξ⊢a∷A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ , Γ⊢a[δ∘γ]∷A[δ][γ]
 ...| TmEqUSubst Γ⊢γ⇒Δ = let
-    ⊢Γ = substWfCtx Γ⊢γ⇒Δ
-    ⊢Δ = substWfCodomain Γ⊢γ⇒Δ
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
+    ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
     Γ⊢Ul∷USl[γ] = TmSubst (TmU ⊢Δ) Γ⊢γ⇒Δ
   in TmTyConv Γ⊢Ul∷USl[γ] (TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ) , TmU ⊢Γ
 ...| TmEqPiBeta Γ⊢A Γ▷A⊢b∷B Γ⊢a∷A = let
@@ -427,12 +426,12 @@ tmEqWf eq with eq
     Γ⊢PiAB = tmWfTy Γ⊢f∷PiAB
     Γ⊢A , Γ▷A⊢B = piTyInversion Γ⊢PiAB
     ⊢Γ▷A = ctxExt Γ⊢A
-    Γ▷A⊢drop1⇒Γ = displayMap Γ⊢A
+    Γ▷A⊢drop1⇒Γ = display Γ⊢A
     Γ▷A⊢A[drop1] = TySubst Γ⊢A Γ▷A⊢drop1⇒Γ
     Γ▷A⊢var0∷A[drop1] = TmVarᶻ Γ⊢A
     Γ▷A⊢id▶var0⇒Γ▷A▷A[drop1] = section Γ▷A⊢A[drop1] Γ▷A⊢var0∷A[drop1]
-    Γ▷A▷A[drop1]⊢lift[drop1]⇒Γ▷A = liftSubst Γ▷A⊢drop1⇒Γ Γ⊢A
-    open TyEqReasoning
+    Γ▷A▷A[drop1]⊢lift[drop1]⇒Γ▷A = liftSb Γ▷A⊢drop1⇒Γ Γ⊢A
+    open TyEqReason
     tyEq = 
       Γ ▷ A ⊢begin-ty
         B [ lift (drop 1) ]ₑ [ idₛ ▶ Var 0 ]ₑ

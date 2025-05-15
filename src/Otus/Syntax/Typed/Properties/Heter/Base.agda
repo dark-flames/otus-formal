@@ -4,18 +4,15 @@ module Otus.Syntax.Typed.Properties.Heter.Base where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Context
 
 
 private
   variable
-    l₁ l₂ : ULevel
-    x y : ℕ
-    Γ Δ Δ₁ Δ₂ Ξ : Context
-    γ γ₁ γ₂ δ δ₁ δ₂ : Substitution
-    A B C a b c : Term
+    Γ : Context
+    A B a b : Term
 
 
 -- Heterogeneous term equality

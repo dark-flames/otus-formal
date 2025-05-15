@@ -6,17 +6,16 @@ open import Otus.Syntax.Untyped hiding (_∘_)
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Context.Base
 open import Otus.Syntax.Typed.Properties.Context.Fundamental
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 
 open FunComp
 
 private
   variable
-    l l₁ l₂ : ULevel
-    x y : ℕ
+    x : ℕ
     Γ Δ Ξ Θ : Context
-    γ γ₁ γ₂ δ δ₁ δ₂ : Substitution
-    f a b c A B C T : Term
+    γ γ₁ γ₂ δ : Substitution
+    a b c A B C : Term
 
 ctxEqRefl : ⊢ Γ → ⊢ Γ ≡ⱼ Γ
 ctxEqRefl = CEqRefl
@@ -39,11 +38,11 @@ tmStability ⊢Γ≡Δ = tmCtxConv (ctxConvFundamental ⊢Γ≡Δ)
 tmStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ a ∷ A → Γ ⊢ a ∷ A 
 tmStability' ⊢Γ≡Δ = tmStability (ctxEqSym ⊢Γ≡Δ)
 
-substStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ δ ⇒ Ξ → Δ ⊢ δ ⇒ Ξ
-substStability ⊢Γ≡Δ = substCtxConv (ctxConvFundamental ⊢Γ≡Δ)
+sbStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ δ ⇒ Ξ → Δ ⊢ δ ⇒ Ξ
+sbStability ⊢Γ≡Δ = sbCtxConv (ctxConvFundamental ⊢Γ≡Δ)
 
-substStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ δ ⇒ Ξ → Γ ⊢ δ ⇒ Ξ
-substStability' ⊢Γ≡Δ = substStability (ctxEqSym ⊢Γ≡Δ)
+sbStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ δ ⇒ Ξ → Γ ⊢ δ ⇒ Ξ
+sbStability' ⊢Γ≡Δ = sbStability (ctxEqSym ⊢Γ≡Δ)
 
 tyEqStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A ≡ⱼ B → Δ ⊢ A ≡ⱼ B
 tyEqStability ⊢Γ≡Δ = tyEqCtxConv (ctxConvFundamental ⊢Γ≡Δ)
@@ -57,11 +56,11 @@ tmEqStability ⊢Γ≡Δ = tmEqCtxConv (ctxConvFundamental ⊢Γ≡Δ)
 tmEqStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ≡ⱼ b ∷ A
 tmEqStability' ⊢Γ≡Δ = tmEqStability (ctxEqSym ⊢Γ≡Δ)
 
-substEqStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ → Δ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ
-substEqStability ⊢Γ≡Δ = substEqCtxConv (ctxConvFundamental ⊢Γ≡Δ)
+sbEqStability : ⊢ Γ ≡ⱼ Δ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ → Δ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ
+sbEqStability ⊢Γ≡Δ = sbEqCtxConv (ctxConvFundamental ⊢Γ≡Δ)
 
-substEqStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ
-substEqStability' ⊢Γ≡Δ = substEqStability (ctxEqSym ⊢Γ≡Δ)
+sbEqStability' : ⊢ Γ ≡ⱼ Δ → Δ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ
+sbEqStability' ⊢Γ≡Δ = sbEqStability (ctxEqSym ⊢Γ≡Δ)
 
 ctxEqWfCtx : ⊢ Γ ≡ⱼ Δ → ⊢ Γ × ⊢ Δ
 ctxEqWfCtx ⊢Γ≡Δ = ctxConvWf (ctxConvFundamental ⊢Γ≡Δ)

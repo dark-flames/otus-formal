@@ -4,7 +4,7 @@ module Otus.Syntax.Typed.Properties.Utils.Context where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 
 
 private

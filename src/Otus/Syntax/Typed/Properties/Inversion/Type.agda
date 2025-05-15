@@ -5,16 +5,14 @@ open import Otus.Utils
 open import Otus.Syntax.Untyped hiding (_∘_)
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Context
-open import Otus.Syntax.Typed.Properties.Presuppositions
+open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Inversion.Base
 open import Otus.Syntax.Typed.Properties.Inversion.Term
 
 
 private
   variable
-    l l₁ l₂ : ULevel
-    Γ Δ  : Context
-    γ γ₁ γ₂ : Substitution
+    Γ : Context
     A B : Term
 
 piTyInversion : Γ ⊢ Pi A B → Γ ⊢ A × Γ ▷ A ⊢ B

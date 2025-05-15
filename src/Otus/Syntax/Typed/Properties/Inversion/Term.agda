@@ -68,7 +68,7 @@ varTmInversion (TmVarˢ {Γ} {x} {T} {B} Γ⊢VarX∷T Γ⊢B) = let
         T [ drop 1 ]ₑ
       ty-≡⟨ tyEqSubst₁ Γ⊢T≡A[dropSX] Γ▷B⊢drop⇒Γ ⟩
         A [ drop (1 + x) ]ₑ [ drop 1 ]ₑ
-      ty-≡⟨ TyEqSubstSubst Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ Γ'⊢A ⟩
+      ty-≡⟨ TyEqSubstSubst Γ'⊢A Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ ⟩
         A [ drop (1 + x) ∘ drop 1 ]ₑ
       ty-≡⟨ tyEqSubst₂ Γ'⊢A (SbEqDropComp Γ⊢dropSX⇒Γ' Γ▷B⊢drop⇒Γ) ⟩∣
         A [ drop (2 + x) ]ₑ

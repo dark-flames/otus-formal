@@ -128,5 +128,5 @@ hTmEqSubst₂ Δ⊢A Δ⊢a∷A Γ⊢γ₁≡γ₂⇒Δ = hTmEqSubst (hTmEqRefl 
 hTmEqSubstSubst : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ A → Ξ ⊢ a ∷ A
     → Γ ⊢ a [ δ ]ₑ [ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ ≡ⱼ a [ δ ∘ γ ]ₑ ∷ A [ δ ∘ γ ]ₑ
 hTmEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢A Ξ⊢a∷A = let 
-    Γ⊢A[δ][γ]≡A[δ∘γ] = TyEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢A
+    Γ⊢A[δ][γ]≡A[δ∘γ] = TyEqSubstSubst Ξ⊢A Δ⊢δ⇒Ξ Γ⊢γ⇒Δ
   in HTmEqₗ Γ⊢A[δ][γ]≡A[δ∘γ] (TmEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢a∷A)

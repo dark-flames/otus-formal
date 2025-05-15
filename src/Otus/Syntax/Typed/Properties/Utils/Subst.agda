@@ -35,7 +35,7 @@ liftSb Γ⊢γ⇒Δ Δ⊢A = let
     Γ⊢Aγ = TySubst Δ⊢A Γ⊢γ⇒Δ
     Γ▷Aγ⊢drop1⇒Γ = display Γ⊢Aγ
     Γ▷Aγ⊢γ∘drop1⇒Δ = SbComp Γ⊢γ⇒Δ Γ▷Aγ⊢drop1⇒Γ
-    Γ▷Aγ⊢Aγdrop≡A[γ∘drop] = TyEqSubstSubst Γ⊢γ⇒Δ Γ▷Aγ⊢drop1⇒Γ Δ⊢A
+    Γ▷Aγ⊢Aγdrop≡A[γ∘drop] = TyEqSubstSubst Δ⊢A Γ⊢γ⇒Δ Γ▷Aγ⊢drop1⇒Γ
     Γ▷Aγ⊢Var0∷↑A = TmTyConv (TmVarᶻ Γ⊢Aγ) Γ▷Aγ⊢Aγdrop≡A[γ∘drop]
   in SbExt Γ▷Aγ⊢γ∘drop1⇒Δ Δ⊢A Γ▷Aγ⊢Var0∷↑A
 

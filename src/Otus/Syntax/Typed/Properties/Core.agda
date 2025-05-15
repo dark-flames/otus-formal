@@ -146,7 +146,7 @@ sbEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
         Δ ⊢ a ∷ A [ δ ]ₑ
       ⎯⎯⎯⎯⟨ Tm-Subst-by Γ⊢γ⇒Δ ⟩
         Γ ⊢ a [ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
-      ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqSubstSubst Δ⊢δ⇒Ξ₁ Γ⊢γ⇒Δ Ξ₁⊢A) ⟩
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqSubstSubst Ξ₁⊢A Δ⊢δ⇒Ξ₁ Γ⊢γ⇒Δ) ⟩
         Γ ⊢ a [ γ ]ₑ ∷ A [ δ ∘ γ ]ₑ
       ⎯⎯⎯⎯⟨ Sb-Ext-to (SbComp Δ⊢δ⇒Ξ₁ Γ⊢γ⇒Δ) Ξ₁⊢A ⟩
         Γ ⊢ (δ ∘ γ) ▶ a [ γ ]ₑ  ⇒ Ξ₁ ▷ A
@@ -185,7 +185,7 @@ tyEqWf eq with eq
     ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
     ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
   in TySubst (TyU ⊢Δ) Γ⊢γ⇒Δ , TyU ⊢Γ
-...| TyEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢A = let 
+...| TyEqSubstSubst Ξ⊢A Δ⊢δ⇒Ξ Γ⊢γ⇒Δ = let 
     Γ⊢Aδγ = TySubst (TySubst Ξ⊢A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ 
     Γ⊢δ∘γ⇒Ξ = SbComp Δ⊢δ⇒Ξ Γ⊢γ⇒Δ
     Γ⊢A[δ∘γ] = TySubst Ξ⊢A Γ⊢δ∘γ⇒Ξ
@@ -303,7 +303,7 @@ tmEqWf eq with eq
         A [ γ ▶ a ]ₑ
       ty-≡⟨ tyEqSubst₁ Δ₂▷B₂⊢A≡B₂[drop1] Γ⊢γ▶a⇒Δ₂▷B₂ ⟩
         B₂ [ drop 1 ]ₑ [ γ ▶ a ]ₑ
-      ty-≡⟨ TyEqSubstSubst Δ₂▷B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▷B₂ Δ₂⊢B₂ ⟩
+      ty-≡⟨ TyEqSubstSubst Δ₂⊢B₂ Δ₂▷B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▷B₂ ⟩
         B₂ [ (drop 1) ∘ γ ▶ a ]ₑ
       ty-≡⟨ tyEqSubst₂ Δ₂⊢B₂ (SbEqDropExt Δ₂▷B₂⊢drop⇒Δ₂ Γ⊢γ▶a⇒Δ₂▷B₂) ⟩
         B₂ [ γ ]ₑ
@@ -377,11 +377,11 @@ tmEqWf eq with eq
     Γ⊢B[liftγ][id▶a]≡T[γ] = 
       Γ ⊢begin-ty
         B [ lift γ ]ₑ [ idₛ ▶ a [ γ ]ₑ ]ₑ
-      ty-≡⟨ TyEqSubstSubst Γ▷A[γ]⊢liftγ⇒Δ▷A Γ⊢id▶a[γ]⇒Γ▷A[γ] Δ▷A⊢B ⟩
+      ty-≡⟨ TyEqSubstSubst Δ▷A⊢B Γ▷A[γ]⊢liftγ⇒Δ▷A Γ⊢id▶a[γ]⇒Γ▷A[γ] ⟩
         B [ lift γ ∘ idₛ ▶ a [ γ ]ₑ ]ₑ
       ty-≡⟨ tyEqSubst₂ Δ▷A⊢B Γ⊢liftγ∘id▶a[γ]≡id▶a∘γ⇒Δ▷A ⟩
         B [ idₛ ▶ a ∘ γ ]ₑ
-      ty-≡⟨ TyEqSubstSubst Δ⊢id▶a⇒Δ▷A Γ⊢γ⇒Δ Δ▷A⊢B ⟨
+      ty-≡⟨ TyEqSubstSubst Δ▷A⊢B Δ⊢id▶a⇒Δ▷A Γ⊢γ⇒Δ ⟨
         B [ idₛ ▶ a ]ₑ [ γ ]ₑ
       ty-≡⟨ tyEqSubst₁ Δ⊢T≡B[id▶a] Γ⊢γ⇒Δ ⟨∣
         T [ γ ]ₑ
@@ -409,7 +409,7 @@ tmEqWf eq with eq
         Γ ⊢ δ ∘ γ ⇒ Ξ
       ⎯⎯⎯⎯⟨ Tm-Subst-on Ξ⊢a∷A ⟩
         Γ ⊢ a [ δ ∘ γ ]ₑ ∷ A [ δ ∘ γ ]ₑ
-      ⎯⎯⎯⎯⟨ Tm-TyConv-by' (TyEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢A) ⟩
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by' (TyEqSubstSubst Ξ⊢A Δ⊢δ⇒Ξ Γ⊢γ⇒Δ) ⟩
         Γ ⊢ a [ δ ∘ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
       ∎
   in TmSubst (TmSubst Ξ⊢a∷A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ , Γ⊢a[δ∘γ]∷A[δ][γ]
@@ -435,7 +435,7 @@ tmEqWf eq with eq
     tyEq = 
       Γ ▷ A ⊢begin-ty
         B [ lift (drop 1) ]ₑ [ idₛ ▶ Var 0 ]ₑ
-      ty-≡⟨ TyEqSubstSubst Γ▷A▷A[drop1]⊢lift[drop1]⇒Γ▷A Γ▷A⊢id▶var0⇒Γ▷A▷A[drop1] Γ▷A⊢B ⟩
+      ty-≡⟨ TyEqSubstSubst Γ▷A⊢B Γ▷A▷A[drop1]⊢lift[drop1]⇒Γ▷A Γ▷A⊢id▶var0⇒Γ▷A▷A[drop1] ⟩
         B [ lift (drop 1) ∘ idₛ ▶ Var 0 ]ₑ
       ty-≡⟨ tyEqSubst₂ Γ▷A⊢B (liftDropEq Γ⊢A) ⟩
         B [ idₛ ]ₑ

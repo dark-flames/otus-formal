@@ -101,7 +101,7 @@ data _⊢_≡ⱼ_ where
         → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ) -- (γ ∘ drop 1) ▶ Var 0
     TyEqUSubst : Δ ⊢ U l → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l
-    TyEqSubstSubst : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ A -- resort
+    TyEqSubstSubst : Ξ ⊢ A → Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢  A [ δ ]ₑ [ γ ]ₑ ≡ⱼ A [ δ ∘ γ ]ₑ
     TyEqSubstId : Γ ⊢ A
         → Γ ⊢ A [ idₛ ]ₑ ≡ⱼ A

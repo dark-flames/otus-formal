@@ -142,7 +142,7 @@ tyEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TyEqRussel Γ⊢A≡B∷U = TyEqRussel (tmEqCtxConv ⊢Γ≃Δ Γ⊢A≡B∷U)
 ...| TyEqPiSubst Ξ⊢PiAB Γ⊢γ⇒Ξ = TyEqPiSubst Ξ⊢PiAB (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqUSubst Ξ⊢U Γ⊢γ⇒Ξ = TyEqUSubst Ξ⊢U (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
-...| TyEqSubstSubst Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ Θ⊢A = TyEqSubstSubst Ξ⊢δ⇒Θ (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ) Θ⊢A
+...| TyEqSubstSubst Θ⊢A Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ = TyEqSubstSubst Θ⊢A Ξ⊢δ⇒Θ (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqSubstId Γ⊢A = TyEqSubstId (tyCtxConv ⊢Γ≃Δ Γ⊢A)
 
 

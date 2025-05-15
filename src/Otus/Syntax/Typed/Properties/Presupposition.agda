@@ -56,7 +56,7 @@ tyEqWfCtx ty with ty
 ...| TyEqRussel Γ⊢A≡B∷U = tmEqWfCtx Γ⊢A≡B∷U
 ...| TyEqPiSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyEqUSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
-...| TyEqSubstSubst _ Γ⇒Δ _ = sbWfCtx Γ⇒Δ
+...| TyEqSubstSubst _ _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyEqSubstId Γ⊢A = tyWfCtx Γ⊢A
 
 -- tmWfCtx : Γ ⊢ a ∷ A → ⊢ Γ

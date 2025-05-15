@@ -136,7 +136,6 @@ data _⊢_≡ⱼ_⇒_ where
         → Γ ⊢ drop x ∘ drop 1 ≡ⱼ drop (1 + x)  ⇒ Ξ 
     SbEqExtComp : Δ ⊢ δ ▶ a ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ δ ▶ a ∘ γ ≡ⱼ(δ ∘ γ) ▶ a [ γ ]ₑ  ⇒ Ξ
-
 open _⊢_≡ⱼ_⇒_
     
 data _⊢_≡ⱼ_∷_ where

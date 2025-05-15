@@ -48,7 +48,8 @@ substEqWfCodomain eq with eq
 ...| SbEqExtComp Δ⊢δ▶a⇒Ξ _ = substWfCodomain Δ⊢δ▶a⇒Ξ
 
 dropCompEq : Δ ⊢ drop x ⇒ Ξ → Γ ⊢ drop y ⇒ Δ
-  → Γ ⊢ drop (y + x) ⇒ Ξ × Γ ⊢ drop x ∘ drop y ≡ⱼ drop (y + x) ⇒ Ξ
+  → (Γ ⊢ drop (y + x) ⇒ Ξ) ×
+    (Γ ⊢ drop x ∘ drop y ≡ⱼ drop (y + x) ⇒ Ξ)
 dropCompEq {_} { x } {_} {_} { zero } Δ⊢dropX⇒Ξ Γ⊢id⇒Δ = let
     ⊢Γ≡Δ = idInversion Γ⊢id⇒Δ
   in substStability' ⊢Γ≡Δ Δ⊢dropX⇒Ξ , SbEqIdᵣ Δ⊢dropX⇒Ξ Γ⊢id⇒Δ

@@ -128,40 +128,40 @@ module TmHEqReasoning where
   Γ ⊢begin-heq Γ⊢a∷A≡b∷B = Γ⊢a∷A≡b∷B
 
   _⊢begin-heqₗ_ : (Γ : Context) → Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ a ≡ⱼ b ∷ A
-  Γ ⊢begin-heqₗ Γ⊢a∷A≡b∷B = hEqWeakenₗ Γ⊢a∷A≡b∷B
+  Γ ⊢begin-heqₗ Γ⊢a∷A≡b∷B = hTmEqWeakenₗ Γ⊢a∷A≡b∷B
 
   _⊢begin-heqᵣ_ : (Γ : Context) → Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ a ≡ⱼ b ∷ B
-  Γ ⊢begin-heqᵣ Γ⊢a∷A≡b∷B = hEqWeakenᵣ Γ⊢a∷A≡b∷B
+  Γ ⊢begin-heqᵣ Γ⊢a∷A≡b∷B = hTmEqWeakenᵣ Γ⊢a∷A≡b∷B
 
   infixr 2 homo-step-≡-⟩ homo-step-≡-⟨ 
   infixr 2 heter-step-≡-∣ heter-stepₗ-≡-⟩ heter-stepₗ-≡-⟨ heter-stepᵣ-≡-⟩ heter-stepᵣ-≡-⟨
   infixr 2 conv-step-≡-⟩ conv-step-≡-⟨
 
   homo-step-≡-⟩ : (a B : Term) → Γ ⊢ a ≡ⱼ b ∷ B → Γ ⊢ b ∷ B ≡ⱼ c ∷ C → Γ ⊢ a ∷ B ≡ⱼ c ∷ C
-  homo-step-≡-⟩ _ _ Γ⊢a≡b∷B Γ⊢b∷B≡c∷C = hEqHomoTransₗ Γ⊢a≡b∷B Γ⊢b∷B≡c∷C
+  homo-step-≡-⟩ _ _ Γ⊢a≡b∷B Γ⊢b∷B≡c∷C = hTmEqHomoTransₗ Γ⊢a≡b∷B Γ⊢b∷B≡c∷C
   homo-step-≡-⟨ : (a B : Term) → Γ ⊢ b ≡ⱼ a ∷ B → Γ ⊢ b ∷ B ≡ⱼ c ∷ C → Γ ⊢ a ∷ B ≡ⱼ c ∷ C
-  homo-step-≡-⟨ _ _ Γ⊢b≡a∷B Γ⊢b∷B≡c∷C = hEqHomoTransₗ (TmEqSym Γ⊢b≡a∷B) Γ⊢b∷B≡c∷C
+  homo-step-≡-⟨ _ _ Γ⊢b≡a∷B Γ⊢b∷B≡c∷C = hTmEqHomoTransₗ (TmEqSym Γ⊢b≡a∷B) Γ⊢b∷B≡c∷C
 
   heter-step-≡-∣ : (a A : Term) → Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ a ∷ A ≡ⱼ b ∷ B
   heter-step-≡-∣ _ _ Γ⊢a∷A≡b∷B = Γ⊢a∷A≡b∷B
   -- by heter
   heter-stepₗ-≡-⟩ : (a A : Term) → Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ b ∷ B ≡ⱼ c ∷ C → Γ ⊢ a ∷ A ≡ⱼ c ∷ C
-  heter-stepₗ-≡-⟩ _ _ Γ⊢a∷A≡b∷B Γ⊢b∷B≡c∷C = hEqTrans Γ⊢a∷A≡b∷B Γ⊢b∷B≡c∷C
+  heter-stepₗ-≡-⟩ _ _ Γ⊢a∷A≡b∷B Γ⊢b∷B≡c∷C = hTmEqTrans Γ⊢a∷A≡b∷B Γ⊢b∷B≡c∷C
 
   heter-stepₗ-≡-⟨ : (a A : Term) → Γ ⊢ b ∷ B ≡ⱼ a ∷ A → Γ ⊢ b ∷ B ≡ⱼ c ∷ C → Γ ⊢ a ∷ A ≡ⱼ c ∷ C
-  heter-stepₗ-≡-⟨ _ _ Γ⊢b∷B≡a∷A Γ⊢b∷B≡c∷C = hEqTrans (hEqSym Γ⊢b∷B≡a∷A) Γ⊢b∷B≡c∷C
+  heter-stepₗ-≡-⟨ _ _ Γ⊢b∷B≡a∷A Γ⊢b∷B≡c∷C = hTmEqTrans (hTmEqSym Γ⊢b∷B≡a∷A) Γ⊢b∷B≡c∷C
 
   heter-stepᵣ-≡-⟩ : (a A : Term) → Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ b ∷ B ≡ⱼ c ∷ C → Γ ⊢ a ∷ B ≡ⱼ c ∷ C
-  heter-stepᵣ-≡-⟩ _ _ Γ⊢a∷A≡b∷B Γ⊢b∷B≡c∷C = hEqTransᵣ Γ⊢a∷A≡b∷B Γ⊢b∷B≡c∷C
+  heter-stepᵣ-≡-⟩ _ _ Γ⊢a∷A≡b∷B Γ⊢b∷B≡c∷C = hTmEqTransᵣ Γ⊢a∷A≡b∷B Γ⊢b∷B≡c∷C
 
   heter-stepᵣ-≡-⟨ : (a A : Term) → Γ ⊢ b ∷ B ≡ⱼ a ∷ A → Γ ⊢ b ∷ B ≡ⱼ c ∷ C → Γ ⊢ a ∷ B ≡ⱼ c ∷ C
-  heter-stepᵣ-≡-⟨ _ _ Γ⊢b∷B≡a∷A Γ⊢b∷B≡c∷C = hEqTransᵣ (hEqSym Γ⊢b∷B≡a∷A) Γ⊢b∷B≡c∷C
+  heter-stepᵣ-≡-⟨ _ _ Γ⊢b∷B≡a∷A Γ⊢b∷B≡c∷C = hTmEqTransᵣ (hTmEqSym Γ⊢b∷B≡a∷A) Γ⊢b∷B≡c∷C
 
   conv-step-≡-⟩ : (a A : Term) → Γ ⊢ A ≡ⱼ C → Γ ⊢ a ∷ C ≡ⱼ b ∷ B → Γ ⊢ a ∷ A ≡ⱼ b ∷ B
-  conv-step-≡-⟩ _ _ Γ⊢A≡C Γ⊢a∷C≡b∷B = hEqConvₗ (TyEqSym Γ⊢A≡C) Γ⊢a∷C≡b∷B 
+  conv-step-≡-⟩ _ _ Γ⊢A≡C Γ⊢a∷C≡b∷B = hTmEqConvₗ (TyEqSym Γ⊢A≡C) Γ⊢a∷C≡b∷B 
 
   conv-step-≡-⟨ : (a A : Term) → Γ ⊢ C ≡ⱼ A → Γ ⊢ a ∷ C ≡ⱼ b ∷ B → Γ ⊢ a ∷ A ≡ⱼ b ∷ B
-  conv-step-≡-⟨ _ _ Γ⊢C≡A Γ⊢a∷C≡b∷B = hEqConvₗ Γ⊢C≡A Γ⊢a∷C≡b∷B 
+  conv-step-≡-⟨ _ _ Γ⊢C≡A Γ⊢a∷C≡b∷B = hTmEqConvₗ Γ⊢C≡A Γ⊢a∷C≡b∷B 
 
   syntax homo-step-≡-⟩ x X x≡y y≡z     = x ∷ X heq-≡⟨ x≡y ⟩ y≡z
   syntax homo-step-≡-⟨ x y≡x y≡z       = x ∷ X heq-≡⟨ y≡x ⟨ y≡z
@@ -179,28 +179,28 @@ module TmHEqReasoning where
   infixr 3 conv-step-≡-⟩-A∎ conv-step-≡-⟨-A∎ conv-step-≡-⟩-B∎ conv-step-≡-⟨-B∎
 
   homo-step-≡-⟩-∎ : (a b A B : Term) → Γ ⊢ A → Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A ≡ⱼ b ∷ A
-  homo-step-≡-⟩-∎ _ _ _ _ = hEqFund
+  homo-step-≡-⟩-∎ _ _ _ _ = hTmEqFund
   
   homo-step-≡-⟨-∎ : (a b A B : Term) → Γ ⊢ A → Γ ⊢ b ≡ⱼ a ∷ A → Γ ⊢ a ∷ A ≡ⱼ b ∷ A
-  homo-step-≡-⟨-∎ _ _ _ _ = hEqFund' 
+  homo-step-≡-⟨-∎ _ _ _ _ = hTmEqFund' 
 
   heter-step-≡-⟩-∎ : (a b A B : Term) → Γ ⊢ a ∷ A ≡ⱼ b ∷ B → Γ ⊢ a ∷ A ≡ⱼ b ∷ B 
   heter-step-≡-⟩-∎ _ _ _ _ Γ⊢a∷A≡b∷B = Γ⊢a∷A≡b∷B
 
   heter-step-≡-⟨-∎ : (a b A B : Term) → Γ ⊢ b ∷ B ≡ⱼ a ∷ A → Γ ⊢ a ∷ A ≡ⱼ b ∷ B 
-  heter-step-≡-⟨-∎ _ _ _ _ Γ⊢b∷B≡a∷A = hEqSym Γ⊢b∷B≡a∷A
+  heter-step-≡-⟨-∎ _ _ _ _ Γ⊢b∷B≡a∷A = hTmEqSym Γ⊢b∷B≡a∷A
 
   conv-step-≡-⟩-A∎ : (a A B : Term) → Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
-  conv-step-≡-⟩-A∎ _ _ _ = hEqTyEqₗ
+  conv-step-≡-⟩-A∎ _ _ _ = hTmEqFundTyₗ
 
   conv-step-≡-⟩-B∎ : (a A B : Term) → Γ ⊢ a ∷ B → Γ ⊢ A ≡ⱼ B → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
-  conv-step-≡-⟩-B∎ _ _ _ = hEqTyEqᵣ
+  conv-step-≡-⟩-B∎ _ _ _ = hTmEqFundTyᵣ
 
   conv-step-≡-⟨-A∎ : (a A B : Term) → Γ ⊢ a ∷ A → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
-  conv-step-≡-⟨-A∎ _ _ _ = hEqTyEqₗ'
+  conv-step-≡-⟨-A∎ _ _ _ = hTmEqFundTyₗ'
 
   conv-step-≡-⟨-B∎ : (a A B : Term) → Γ ⊢ a ∷ B → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
-  conv-step-≡-⟨-B∎ _ _ _ = hEqTyEqᵣ'
+  conv-step-≡-⟨-B∎ _ _ _ = hTmEqFundTyᵣ'
 
   syntax homo-step-≡-⟩-∎  x y X Y j x≡y   = x ∷ X heq-≡⟨ x≡y ⟩ j ∣ y ∷ Y ∎
   syntax homo-step-≡-⟨-∎  x y X Y j y≡x   = x ∷ X heq-≡⟨ y≡x ⟨ j ∣ y ∷ Y ∎

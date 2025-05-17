@@ -16,7 +16,7 @@ private
     A B C D : Term
     f g a b c d : Term
 
-infix 4 ⊢_ _⊢_ _⊢_∷_ _⊢_⇒_ ⊢_≡ⱼ_ _⊢_≡ⱼ_ _⊢_≡ⱼ_⇒_ _⊢_≡ⱼ_∷_
+infix 6 ⊢_ _⊢_ _⊢_∷_ _⊢_⇒_ ⊢_≡ⱼ_ _⊢_≡ⱼ_ _⊢_≡ⱼ_⇒_ _⊢_≡ⱼ_∷_
 
 data ⊢_ : Context → Set
 data _⊢_ : Context → Term → Set

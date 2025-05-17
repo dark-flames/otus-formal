@@ -112,8 +112,7 @@ sbEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
     ⊢Γ≡Γ'◁B = idInversion Γ⊢id⇒Γ'◁B
   in (
       begin
-        intro-⟨ Γ⊢Var0∷A ⟩
-        Γ ⊢ Var 0 ∷ A
+        intro-⟨ Γ⊢Var0∷A ⟩  Γ ⊢ Var 0 ∷ A
       ⎯⎯⎯⎯⟨ Tm-TyConv-by Γ⊢A≡B[drop1] ⟩
         Γ ⊢ Var 0 ∷ B [ drop 1 ]ₑ
       ⎯⎯⎯⎯⟨ SbExt Γ⊢drop1⇒Γ' Γ'⊢B  ⟩
@@ -142,8 +141,7 @@ sbEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
     ctxExtInv Ξ₁ A Ξ₁⊢A ⊢Ξ≡Ξ₁◁A , Δ⊢δ⇒Ξ₁ , Δ⊢a∷Aδ = sbExtInversion Δ⊢δ◀a⇒Ξ
   in (SbComp Δ⊢δ◀a⇒Ξ Γ⊢γ⇒Δ) , (
       begin
-        intro-⟨ Δ⊢a∷Aδ ⟩
-        Δ ⊢ a ∷ A [ δ ]ₑ
+        intro-⟨ Δ⊢a∷Aδ ⟩  Δ ⊢ a ∷ A [ δ ]ₑ  
       ⎯⎯⎯⎯⟨ Tm-Subst-by Γ⊢γ⇒Δ ⟩
         Γ ⊢ a [ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
       ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqSubstSubst Ξ₁⊢A Δ⊢δ⇒Ξ₁ Γ⊢γ⇒Δ) ⟩
@@ -389,7 +387,7 @@ tmEqWf eq with eq
       
     Γ⊢f[γ]∙a[γ]∷T[γ] =
       begin
-        intro-⟨ Δ⊢f∷PiAB ⟩ Δ ⊢ f ∷ Pi A B 
+        intro-⟨ Δ⊢f∷PiAB ⟩  Δ ⊢ f ∷ Pi A B
       ⎯⎯⎯⎯⟨ Tm-Subst-by Γ⊢γ⇒Δ ⟩
         Γ ⊢ f [ γ ]ₑ ∷ Pi A B [ γ ]ₑ
       ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqPiSubst Δ⊢PiAB Γ⊢γ⇒Δ) ⟩
@@ -404,7 +402,8 @@ tmEqWf eq with eq
     Ξ⊢A = tmWfTy Ξ⊢a∷A
     Γ⊢a[δ∘γ]∷A[δ][γ] = 
       begin
-        (intro-⟨ Δ⊢δ⇒Ξ ⟩ Δ ⊢ δ ⇒ Ξ) , (intro-⟨ Γ⊢γ⇒Δ ⟩ Γ ⊢ γ ⇒ Δ)
+      intro-⟨ Δ⊢δ⇒Ξ ⟩  Δ ⊢ δ ⇒ Ξ
+      ∧-intro-⟨ Γ⊢γ⇒Δ ⟩  Γ ⊢ γ ⇒ Δ
       ⎯⎯⎯⎯⟨ Sb-Comp ⟩
         Γ ⊢ δ ∘ γ ⇒ Ξ
       ⎯⎯⎯⎯⟨ Tm-Subst-on Ξ⊢a∷A ⟩
@@ -445,7 +444,7 @@ tmEqWf eq with eq
 
     Γ⊢Lam[f[drop1]∙Var0]∷PiAB = 
       begin
-        intro-⟨ Γ⊢f∷PiAB ⟩ Γ ⊢ f ∷ Pi A B
+        intro-⟨ Γ⊢f∷PiAB ⟩  Γ ⊢ f ∷ Pi A B  
       ⎯⎯⎯⎯⟨ Tm-Subst-by Γ◁A⊢drop1⇒Γ ⟩
         Γ ◁ A ⊢ f [ drop 1 ]ₑ ∷ Pi A B [ drop 1 ]ₑ
       ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqPiSubst Γ⊢PiAB Γ◁A⊢drop1⇒Γ) ⟩

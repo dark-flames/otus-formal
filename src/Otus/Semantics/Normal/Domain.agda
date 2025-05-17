@@ -1,5 +1,5 @@
-{-# OPTIONS --without-K #-}
-module Otus.Semantics.Domain where
+{-# OPTIONS --without-K --safe #-}
+module Otus.Semantics.Normal.Domain where
 
 open import Otus.Utils
 open import Otus.Syntax.Untyped
@@ -15,6 +15,9 @@ data Env : ℕ → Set
 
 VType : Set
 VType = Value
+
+infixl 9 ⟨_⟩_
+infxil 8 _++_
 
 data Closure : Set where
   ⟨_⟩_ : Env n → Term → Closure

@@ -107,8 +107,7 @@ private
       Δ₂ , Δ⊢drop-x⇒Δ₂ , Δ₂⊢drop1⇒Ξ , Δ⊢drop-x∘drop-1≡drop-1∘dropx⇒Ξ = drop1CompCommu Δ₁⊢drop-x⇒Ξ Δ⊢drop1⇒Δ₁
       open SbEqReason
       Γ⊢drop-sx⇒Δ₂ = begin
-          intro-⟨ Δ⊢drop-x⇒Δ₂ ⟩
-          Δ ⊢ drop x ⇒ Δ₂
+          intro-⟨ Δ⊢drop-x⇒Δ₂ ⟩ Δ ⊢ drop x ⇒ Δ₂  
         ⎯⎯⎯⎯⟨ Sb-Stability' ⊢Γ'≡Δ ⟩
           Γ' ⊢ drop x ⇒ Δ₂
         ⎯⎯⎯⎯⟨ Sb-Dropₛ-ext Γ'⊢A ⟩
@@ -161,8 +160,7 @@ dropCompCommu {_} { x } {Ξ} {Γ} { suc y } Δ⊢drop-x⇒Ξ Γ⊢drop-sy⇒Δ =
     ctxExtInv Γ₃ B Γ₃⊢B ⊢Γ₂≡Γ₃◁B , ⊢Γ₃≡Δ₁ = drop1Inversion Γ₂⊢drop1⇒Δ₁
     Γ₂⊢drop-sy⇒Ξ = 
       begin
-        intro-⟨ Δ₁⊢drop-y⇒Ξ ⟩
-        Δ₁  ⊢ drop y ⇒ Ξ
+        intro-⟨ Δ₁⊢drop-y⇒Ξ ⟩ Δ₁  ⊢ drop y ⇒ Ξ  
       ⎯⎯⎯⎯⟨ Sb-Stability' ⊢Γ₃≡Δ₁ ⟩
         Γ₃  ⊢ drop y ⇒ Ξ
       ⎯⎯⎯⎯⟨ Sb-Dropₛ-ext Γ₃⊢B ⟩
@@ -204,8 +202,7 @@ liftVar {Δ} {A} {x} {Γ} {suc y} Δ⊢A Δ⊢VarX∷A Γ⊢dropSY⇒Δ = let
     dropSucInv Γ' B Γ'⊢B ⊢Γ≡Γ'◁B Γ'⊢dropY⇒Δ = dropSInversion Γ⊢dropSY⇒Δ
     Γ⊢drop1⇒Γ' = sbStability' ⊢Γ≡Γ'◁B (display Γ'⊢B)
     in begin
-      intro-⟨ liftVar Δ⊢A Δ⊢VarX∷A Γ'⊢dropY⇒Δ ⟩
-      Γ' ⊢ Var (y + x) ∷ A [ drop y ]ₑ 
+      intro-⟨ liftVar Δ⊢A Δ⊢VarX∷A Γ'⊢dropY⇒Δ ⟩ Γ' ⊢ Var (y + x) ∷ A [ drop y ]ₑ 
     ⎯⎯⎯⎯⟨ Tm-Var-ext Γ'⊢B ⟩
       Γ' ◁ B ⊢ Var (1 + (y + x)) ∷ A [ drop y ]ₑ [ drop 1 ]ₑ
     ⎯⎯⎯⎯⟨ Tm-Stability' ⊢Γ≡Γ'◁B ⟩

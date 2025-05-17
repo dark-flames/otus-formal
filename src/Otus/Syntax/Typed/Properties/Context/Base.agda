@@ -21,7 +21,7 @@ data ⊢_≃_ : Context → Context → Set where
   CConvExt :  ⊢ Γ ≃ Δ
     → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ≡ⱼ B
     → Δ ⊢ A → Δ ⊢ B → Δ ⊢ A ≡ⱼ B
-    → ⊢ Γ ▷ A ≃ Δ ▷ B
+    → ⊢ Γ ◁ A ≃ Δ ◁ B
 
-ctxConvExtRefl : ⊢ Γ ≃ Δ → Γ ⊢ A → Δ ⊢ A → ⊢ Γ ▷ A ≃ Δ ▷ A
+ctxConvExtRefl : ⊢ Γ ≃ Δ → Γ ⊢ A → Δ ⊢ A → ⊢ Γ ◁ A ≃ Δ ◁ A
 ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A = CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢A (TyEqRefl Γ⊢A) Δ⊢A Δ⊢A (TyEqRefl Δ⊢A)

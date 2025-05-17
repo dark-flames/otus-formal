@@ -35,9 +35,9 @@ Sb-Conv-by' : ⊢ Δ₂ ≡ⱼ Δ₁ → Γ ⊢ γ ⇒ Δ₁
 Sb-Conv-by' ⊢Δ₂≡Δ₁ Γ⊢γ⇒Δ₁ = SbConv Γ⊢γ⇒Δ₁ (ctxEqSym ⊢Δ₂≡Δ₁)
 
 Sb-Dropₛ-ext : Γ ⊢ A → Γ ⊢ drop x ⇒ Δ 
-        → Γ ▷ A ⊢ drop (1 + x) ⇒ Δ
+        → Γ ◁ A ⊢ drop (1 + x) ⇒ Δ
 Sb-Dropₛ-ext Γ⊢A Γ⊢drop-x⇒Δ = SbDropˢ Γ⊢drop-x⇒Δ Γ⊢A
 
 Sb-Ext-to : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ∷ (A [ γ ]ₑ)
-        → Γ ⊢ γ ▶ a ⇒ Δ ▷ A
+        → Γ ⊢ γ ◀ a ⇒ Δ ◁ A
 Sb-Ext-to = SbExt

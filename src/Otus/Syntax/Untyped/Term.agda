@@ -4,7 +4,7 @@ module Otus.Syntax.Untyped.Term where
 open import Otus.Utils
 open import Otus.Syntax.Untyped.Universe
 
-infixl 8 _▶_
+infixl 8 _◀_
 infixl 7 _∘_
 infixl 10 _∙_
 infixl 9 _[_]ₑ
@@ -21,11 +21,11 @@ data Term : Set where
 
 data Substitution where
     drop : ℕ → Substitution
-    _▶_ : Substitution → Term → Substitution
+    _◀_ : Substitution → Term → Substitution
     _∘_ : Substitution → Substitution → Substitution
 
 idₛ : Substitution
 idₛ = drop 0
 
 lift : Substitution → Substitution
-lift γ = (γ ∘ drop 1) ▶ Var 0
+lift γ = (γ ∘ drop 1) ◀ Var 0

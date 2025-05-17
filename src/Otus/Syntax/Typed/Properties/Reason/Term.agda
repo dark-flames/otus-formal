@@ -20,35 +20,35 @@ private
 -- tactics
 
 Tm-Varᶻ : Γ ⊢ A
-    → Γ ▷ A ⊢ Var 0 ∷ A [ drop 1 ]ₑ
+    → Γ ◁ A ⊢ Var 0 ∷ A [ drop 1 ]ₑ
 Tm-Varᶻ = TmVarᶻ
 
 Tm-Varˢ : Γ ⊢ Var x ∷ A × Γ ⊢ B
-    → Γ ▷ B ⊢ Var (suc x) ∷ A [ drop 1 ]ₑ
+    → Γ ◁ B ⊢ Var (suc x) ∷ A [ drop 1 ]ₑ
 Tm-Varˢ = uncurry TmVarˢ
 
 Tm-Var-ext : Γ ⊢ B → Γ ⊢ Var x ∷ A
-    → Γ ▷ B ⊢ Var (suc x) ∷ A [ drop 1 ]ₑ
+    → Γ ◁ B ⊢ Var (suc x) ∷ A [ drop 1 ]ₑ
 Tm-Var-ext Γ⊢B Γ⊢Var-x∷A = TmVarˢ Γ⊢Var-x∷A Γ⊢B
 
-Tm-Lam : (Γ ⊢ A) × (Γ ▷ A ⊢ b ∷ B)
+Tm-Lam : (Γ ⊢ A) × (Γ ◁ A ⊢ b ∷ B)
     → Γ ⊢ Lam b ∷ Pi A B
 Tm-Lam  = uncurry TmLam
 
-Tm-Lam-abs : Γ ⊢ A → Γ ▷ A ⊢ b ∷ B
+Tm-Lam-abs : Γ ⊢ A → Γ ◁ A ⊢ b ∷ B
     → Γ ⊢ Lam b ∷ Pi A B
 Tm-Lam-abs  = TmLam
 
-Tm-Pi : Γ ⊢ A ∷ U l₁ × Γ ▷ A ⊢ B ∷ U l₂
+Tm-Pi : Γ ⊢ A ∷ U l₁ × Γ ◁ A ⊢ B ∷ U l₂
     → Γ ⊢ Pi A B ∷ U (l₁ ⊔ l₂)
 Tm-Pi = uncurry TmPi
 
 Tm-App : Γ ⊢ f ∷ Pi A B × Γ ⊢ a ∷ A
-    → Γ ⊢ f ∙ a ∷ B [ idₛ ▶ a ]ₑ
+    → Γ ⊢ f ∙ a ∷ B [ idₛ ◀ a ]ₑ
 Tm-App = uncurry TmApp
 
 Tm-App-on : Γ ⊢ a ∷ A → Γ ⊢ f ∷ Pi A B
-    → Γ ⊢ f ∙ a ∷ B [ idₛ ▶ a ]ₑ
+    → Γ ⊢ f ∙ a ∷ B [ idₛ ◀ a ]ₑ
 Tm-App-on Γ⊢a∷A Γ⊢f∷PiAB = TmApp Γ⊢f∷PiAB Γ⊢a∷A
 
 Tm-Subst : Δ ⊢ a ∷ A × Γ ⊢ γ ⇒ Δ

@@ -17,7 +17,7 @@ VType : Set
 VType = Value
 
 data Closure : Set where
-  EClosure : Env n → Term → Closure
+  ⟨_⟩_ : Env n → Term → Closure
 
 data Value where
   VPi  : Value → Closure → Value
@@ -29,10 +29,9 @@ data Neutral where
   NVar : ℕ → Neutral
   NApp : Neutral → Normal → Neutral
 
-
 data Normal where
   Reification : VType → Value → Normal
 
 data Env where
-    ε : Env 0
-    _,_ : Env n → Value → Env (1 + n)
+    [] : Env 0
+    _++_ : Env n → Value → Env (1 + n)

@@ -22,7 +22,7 @@ sbEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ
 
 -- tyWfCtx : Γ ⊢ A → ⊢ Γ
 tyWfCtx ty with ty
-...| TyPi Γ⊢A Γ▷A⊢B = tyWfCtx Γ⊢A 
+...| TyPi Γ⊢A Γ◁A⊢B = tyWfCtx Γ⊢A 
 ...| TyU ⊢Γ = ⊢Γ
 ...| TySubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyRussel Γ⊢A∷U = tmWfCtx Γ⊢A∷U
@@ -31,7 +31,7 @@ tyWfCtx ty with ty
 tmWfCtx tm with tm
 ...| TmVarᶻ Γ⊢A = CExt (tyWfCtx Γ⊢A) Γ⊢A
 ...| TmVarˢ Γ⊢VarX∷A Γ⊢B = CExt (tmWfCtx Γ⊢VarX∷A) Γ⊢B
-...| TmLam _ Γ▷A⊢b∷B = proj₁ (ctxExtInversion (tmWfCtx Γ▷A⊢b∷B))
+...| TmLam _ Γ◁A⊢b∷B = proj₁ (ctxExtInversion (tmWfCtx Γ◁A⊢b∷B))
 ...| TmPi Γ⊢A∷U _ = tmWfCtx Γ⊢A∷U
 ...| TmApp _ Γ⊢a∷A = tmWfCtx Γ⊢a∷A
 ...| TmSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
@@ -64,13 +64,13 @@ tmEqWfCtx tm with tm
 ...| TmEqRefl Γ⊢a∷A = tmWfCtx Γ⊢a∷A
 ...| TmEqSym Γ⊢b≡a∷A = tmEqWfCtx Γ⊢b≡a∷A
 ...| TmEqTrans Γ⊢a≡b∷A _ = tmEqWfCtx Γ⊢a≡b∷A
-...| TmEqLam _ Γ▷A⊢a≡b∷B = proj₁ (ctxExtInversion (tmEqWfCtx Γ▷A⊢a≡b∷B))
+...| TmEqLam _ Γ◁A⊢a≡b∷B = proj₁ (ctxExtInversion (tmEqWfCtx Γ◁A⊢a≡b∷B))
 ...| TmEqApp _ _ Γ⊢a≡b∷A = tmEqWfCtx Γ⊢a≡b∷A
 ...| TmEqPi _ Γ⊢A≡B∷U _ = tmEqWfCtx Γ⊢A≡B∷U
 ...| TmEqSubst _ Γ⊢γ₁≡γ₂⇒Δ = sbEqWfCtx Γ⊢γ₁≡γ₂⇒Δ
 ...| TmEqConv Γ⊢a≡b∷A _ = tmEqWfCtx Γ⊢a≡b∷A
 ...| TmEqSubstId Γ⊢a∷A = tmWfCtx Γ⊢a∷A
-...| TmEqSubstVarExt _ Γ⊢γ▶a⇒Δ = sbWfCtx Γ⊢γ▶a⇒Δ
+...| TmEqSubstVarExt _ Γ⊢γ◀a⇒Δ = sbWfCtx Γ⊢γ◀a⇒Δ
 ...| TmEqSubstVarDrop _ Γ⊢dropX⇒Δ = sbWfCtx Γ⊢dropX⇒Δ
 ...| TmEqLamSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqAppSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ

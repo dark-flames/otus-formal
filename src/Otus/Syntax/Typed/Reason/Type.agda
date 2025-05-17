@@ -16,10 +16,10 @@ private
 
 -- Type Judgement
 
-Ty-Pi : Γ ▷ A ⊢ B → Γ ⊢ Pi A B
-Ty-Pi Γ▷A⊢B = let
-    _ , Γ⊢A = ctxExtInversion (tyWfCtx Γ▷A⊢B)
-  in TyPi Γ⊢A Γ▷A⊢B
+Ty-Pi : Γ ◁ A ⊢ B → Γ ⊢ Pi A B
+Ty-Pi Γ◁A⊢B = let
+    _ , Γ⊢A = ctxExtInversion (tyWfCtx Γ◁A⊢B)
+  in TyPi Γ⊢A Γ◁A⊢B
 
 Ty-U : ⊢ Γ → Γ ⊢ U l
 Ty-U = TyU
@@ -34,11 +34,11 @@ Ty-Russel = TyRussel
 
 -- Definitional Type Equality
 
-TyEq-Pi : Γ ⊢ A ≡ⱼ B → Γ ▷ A ⊢ C ≡ⱼ D
+TyEq-Pi : Γ ⊢ A ≡ⱼ B → Γ ◁ A ⊢ C ≡ⱼ D
     → Γ ⊢ Pi A C ≡ⱼ Pi B D
-TyEq-Pi Γ⊢A≡B Γ▷A⊢C≡D = let
+TyEq-Pi Γ⊢A≡B Γ◁A⊢C≡D = let
     Γ⊢A , _ = tyEqWf Γ⊢A≡B
-  in TyEqPi Γ⊢A Γ⊢A≡B Γ▷A⊢C≡D
+  in TyEqPi Γ⊢A Γ⊢A≡B Γ◁A⊢C≡D
 
 TyEq-Subst : Δ ⊢ A ≡ⱼ B → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ A [ γ₁ ]ₑ ≡ⱼ B [ γ₂ ]ₑ

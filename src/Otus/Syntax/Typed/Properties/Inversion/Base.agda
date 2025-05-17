@@ -12,7 +12,7 @@ private
     a A B : Term
     γ : Substitution
     
-ctxExtInversion : ⊢ Γ ▷ A → ⊢ Γ × Γ ⊢ A
+ctxExtInversion : ⊢ Γ ◁ A → ⊢ Γ × Γ ⊢ A
 ctxExtInversion (CExt ⊢Γ Γ⊢A) = ⊢Γ , Γ⊢A
 
 univInversion : Γ ⊢ A ∷ U l → ULevel

@@ -22,7 +22,7 @@ record DropSucInversion ( Γ Δ : Context ) ( x : ℕ ) : Set where
     Γ' : Context
     A : Term
     Γ'⊢A : Γ' ⊢ A
-    ⊢Γ≡Γ'▷A : ⊢ Γ ≡ⱼ Γ' ▷ A
+    ⊢Γ≡Γ'◁A : ⊢ Γ ≡ⱼ Γ' ◁ A
     Γ'⊢dropX⇒Δ : Γ' ⊢ drop x ⇒ Δ
     
 
@@ -42,18 +42,18 @@ dropInversion : Γ ⊢ drop x ⇒ Δ
   → Σ[ inv ∈ DropInversion Γ x ]
     ⊢ (DropInversion.Γ' inv) ≡ⱼ Δ
 
-sbExtInversion : Γ ⊢ γ ▶ a ⇒ Δ 
+sbExtInversion : Γ ⊢ γ ◀ a ⇒ Δ 
   → Σ[ inv ∈ CtxExtInversion Δ ] 
     Γ ⊢ γ ⇒ CtxExtInversion.Γ' inv ×
     Γ ⊢ a ∷ (CtxExtInversion.A inv) [ γ ]ₑ
 
 -- dropSInversion : Γ ⊢ drop (suc x) ⇒ Δ → DropSucInversion Γ Δ x
 dropSInversion (SbDropˢ Γ⊢dropX⇒Δ Γ⊢A) = let 
-    ⊢Γ▷A = ctxExt Γ⊢A
-  in dropSucInv _ _ Γ⊢A (ctxEqRefl ⊢Γ▷A) Γ⊢dropX⇒Δ
+    ⊢Γ◁A = ctxExt Γ⊢A
+  in dropSucInv _ _ Γ⊢A (ctxEqRefl ⊢Γ◁A) Γ⊢dropX⇒Δ
 dropSInversion (SbConv Γ⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂) = let
-    dropSucInv _ _ Γ'⊢A ⊢Γ≡Γ'▷A Γ'⊢dropX⇒Δ₁ = dropSInversion Γ⊢dropX⇒Δ₁
-  in dropSucInv _ _ Γ'⊢A ⊢Γ≡Γ'▷A (SbConv Γ'⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂)
+    dropSucInv _ _ Γ'⊢A ⊢Γ≡Γ'◁A Γ'⊢dropX⇒Δ₁ = dropSInversion Γ⊢dropX⇒Δ₁
+  in dropSucInv _ _ Γ'⊢A ⊢Γ≡Γ'◁A (SbConv Γ'⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂)
 
 -- idInversion : Γ ⊢ idₛ ⇒ Δ → ⊢ Γ ≡ⱼ Δ
 idInversion (SbId ⊢Γ) = CEqRefl ⊢Γ
@@ -65,8 +65,8 @@ idInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let
 --    → Σ[ inv ∈ CtxExtInversion Γ ] 
 --      ⊢ (CtxExtInversion.Γ' inv) ≡ⱼ Δ
 drop1Inversion Γ⊢drop1⇒Δ = let 
-    dropSucInv _ _ Γ'⊢A ⊢Γ≡Γ'▷A Γ'⊢id⇒Δ₁ = dropSInversion Γ⊢drop1⇒Δ 
-  in ctxExtInv _ _ Γ'⊢A ⊢Γ≡Γ'▷A , (idInversion Γ'⊢id⇒Δ₁)
+    dropSucInv _ _ Γ'⊢A ⊢Γ≡Γ'◁A Γ'⊢id⇒Δ₁ = dropSInversion Γ⊢drop1⇒Δ 
+  in ctxExtInv _ _ Γ'⊢A ⊢Γ≡Γ'◁A , (idInversion Γ'⊢id⇒Δ₁)
 
 -- dropInversion : Γ ⊢ drop x ⇒ Δ
 --  → Σ[ inv ∈ DropInversion Γ x ]
@@ -74,21 +74,21 @@ drop1Inversion Γ⊢drop1⇒Δ = let
 dropInversion Γ⊢γ⇒Γ@(SbId ⊢Γ) = dropInv _ Γ⊢γ⇒Γ , ctxEqRefl ⊢Γ
 dropInversion (SbDropˢ Γ⊢dropX⇒Δ Γ⊢A) = let 
     dropInv Γ' Γ⊢dropX⇒Γ' , ⊢Γ'≡Δ = dropInversion Γ⊢dropX⇒Δ
-    Γ▷A⊢dropSX⇒Γ' = SbDropˢ Γ⊢dropX⇒Γ' Γ⊢A
-  in dropInv Γ' Γ▷A⊢dropSX⇒Γ' , ⊢Γ'≡Δ
+    Γ◁A⊢dropSX⇒Γ' = SbDropˢ Γ⊢dropX⇒Γ' Γ⊢A
+  in dropInv Γ' Γ◁A⊢dropSX⇒Γ' , ⊢Γ'≡Δ
 dropInversion (SbConv Γ⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂) = let 
     inv , ⊢Γ'≡Δ₁ = dropInversion Γ⊢dropX⇒Δ₁
   in inv , (ctxEqTrans ⊢Γ'≡Δ₁ ⊢Δ₁≡Δ₂)
 
--- sbExtInversion : Γ ⊢ γ ▶ a ⇒ Δ 
+-- sbExtInversion : Γ ⊢ γ ◀ a ⇒ Δ 
 --   → Σ[ inv ∈ CtxExtInversion Δ ] 
 --     Γ ⊢ γ ⇒ CtxExtInversion.Γ' inv ×
 --     Γ ⊢ a ∷ (CtxExtInversion.A inv) [ γ ]ₑ
 sbExtInversion (SbExt Γ⊢γ⇒Δ Δ⊢A Γ⊢a∷Aγ) = let 
-    ⊢Δ▷A = ctxExt Δ⊢A
-    inv = ctxExtInv _ _ Δ⊢A (ctxEqRefl ⊢Δ▷A)
+    ⊢Δ◁A = ctxExt Δ⊢A
+    inv = ctxExtInv _ _ Δ⊢A (ctxEqRefl ⊢Δ◁A)
   in inv , Γ⊢γ⇒Δ , Γ⊢a∷Aγ
 sbExtInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let 
-    ctxExtInv Δ A Δ⊢A ⊢Δ₁≡Δ▷A , Γ⊢γ⇒Δ₁ , Γ⊢a∷Aγ = sbExtInversion Γ⊢γ⇒Δ₁
-    inv = ctxExtInv Δ A Δ⊢A (ctxEqTrans (ctxEqSym ⊢Δ₁≡Δ₂) ⊢Δ₁≡Δ▷A)
+    ctxExtInv Δ A Δ⊢A ⊢Δ₁≡Δ◁A , Γ⊢γ⇒Δ₁ , Γ⊢a∷Aγ = sbExtInversion Γ⊢γ⇒Δ₁
+    inv = ctxExtInv Δ A Δ⊢A (ctxEqTrans (ctxEqSym ⊢Δ₁≡Δ₂) ⊢Δ₁≡Δ◁A)
   in inv , Γ⊢γ⇒Δ₁ , Γ⊢a∷Aγ

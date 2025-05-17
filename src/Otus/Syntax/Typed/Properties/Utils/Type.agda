@@ -14,13 +14,13 @@ private
     γ γ₁ γ₂ : Substitution
     A B C D : Term
 
-tyEqPi₁ : Γ ⊢ A → Γ ⊢ A ≡ⱼ B → Γ ▷ A ⊢ C
+tyEqPi₁ : Γ ⊢ A → Γ ⊢ A ≡ⱼ B → Γ ◁ A ⊢ C
     → Γ ⊢ Pi A C ≡ⱼ Pi B C
-tyEqPi₁ Γ⊢A Γ⊢A≡B Γ▷A⊢C = TyEqPi Γ⊢A Γ⊢A≡B (TyEqRefl Γ▷A⊢C)
+tyEqPi₁ Γ⊢A Γ⊢A≡B Γ◁A⊢C = TyEqPi Γ⊢A Γ⊢A≡B (TyEqRefl Γ◁A⊢C)
 
-tyEqPi₂ : Γ ⊢ A → Γ ▷ A ⊢ C ≡ⱼ D
+tyEqPi₂ : Γ ⊢ A → Γ ◁ A ⊢ C ≡ⱼ D
     → Γ ⊢ Pi A C ≡ⱼ Pi A D
-tyEqPi₂ Γ⊢A Γ▷A⊢C≡D = TyEqPi Γ⊢A (TyEqRefl Γ⊢A) Γ▷A⊢C≡D
+tyEqPi₂ Γ⊢A Γ◁A⊢C≡D = TyEqPi Γ⊢A (TyEqRefl Γ⊢A) Γ◁A⊢C≡D
 
 tyEqSubst₁ : Δ ⊢ A ≡ⱼ B → Γ ⊢ γ ⇒ Δ
     → Γ ⊢ A [ γ ]ₑ ≡ⱼ B [ γ ]ₑ

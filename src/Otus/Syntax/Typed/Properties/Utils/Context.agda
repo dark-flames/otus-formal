@@ -18,8 +18,8 @@ private
 
 --- Context
 
-ctxExt : Γ ⊢ A → ⊢ Γ ▷ A
+ctxExt : Γ ⊢ A → ⊢ Γ ◁ A
 ctxExt Γ⊢A = CExt (tyWfCtx Γ⊢A) Γ⊢A
 
-ctxEqExt₂ : ⊢ Γ → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ≡ⱼ B → ⊢ Γ ▷ A ≡ⱼ Γ ▷ B
+ctxEqExt₂ : ⊢ Γ → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ≡ⱼ B → ⊢ Γ ◁ A ≡ⱼ Γ ◁ B
 ctxEqExt₂ ⊢Γ Γ⊢A Γ⊢B Γ⊢A≡B = CEqExt (CEqRefl ⊢Γ) Γ⊢A Γ⊢B Γ⊢A≡B

@@ -11,30 +11,41 @@ private
 data Value : Set
 data Neutral : Set
 data Normal : Set
-data Env : ℕ → Set
+data Env : Set
 
 VType : Set
 VType = Value
 
-infixl 9 ⟨_⟩_
-infxil 8 _++_
+infixl 9 ⟨_⟩_ ↑_∷_
+infixl 8 ↓_∷_
+infixl 7 _++_
 
 data Closure : Set where
-  ⟨_⟩_ : Env n → Term → Closure
+  ⟨_⟩_ : Term → Env → Closure
+
+open Closure
 
 data Value where
   VPi  : Value → Closure → Value
   VLam : Closure → Value
-  U : ULevel → Value
-  Relflection : Neutral → VType → Value
+  VU : ULevel → Value
+  ↑_∷_ : Neutral → VType → Value
+
+open Value
 
 data Neutral where
   NVar : ℕ → Neutral
   NApp : Neutral → Normal → Neutral
 
+open Neutral
+
 data Normal where
-  Reification : VType → Value → Normal
+  ↓_∷_ : Value → VType → Normal
+
+open Normal
 
 data Env where
-    [] : Env 0
-    _++_ : Env n → Value → Env (1 + n)
+    [] : Env
+    _++_ : Env → Value → Env
+
+open Env

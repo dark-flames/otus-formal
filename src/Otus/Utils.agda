@@ -2,7 +2,7 @@
 
 module Otus.Utils where
 
-open import Data.Nat using (ℕ; suc; zero; _+_) public
+open import Data.Nat using (ℕ; suc; zero; _+_; _∸_) public
 open import Data.Nat.Properties using (+-suc) public
 open import Data.Product public
 open import Data.Unit using (⊤; tt) public

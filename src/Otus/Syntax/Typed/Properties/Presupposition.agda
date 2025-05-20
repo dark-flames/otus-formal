@@ -60,7 +60,7 @@ tyEqWfCtx ty with ty
 ...| TyEqSubst _ Γ⇒Δ = sbEqWfCtx Γ⇒Δ
 ...| TyEqRussel Γ⊢A≡B∷U = tmEqWfCtx Γ⊢A≡B∷U
 ...| TyEqPiSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
-...| TyEqUSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
+...| TyEqUSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyEqNatSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyEqSubstSubst _ _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyEqSubstId Γ⊢A = tyWfCtx Γ⊢A
@@ -84,6 +84,9 @@ tmEqWfCtx tm with tm
 ...| TmEqAppSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqSubstSubst _ Γ⊢γ⇒Δ _ = sbWfCtx Γ⊢γ⇒Δ
 ...| TmEqUSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
+...| TmEqNatSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
+...| TmEqZeroSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
+...| TmEqSuccSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqPiSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqPiBeta _ _ Γ⊢a∷A = tmWfCtx Γ⊢a∷A
 ...| TmEqPiEta Γ⊢f∷PiAB = tmWfCtx Γ⊢f∷PiAB

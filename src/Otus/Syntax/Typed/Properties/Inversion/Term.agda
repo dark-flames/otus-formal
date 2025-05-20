@@ -29,7 +29,7 @@ private
   variable
     x : ℕ
     Γ : Context
-    A B T : Term
+    A B T a : Term
 
 piTmInversion : Γ ⊢ Pi A B ∷ T 
   → Σ[ inv ∈ ULevelConjInversion ] 
@@ -77,4 +77,12 @@ varTmInversion (TmVarˢ {Γ} {x} {T} {B} Γ⊢VarX∷T Γ⊢B) = let
 varTmInversion (TmTyConv Γ⊢VarX∷G Γ⊢G≡T) = let
     inv , Γ⊢G≡A[dropX] = varTmInversion Γ⊢VarX∷G
   in inv , (TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡A[dropX])
+
+succTmInversion : Γ ⊢ Succ a ∷ T → Γ ⊢ a ∷ Nat × (Γ ⊢ T ≡ⱼ Nat)
+succTmInversion (TmSucc Γ⊢a∷Nat) = let
+    ⊢Γ = tmWfCtx Γ⊢a∷Nat
+  in Γ⊢a∷Nat , (TyEqRefl (TyNat ⊢Γ))
+succTmInversion (TmTyConv Γ⊢Succ-a∷G Γ⊢G≡T) = let
+    Γ⊢a∷Nat , Γ⊢G≡Nat = succTmInversion Γ⊢Succ-a∷G
+  in Γ⊢a∷Nat , TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡Nat
 

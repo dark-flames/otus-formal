@@ -162,7 +162,7 @@ tyEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TyEqSubst Ξ⊢A≡B Γ⊢γ₁≡γ₂⇒Ξ = TyEqSubst Ξ⊢A≡B (sbEqCtxConv ⊢Γ≃Δ Γ⊢γ₁≡γ₂⇒Ξ)
 ...| TyEqRussel Γ⊢A≡B∷U = TyEqRussel (tmEqCtxConv ⊢Γ≃Δ Γ⊢A≡B∷U)
 ...| TyEqPiSubst Ξ⊢PiAB Γ⊢γ⇒Ξ = TyEqPiSubst Ξ⊢PiAB (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
-...| TyEqUSubst Ξ⊢Univ Γ⊢γ⇒Ξ = TyEqUSubst Ξ⊢Univ (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
+...| TyEqUSubst Γ⊢γ⇒Ξ = TyEqUSubst (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqNatSubst Γ⊢γ⇒Ξ = TyEqNatSubst (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqSubstSubst Θ⊢A Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ = TyEqSubstSubst Θ⊢A Ξ⊢δ⇒Θ (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqSubstId Γ⊢A = TyEqSubstId (tyCtxConv ⊢Γ≃Δ Γ⊢A)
@@ -232,6 +232,15 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TmEqUSubst Γ⊢γ⇒Ξ = let 
     Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmEqUSubst Δ⊢γ⇒Ξ
+...| TmEqNatSubst Γ⊢γ⇒Ξ = let 
+    Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
+  in TmEqNatSubst Δ⊢γ⇒Ξ
+...| TmEqZeroSubst Γ⊢γ⇒Ξ = let 
+    Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
+  in TmEqZeroSubst Δ⊢γ⇒Ξ
+...| TmEqSuccSubst Ξ⊢Succ-a∷ℕ Γ⊢γ⇒Ξ = let 
+    Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
+  in TmEqSuccSubst Ξ⊢Succ-a∷ℕ Δ⊢γ⇒Ξ
 ...| TmEqPiBeta Γ⊢A Γ◁A⊢b∷B Γ⊢a∷A = let 
     Δ⊢A = tyCtxConv ⊢Γ≃Δ Γ⊢A 
     ⊢Γ◁A≃Δ◁A = ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A

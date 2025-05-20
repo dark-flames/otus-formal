@@ -111,7 +111,7 @@ data _⊢_≡ⱼ_ where
 ---- Subst Computation
     TyEqPiSubst : Δ ⊢ Pi A B → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ) -- (γ ∘ drop 1) ◀ Var 0
-    TyEqUSubst : Δ ⊢ Univ l → Γ ⊢ γ ⇒ Δ
+    TyEqUSubst : Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l
     TyEqNatSubst : Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Nat [ γ ]ₑ ≡ⱼ Nat
@@ -165,6 +165,12 @@ data _⊢_≡ⱼ_∷_ where
         → Γ ⊢ a [ δ ]ₑ [ γ ]ₑ ≡ⱼ a [ δ ∘ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
     TmEqUSubst : Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l ∷ Univ (lsuc l)
+    TmEqNatSubst : Γ ⊢ γ ⇒ Δ
+        → Γ ⊢ Nat [ γ ]ₑ ≡ⱼ Nat ∷ Univ lBottom
+    TmEqZeroSubst : Γ ⊢ γ ⇒ Δ
+        → Γ ⊢ Zero [ γ ]ₑ ≡ⱼ Zero ∷ Nat
+    TmEqSuccSubst : Δ ⊢ Succ a ∷ Nat → Γ ⊢ γ ⇒ Δ 
+        → Γ ⊢ Succ a [ γ ]ₑ ≡ⱼ Succ (a [ γ ]ₑ) ∷ Nat
 
 ---- β rules
     TmEqPiBeta : Γ ⊢ A → Γ ◁ A ⊢ b ∷ B → Γ ⊢ a ∷ A

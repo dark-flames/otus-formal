@@ -21,14 +21,14 @@ Ty-Pi Γ◁A⊢B = let
     _ , Γ⊢A = ctxExtInversion (tyWfCtx Γ◁A⊢B)
   in TyPi Γ⊢A Γ◁A⊢B
 
-Ty-U : ⊢ Γ → Γ ⊢ U l
-Ty-U = TyU
+Ty-Univ : ⊢ Γ → Γ ⊢ Univ l
+Ty-Univ = TyUniv
 
 Ty-Subst : Δ ⊢ A → Γ ⊢ γ ⇒ Δ 
     → Γ ⊢ (A [ γ ]ₑ)
 Ty-Subst = TySubst
 
-Ty-Russel : Γ ⊢ A ∷ U l
+Ty-Russel : Γ ⊢ A ∷ Univ l
     → Γ ⊢ A
 Ty-Russel = TyRussel
 
@@ -44,7 +44,7 @@ TyEq-Subst : Δ ⊢ A ≡ⱼ B → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ A [ γ₁ ]ₑ ≡ⱼ B [ γ₂ ]ₑ
 TyEq-Subst = TyEqSubst
 
-TyEq-Russel : Γ ⊢ A ≡ⱼ B ∷ U l
+TyEq-Russel : Γ ⊢ A ≡ⱼ B ∷ Univ l
     → Γ ⊢ A ≡ⱼ B
 TyEq-Russel = TyEqRussel
 
@@ -52,8 +52,8 @@ TyEq-PiSubst : Δ ⊢ Pi A B → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ)
 TyEq-PiSubst = TyEqPiSubst
 
-TyEq-USubst : Δ ⊢ U l → Γ ⊢ γ ⇒ Δ
-    → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l
+TyEq-USubst : Δ ⊢ Univ l → Γ ⊢ γ ⇒ Δ
+    → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l
 TyEq-USubst = TyEqUSubst
 
 TyEq-SubstSubst : Ξ ⊢ A → Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ

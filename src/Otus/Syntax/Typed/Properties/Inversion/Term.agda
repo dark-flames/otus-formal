@@ -33,15 +33,15 @@ private
 
 piTmInversion : Γ ⊢ Pi A B ∷ T 
   → Σ[ inv ∈ ULevelConjInversion ] 
-    (Γ ⊢ T ≡ⱼ U (ULevelConjInversion.l inv)) ×
-    (Γ ⊢ A ∷ U (ULevelConjInversion.l₁ inv)) ×
-    (Γ ◁ A ⊢ B ∷ U (ULevelConjInversion.l₂ inv))
+    (Γ ⊢ T ≡ⱼ Univ (ULevelConjInversion.l inv)) ×
+    (Γ ⊢ A ∷ Univ (ULevelConjInversion.l₁ inv)) ×
+    (Γ ◁ A ⊢ B ∷ Univ (ULevelConjInversion.l₂ inv))
 piTmInversion (TmPi Γ⊢A∷Ul₁ Γ◁A⊢B∷Ul₂) = let 
     l₁ = univInversion Γ⊢A∷Ul₁
     l₂ = univInversion Γ◁A⊢B∷Ul₂
     ⊢Γ = tmWfCtx Γ⊢A∷Ul₁
     inv = uLvlConjInv (l₁ ⊔ l₂) l₁ l₂ refl
-  in inv , TyEqRefl (TyU ⊢Γ) , Γ⊢A∷Ul₁ , Γ◁A⊢B∷Ul₂
+  in inv , TyEqRefl (TyUniv ⊢Γ) , Γ⊢A∷Ul₁ , Γ◁A⊢B∷Ul₂
 piTmInversion (TmTyConv Γ⊢PiAB∷G Γ⊢G≡T) = let 
     inv , Γ⊢G≡Ul , Γ⊢A∷Ul₁ , Γ◁A⊢B∷Ul₂ = piTmInversion Γ⊢PiAB∷G
     Γ⊢T≡Ul = TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡Ul

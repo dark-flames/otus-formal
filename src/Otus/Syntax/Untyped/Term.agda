@@ -16,7 +16,7 @@ data Term : Set where
     Lam : Term → Term
     Pi : Term → Term → Term
     _∙_ : Term → Term → Term
-    U : ULevel → Term
+    Univ : ULevel → Term
     _[_]ₑ : Term → Substitution → Term
 
 data Substitution where

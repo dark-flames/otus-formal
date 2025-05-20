@@ -36,10 +36,10 @@ open ⊢_
 data _⊢_ where
     TyPi : Γ ⊢ A → Γ ◁ A ⊢ B
         → Γ ⊢ Pi A B
-    TyU : ⊢ Γ → Γ ⊢ U l
+    TyUniv : ⊢ Γ → Γ ⊢ Univ l
     TySubst : Δ ⊢ A → Γ ⊢ γ ⇒ Δ 
         → Γ ⊢ (A [ γ ]ₑ)
-    TyRussel : Γ ⊢ A ∷ U l
+    TyRussel : Γ ⊢ A ∷ Univ l
         → Γ ⊢ A
 
 open _⊢_
@@ -63,14 +63,14 @@ data _⊢_∷_ where
         → Γ ◁ B ⊢ Var (suc x) ∷ A [ drop 1 ]ₑ
     TmLam : Γ ⊢ A → Γ ◁ A ⊢ b ∷ B
         → Γ ⊢ Lam b ∷ Pi A B
-    TmPi : Γ ⊢ A ∷ U l₁ → Γ ◁ A ⊢ B ∷ U l₂
-        → Γ ⊢ Pi A B ∷ U (l₁ ⊔ l₂)
+    TmPi : Γ ⊢ A ∷ Univ l₁ → Γ ◁ A ⊢ B ∷ Univ l₂
+        → Γ ⊢ Pi A B ∷ Univ (l₁ ⊔ l₂)
     TmApp : Γ ⊢ f ∷ Pi A B → Γ ⊢ a ∷ A
         → Γ ⊢ f ∙ a ∷ B [ idₛ ◀ a ]ₑ
     TmSubst : Δ ⊢ a ∷ A → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ a [ γ ]ₑ ∷ A [ γ ]ₑ
-    TmU : ⊢ Γ 
-        → Γ ⊢ U l ∷ U (lsuc l)
+    TmUniv : ⊢ Γ 
+        → Γ ⊢ Univ l ∷ Univ (lsuc l)
     TmTyConv : Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B
         → Γ ⊢ a ∷ B
 open _⊢_∷_
@@ -94,13 +94,13 @@ data _⊢_≡ⱼ_ where
         → Γ ⊢ Pi A C ≡ⱼ Pi B D
     TyEqSubst : Δ ⊢ A ≡ⱼ B → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ A [ γ₁ ]ₑ ≡ⱼ B [ γ₂ ]ₑ
-    TyEqRussel : Γ ⊢ A ≡ⱼ B ∷ U l
+    TyEqRussel : Γ ⊢ A ≡ⱼ B ∷ Univ l
         → Γ ⊢ A ≡ⱼ B
 ---- Subst Computation
     TyEqPiSubst : Δ ⊢ Pi A B → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ) -- (γ ∘ drop 1) ◀ Var 0
-    TyEqUSubst : Δ ⊢ U l → Γ ⊢ γ ⇒ Δ
-        → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l
+    TyEqUSubst : Δ ⊢ Univ l → Γ ⊢ γ ⇒ Δ
+        → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l
     TyEqSubstSubst : Ξ ⊢ A → Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢  A [ δ ]ₑ [ γ ]ₑ ≡ⱼ A [ δ ∘ γ ]ₑ
     TyEqSubstId : Γ ⊢ A
@@ -149,8 +149,8 @@ data _⊢_≡ⱼ_∷_ where
 ---- Congruence
     TmEqLam : Γ ⊢ A → Γ ◁ A ⊢ a ≡ⱼ b ∷ B -- todo : `Γ ⊢ A` required by context conv (tc)
         → Γ ⊢ Lam a ≡ⱼ Lam b ∷ Pi A B
-    TmEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ U l₁ → Γ ◁ A ⊢ C ≡ⱼ D ∷ U l₂ -- todo : `Γ ⊢ A` required by context conv (tc)
-        → Γ ⊢ Pi A C ≡ⱼ Pi B D ∷ U (l₁ ⊔ l₂)
+    TmEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ Univ l₁ → Γ ◁ A ⊢ C ≡ⱼ D ∷ Univ l₂ -- todo : `Γ ⊢ A` required by context conv (tc)
+        → Γ ⊢ Pi A C ≡ⱼ Pi B D ∷ Univ (l₁ ⊔ l₂)
     TmEqApp : Γ ⊢ Pi A B → Γ ⊢ f ≡ⱼ g ∷ Pi A B → Γ ⊢ a ≡ⱼ b ∷ A
         → Γ ⊢ f ∙ a ≡ⱼ g ∙ b ∷ B [ idₛ ◀ a ]ₑ
     TmEqSubst : Δ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
@@ -166,14 +166,14 @@ data _⊢_≡ⱼ_∷_ where
         → Γ ⊢ Var x [ drop y ]ₑ ≡ⱼ Var (y + x) ∷ (A [ drop y ]ₑ)
     TmEqLamSubst : Δ ⊢ Lam a ∷ Pi A B → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Lam a [ γ ]ₑ ≡ⱼ Lam (a [ lift γ ]ₑ) ∷ Pi A B [ γ ]ₑ
-    TmEqPiSubst : Δ ⊢ Pi A B ∷ U l → Γ ⊢ γ ⇒ Δ
-        → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi (A [ γ ]ₑ) (B [ lift γ ]ₑ) ∷ U l 
+    TmEqPiSubst : Δ ⊢ Pi A B ∷ Univ l → Γ ⊢ γ ⇒ Δ
+        → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi (A [ γ ]ₑ) (B [ lift γ ]ₑ) ∷ Univ l 
     TmEqAppSubst : Δ ⊢ f ∙ a ∷ A → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ f ∙ a [ γ ]ₑ ≡ⱼ (f [ γ ]ₑ) ∙ (a [ γ ]ₑ) ∷ (A [ γ ]ₑ)
     TmEqSubstSubst :  Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ a ∷ A
         → Γ ⊢ a [ δ ]ₑ [ γ ]ₑ ≡ⱼ a [ δ ∘ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
     TmEqUSubst : Γ ⊢ γ ⇒ Δ
-        → Γ ⊢ U l [ γ ]ₑ ≡ⱼ U l ∷ U (lsuc l)
+        → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l ∷ Univ (lsuc l)
 
 ---- β rules
     TmEqPiBeta : Γ ⊢ A → Γ ◁ A ⊢ b ∷ B → Γ ⊢ a ∷ A

@@ -30,7 +30,7 @@ data ⌈_⌉_≡_ where
   RbLam : App⟨ v ∣ ↑ NVar x ∷ V ⟩⇝ w → ⟦ C ⟧⇐ ↑ NVar x ∷ V ⇝ W → ⌈ ↓ w ∷ W ⌉ x ≡ a
     → ⌈ ↓ v ∷ VPi V C ⌉ x ≡ Lam a
   RbTy : ⌈ V ⌉ᵗʸ x ≡ A
-    → ⌈ ↓ V ∷ VU l ⌉ x ≡ A
+    → ⌈ ↓ V ∷ VUniv l ⌉ x ≡ A
 
 
 data ⌈_⌉ⁿ_≡_ where
@@ -41,6 +41,6 @@ data ⌈_⌉ⁿ_≡_ where
 data ⌈_⌉ᵗʸ_≡_ where
   RbNTy : ⌈ n ⌉ⁿ x ≡ A
       → ⌈ ↑ n ∷ V ⌉ᵗʸ x ≡ A
-  RbU : ⌈ VU l ⌉ᵗʸ x ≡ U l
+  RbUniv : ⌈ VUniv l ⌉ᵗʸ x ≡ Univ l
   RbPi : ⌈ V ⌉ᵗʸ x ≡ A → ⟦ C ⟧⇐ ↑ NVar x ∷ V ⇝ W → ⌈ W ⌉ᵗʸ 1 + x ≡ B
       → ⌈ VPi V C ⌉ᵗʸ x ≡ Pi A B

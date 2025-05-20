@@ -39,8 +39,8 @@ Tm-Lam-abs : Γ ⊢ A → Γ ◁ A ⊢ b ∷ B
     → Γ ⊢ Lam b ∷ Pi A B
 Tm-Lam-abs  = TmLam
 
-Tm-Pi : Γ ⊢ A ∷ U l₁ × Γ ◁ A ⊢ B ∷ U l₂
-    → Γ ⊢ Pi A B ∷ U (l₁ ⊔ l₂)
+Tm-Pi : Γ ⊢ A ∷ Univ l₁ × Γ ◁ A ⊢ B ∷ Univ l₂
+    → Γ ⊢ Pi A B ∷ Univ (l₁ ⊔ l₂)
 Tm-Pi = uncurry TmPi
 
 Tm-App : Γ ⊢ f ∷ Pi A B × Γ ⊢ a ∷ A
@@ -63,9 +63,9 @@ Tm-Subst-on : Δ ⊢ a ∷ A → Γ ⊢ γ ⇒ Δ
     → Γ ⊢ a [ γ ]ₑ ∷ A [ γ ]ₑ
 Tm-Subst-on = TmSubst
 
-Tm-U : ⊢ Γ 
-    → Γ ⊢ U l ∷ U (lsuc l) 
-Tm-U = TmU
+Tm-Univ : ⊢ Γ 
+    → Γ ⊢ Univ l ∷ Univ (lsuc l) 
+Tm-Univ = TmUniv
 
 Tm-TyConv : Γ ⊢ a ∷ A × Γ ⊢ A ≡ⱼ B
     → Γ ⊢ a ∷ B

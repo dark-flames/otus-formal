@@ -30,5 +30,5 @@ tyEqSubst₂ : Δ ⊢ A → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
     → Γ ⊢ A [ γ₁ ]ₑ ≡ⱼ A [ γ₂ ]ₑ
 tyEqSubst₂ Δ⊢A Γ⊢γ₁≡γ₂⇒Δ = TyEqSubst (TyEqRefl Δ⊢A) Γ⊢γ₁≡γ₂⇒Δ
 
-tyUnivCong : ⊢ Γ → l₁ ≡ l₂ → Γ ⊢ U l₁ ≡ⱼ U l₂
-tyUnivCong ⊢Γ refl = TyEqRefl (TyU ⊢Γ)
+tyUnivCong : ⊢ Γ → l₁ ≡ l₂ → Γ ⊢ Univ l₁ ≡ⱼ Univ l₂
+tyUnivCong ⊢Γ refl = TyEqRefl (TyUniv ⊢Γ)

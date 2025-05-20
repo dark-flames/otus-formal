@@ -28,7 +28,7 @@ open Closure
 data Value where
   VPi  : Value → Closure → Value
   VLam : Closure → Value
-  VU : ULevel → Value
+  VUniv : ULevel → Value
   ↑_∷_ : Neutral → VType → Value
 
 open Value

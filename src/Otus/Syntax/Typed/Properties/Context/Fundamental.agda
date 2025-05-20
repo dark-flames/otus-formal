@@ -67,8 +67,8 @@ tyCtxConv ⊢Γ≃Δ ty with ty
     Γ◁A≃Δ◁A = ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A
     Δ◁A⊢B = tyCtxConv Γ◁A≃Δ◁A Γ◁A⊢B
   in TyPi Δ⊢A Δ◁A⊢B
-...| TyU _ = let ⊢Δ = proj₂ (ctxConvWf ⊢Γ≃Δ)
-  in TyU ⊢Δ
+...| TyUniv _ = let ⊢Δ = proj₂ (ctxConvWf ⊢Γ≃Δ)
+  in TyUniv ⊢Δ
 ...| TySubst Ξ⊢A Γ⇒Ξ = let 
     Δ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⇒Ξ
   in TySubst Ξ⊢A Δ⇒Ξ
@@ -103,7 +103,7 @@ tmCtxConv ⊢Γ≃Δ (TmApp Γ⊢f∷PiAB Γ⊢a∷A) = let
 tmCtxConv ⊢Γ≃Δ (TmSubst Ξ⊢a∷A Γ⊢γ⇒Ξ) = let 
   Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmSubst Ξ⊢a∷A Δ⊢γ⇒Ξ
-tmCtxConv ⊢Γ≃Δ (TmU _) = TmU (proj₂ (ctxConvWf ⊢Γ≃Δ))
+tmCtxConv ⊢Γ≃Δ (TmUniv _) = TmUniv (proj₂ (ctxConvWf ⊢Γ≃Δ))
 tmCtxConv ⊢Γ≃Δ (TmTyConv Γ⊢a∷A Γ⊢A≡B) = let 
     Δ⊢a∷A = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A 
     Δ⊢A≡B = tyEqCtxConv ⊢Γ≃Δ Γ⊢A≡B
@@ -141,7 +141,7 @@ tyEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TyEqSubst Ξ⊢A≡B Γ⊢γ₁≡γ₂⇒Ξ = TyEqSubst Ξ⊢A≡B (sbEqCtxConv ⊢Γ≃Δ Γ⊢γ₁≡γ₂⇒Ξ)
 ...| TyEqRussel Γ⊢A≡B∷U = TyEqRussel (tmEqCtxConv ⊢Γ≃Δ Γ⊢A≡B∷U)
 ...| TyEqPiSubst Ξ⊢PiAB Γ⊢γ⇒Ξ = TyEqPiSubst Ξ⊢PiAB (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
-...| TyEqUSubst Ξ⊢U Γ⊢γ⇒Ξ = TyEqUSubst Ξ⊢U (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
+...| TyEqUSubst Ξ⊢Univ Γ⊢γ⇒Ξ = TyEqUSubst Ξ⊢Univ (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqSubstSubst Θ⊢A Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ = TyEqSubstSubst Θ⊢A Ξ⊢δ⇒Θ (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqSubstId Γ⊢A = TyEqSubstId (tyCtxConv ⊢Γ≃Δ Γ⊢A)
 

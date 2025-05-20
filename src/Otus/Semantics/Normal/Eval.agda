@@ -58,7 +58,7 @@ data  ⟦_⟧_⇝_ where
     → ⟦ f ∙ a ⟧ ρ ⇝ u
   ETmSubst : ⟦ γ ⟧ˢ ρ₁ ⇝ ρ₂ → ⟦ a ⟧ ρ₂ ⇝ v
     → ⟦ a [ γ ]ₑ ⟧ ρ₁ ⇝ v
-  ETmU : ⟦ U l ⟧ ρ ⇝ VU l
+  ETmUniv : ⟦ Univ l ⟧ ρ ⇝ VUniv l
 
 data  ⟦_⟧⇐_⇝_ where
   EClosure : ⟦ a ⟧ ρ ++ v ⇝ w

@@ -23,12 +23,12 @@ tmTyConv' : Γ ⊢ b ∷ B → Γ ⊢ A ≡ⱼ B
     → Γ ⊢ b ∷ A
 tmTyConv' Γ⊢b∷B Γ⊢A≡B = TmTyConv Γ⊢b∷B (TyEqSym Γ⊢A≡B)
 
-tmEqPi₁ : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ U l₁ → Γ ◁ A ⊢ C ∷ U l₂
-    → Γ ⊢ Pi A C ≡ⱼ Pi B C ∷ U (l₁ ⊔ l₂)
+tmEqPi₁ : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ Univ l₁ → Γ ◁ A ⊢ C ∷ Univ l₂
+    → Γ ⊢ Pi A C ≡ⱼ Pi B C ∷ Univ (l₁ ⊔ l₂)
 tmEqPi₁ Γ⊢A Γ⊢A≡B∷Ul₁ Γ◁A⊢C∷Ul₂ = TmEqPi Γ⊢A Γ⊢A≡B∷Ul₁ (TmEqRefl Γ◁A⊢C∷Ul₂)
 
-tmEqPi₂ : Γ ⊢ A ∷ U l₁ → Γ ◁ A ⊢ C ≡ⱼ D ∷ U l₂
-    → Γ ⊢ Pi A C ≡ⱼ Pi A D ∷ U (l₁ ⊔ l₂)
+tmEqPi₂ : Γ ⊢ A ∷ Univ l₁ → Γ ◁ A ⊢ C ≡ⱼ D ∷ Univ l₂
+    → Γ ⊢ Pi A C ≡ⱼ Pi A D ∷ Univ (l₁ ⊔ l₂)
 tmEqPi₂ Γ⊢A∷Ul₁ Γ◁A⊢C≡D∷Ul₂ = TmEqPi (TyRussel Γ⊢A∷Ul₁) (TmEqRefl Γ⊢A∷Ul₁) Γ◁A⊢C≡D∷Ul₂
 
 tmEqSubst₁ : Δ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ γ ⇒ Δ

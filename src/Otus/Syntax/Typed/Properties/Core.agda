@@ -61,7 +61,7 @@ tmWfTy tm with tm
     Γ◁B⊢drop1⇒Γ = display Γ⊢B
   in TySubst Γ⊢A Γ◁B⊢drop1⇒Γ
 ...| TmLam Γ⊢A Γ◁A⊢b∷B = TyPi Γ⊢A (tmWfTy Γ◁A⊢b∷B)
-...| TmPi Γ⊢A∷U Γ◁A⊢B∷U = TyU (tmWfCtx Γ⊢A∷U)
+...| TmPi Γ⊢A∷U Γ◁A⊢B∷U = TyUniv (tmWfCtx Γ⊢A∷U)
 ...| TmApp Γ⊢f∷PiAB Γ⊢a∷A = let 
     Γ⊢PiAB = tmWfTy Γ⊢f∷PiAB
     Γ⊢A , Γ◁A⊢B = piTyInversion Γ⊢PiAB
@@ -70,7 +70,7 @@ tmWfTy tm with tm
 ...| TmSubst Δ⊢a∷A Γ⇒Δ = let 
     Δ⊢A = tmWfTy Δ⊢a∷A
   in TySubst Δ⊢A Γ⇒Δ
-...| TmU ⊢Γ = TyU ⊢Γ
+...| TmUniv ⊢Γ = TyUniv ⊢Γ
 ...| TmTyConv _ Γ⊢A≡B = proj₂ (tyEqWf Γ⊢A≡B)
 
 
@@ -179,10 +179,10 @@ tyEqWf eq with eq
     Γ◁Aγ⊢↑γ⇒Δ◁A = liftSb Γ⊢γ⇒Δ Δ⊢A
     Γ◁Aγ⊢B[↑γ] = TySubst Δ◁A⊢B Γ◁Aγ⊢↑γ⇒Δ◁A
   in TySubst Δ⊢PiAB Γ⊢γ⇒Δ , TyPi Γ⊢Aγ Γ◁Aγ⊢B[↑γ]
-...| TyEqUSubst Δ⊢U Γ⊢γ⇒Δ = let 
+...| TyEqUSubst Δ⊢Univ Γ⊢γ⇒Δ = let 
     ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
     ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
-  in TySubst (TyU ⊢Δ) Γ⊢γ⇒Δ , TyU ⊢Γ
+  in TySubst (TyUniv ⊢Δ) Γ⊢γ⇒Δ , TyUniv ⊢Γ
 ...| TyEqSubstSubst Ξ⊢A Δ⊢δ⇒Ξ Γ⊢γ⇒Δ = let 
     Γ⊢Aδγ = TySubst (TySubst Ξ⊢A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ 
     Γ⊢δ∘γ⇒Ξ = SbComp Δ⊢δ⇒Ξ Γ⊢γ⇒Δ
@@ -200,7 +200,7 @@ tmEqWfTy tm with tm
 ...| TmEqLam Γ⊢A Γ◁A⊢a≡b∷B = let 
     Γ◁A⊢B = tmEqWfTy Γ◁A⊢a≡b∷B
   in TyPi Γ⊢A Γ◁A⊢B
-...| TmEqPi Γ⊢A _ _ = TyU (tyWfCtx Γ⊢A)
+...| TmEqPi Γ⊢A _ _ = TyUniv (tyWfCtx Γ⊢A)
 ...| TmEqApp Γ⊢PiAB Γ⊢f≡g∷PiAB Γ⊢a≡b∷A = let 
     Γ⊢A , Γ◁A⊢B = piTyInversion Γ⊢PiAB
     Γ⊢id◀a⇒Γ◁A = section Γ⊢A (proj₁ (tmEqWf Γ⊢a≡b∷A))
@@ -224,7 +224,7 @@ tmEqWfTy tm with tm
   in TySubst Δ⊢PiAB Γ⊢γ⇒Δ
 ...| TmEqPiSubst Δ⊢PiAB∷Ul Γ⊢γ⇒Δ = let
     ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
-  in TyU ⊢Γ
+  in TyUniv ⊢Γ
 ...| TmEqAppSubst Δ⊢f∙a∷A Γ⊢γ⇒Δ = let
     Δ⊢A = tmWfTy Δ⊢f∙a∷A
   in TySubst Δ⊢A Γ⊢γ⇒Δ
@@ -233,7 +233,7 @@ tmEqWfTy tm with tm
   in TySubst (TySubst Ξ⊢A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ
 ...| TmEqUSubst Γ⊢γ⇒Δ = let
     ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
-  in TyU ⊢Γ
+  in TyUniv ⊢Γ
 ...| TmEqPiBeta Γ⊢A Γ◁A⊢b∷B Γ⊢a∷A = let
     Γ◁A⊢B = tmWfTy Γ◁A⊢b∷B
     Γ⊢id◀a⇒Γ◁A = section Γ⊢A Γ⊢a∷A
@@ -334,7 +334,7 @@ tmEqWf eq with eq
   in TmSubst Δ⊢Lam-a∷PiAB Γ⊢γ⇒Δ , TmTyConv Γ⊢Lam-a[liftγ]∷PiC[γ][D[liftγ]] Γ⊢PiC[γ][D[liftγ]]≡PiAB[γ]
 ...| TmEqPiSubst {Δ} {A} {B} {l} {Γ} {γ} Δ⊢PiAB∷Ul Γ⊢γ⇒Δ = let
     ⊢Δ = tmWfCtx Δ⊢PiAB∷Ul
-    Γ⊢Ul[γ]≡Ul = TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ
+    Γ⊢Ul[γ]≡Ul = TyEqUSubst (TyUniv ⊢Δ) Γ⊢γ⇒Δ
     Γ⊢PiAB[γ]∷Ul[γ] = TmSubst Δ⊢PiAB∷Ul Γ⊢γ⇒Δ
     (uLvlConjInv l' l₁ l₂ l₁⊔l₂≡l') , Δ⊢Ul≡Ul' , Δ⊢A∷Ul₁ , Δ◁A⊢B∷Ul₂ = piTmInversion Δ⊢PiAB∷Ul
     Δ⊢A = TyRussel Δ⊢A∷Ul₁
@@ -342,22 +342,22 @@ tmEqWf eq with eq
     Γ⊢A[γ] = TySubst Δ⊢A Γ⊢γ⇒Δ
     ⊢Γ◁A[γ] = ctxExt Γ⊢A[γ]
     Γ◁A[γ]⊢liftγ⇒Δ◁A = liftSb Γ⊢γ⇒Δ Δ⊢A
-    Γ⊢A[γ]∷Ul₁ = (TmTyConv (TmSubst Δ⊢A∷Ul₁ Γ⊢γ⇒Δ) (TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ)) 
-    Γ◁A[γ]⊢B[liftγ]∷Ul₂ = (TmTyConv (TmSubst Δ◁A⊢B∷Ul₂ Γ◁A[γ]⊢liftγ⇒Δ◁A) (TyEqUSubst (TyU ⊢Δ◁A) Γ◁A[γ]⊢liftγ⇒Δ◁A)) 
+    Γ⊢A[γ]∷Ul₁ = (TmTyConv (TmSubst Δ⊢A∷Ul₁ Γ⊢γ⇒Δ) (TyEqUSubst (TyUniv ⊢Δ) Γ⊢γ⇒Δ)) 
+    Γ◁A[γ]⊢B[liftγ]∷Ul₂ = (TmTyConv (TmSubst Δ◁A⊢B∷Ul₂ Γ◁A[γ]⊢liftγ⇒Δ◁A) (TyEqUSubst (TyUniv ⊢Δ◁A) Γ◁A[γ]⊢liftγ⇒Δ◁A)) 
     Γ⊢PiA[γ]B[liftγ]∷Ul₁⊔l₂ = TmPi Γ⊢A[γ]∷Ul₁ Γ◁A[γ]⊢B[liftγ]∷Ul₂
     Γ⊢Ul₁⊔l₂≡Ul' = tyUnivCong (sbWfCtx Γ⊢γ⇒Δ) l₁⊔l₂≡l'
     open TyEqReason
     Γ⊢Ul≡Ul₁⊔l₂ =  
       Γ ⊢begin-ty
-        U l
-      ty-≡⟨ TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ ⟨  
-        U l [ γ ]ₑ
+        Univ l
+      ty-≡⟨ TyEqUSubst (TyUniv ⊢Δ) Γ⊢γ⇒Δ ⟨  
+        Univ l [ γ ]ₑ
       ty-≡⟨ tyEqSubst₁ Δ⊢Ul≡Ul' Γ⊢γ⇒Δ ⟩
-        U l' [ γ ]ₑ
+        Univ l' [ γ ]ₑ
       ty-≡⟨ tyEqSubst₁ (tyUnivCong ⊢Δ l₁⊔l₂≡l') Γ⊢γ⇒Δ ⟨
-        U (l₁ ⊔ l₂) [ γ ]ₑ
-      ty-≡⟨ TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ ⟩∣
-        U (l₁ ⊔ l₂)
+        Univ (l₁ ⊔ l₂) [ γ ]ₑ
+      ty-≡⟨ TyEqUSubst (TyUniv ⊢Δ) Γ⊢γ⇒Δ ⟩∣
+        Univ (l₁ ⊔ l₂)
       ∎
   in TmTyConv Γ⊢PiAB[γ]∷Ul[γ] Γ⊢Ul[γ]≡Ul , tmTyConv' Γ⊢PiA[γ]B[liftγ]∷Ul₁⊔l₂ Γ⊢Ul≡Ul₁⊔l₂
 ...| TmEqAppSubst {Δ} {f} {a} {T} {Γ} {γ} Δ⊢f∙a∷T Γ⊢γ⇒Δ = let
@@ -415,8 +415,8 @@ tmEqWf eq with eq
 ...| TmEqUSubst Γ⊢γ⇒Δ = let
     ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
     ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
-    Γ⊢Ul∷USl[γ] = TmSubst (TmU ⊢Δ) Γ⊢γ⇒Δ
-  in TmTyConv Γ⊢Ul∷USl[γ] (TyEqUSubst (TyU ⊢Δ) Γ⊢γ⇒Δ) , TmU ⊢Γ
+    Γ⊢Ul∷USl[γ] = TmSubst (TmUniv ⊢Δ) Γ⊢γ⇒Δ
+  in TmTyConv Γ⊢Ul∷USl[γ] (TyEqUSubst (TyUniv ⊢Δ) Γ⊢γ⇒Δ) , TmUniv ⊢Γ
 ...| TmEqPiBeta Γ⊢A Γ◁A⊢b∷B Γ⊢a∷A = let
     Γ⊢Lam-b∷PiAB = TmLam Γ⊢A Γ◁A⊢b∷B
     Γ⊢id◀a⇒Γ◁A = section Γ⊢A Γ⊢a∷A

@@ -23,7 +23,7 @@ sbEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ
 -- tyWfCtx : Γ ⊢ A → ⊢ Γ
 tyWfCtx ty with ty
 ...| TyPi Γ⊢A Γ◁A⊢B = tyWfCtx Γ⊢A 
-...| TyU ⊢Γ = ⊢Γ
+...| TyUniv ⊢Γ = ⊢Γ
 ...| TySubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyRussel Γ⊢A∷U = tmWfCtx Γ⊢A∷U
 
@@ -35,7 +35,7 @@ tmWfCtx tm with tm
 ...| TmPi Γ⊢A∷U _ = tmWfCtx Γ⊢A∷U
 ...| TmApp _ Γ⊢a∷A = tmWfCtx Γ⊢a∷A
 ...| TmSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
-...| TmU ⊢Γ = ⊢Γ
+...| TmUniv ⊢Γ = ⊢Γ
 ...| TmTyConv Γ⊢a∷A _ = tmWfCtx Γ⊢a∷A
 
 -- sbWfCtx : Γ ⊢ γ ⇒ Δ → ⊢ Γ

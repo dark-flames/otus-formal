@@ -15,5 +15,5 @@ private
 ctxExtInversion : ⊢ Γ ◁ A → ⊢ Γ × Γ ⊢ A
 ctxExtInversion (CExt ⊢Γ Γ⊢A) = ⊢Γ , Γ⊢A
 
-univInversion : Γ ⊢ A ∷ U l → ULevel
+univInversion : Γ ⊢ A ∷ Univ l → ULevel
 univInversion {_} {_} {l} _ = l

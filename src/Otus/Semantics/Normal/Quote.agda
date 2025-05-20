@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K --safe #-}
 module Otus.Semantics.Normal.Quote where
 
 open import Otus.Utils

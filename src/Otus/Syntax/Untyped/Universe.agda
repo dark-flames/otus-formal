@@ -7,6 +7,9 @@ data ULevel : Set where
 
 infixl 10 _⊔_ 
 
+lBottom : ULevel
+lBottom = lzero
+
 _⊔_  : ULevel → ULevel → ULevel
 lzero ⊔ l₂ = l₂
 (lsuc l₁) ⊔ lzero = lsuc l₁

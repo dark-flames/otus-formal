@@ -60,13 +60,16 @@ tmWfTy tm with tm
     Γ⊢A = tmWfTy Γ⊢VarX∷A
     Γ◁B⊢drop1⇒Γ = display Γ⊢B
   in TySubst Γ⊢A Γ◁B⊢drop1⇒Γ
-...| TmLam Γ⊢A Γ◁A⊢b∷B = TyPi Γ⊢A (tmWfTy Γ◁A⊢b∷B)
 ...| TmPi Γ⊢A∷U Γ◁A⊢B∷U = TyUniv (tmWfCtx Γ⊢A∷U)
+...| TmLam Γ⊢A Γ◁A⊢b∷B = TyPi Γ⊢A (tmWfTy Γ◁A⊢b∷B)
 ...| TmApp Γ⊢f∷PiAB Γ⊢a∷A = let 
     Γ⊢PiAB = tmWfTy Γ⊢f∷PiAB
     Γ⊢A , Γ◁A⊢B = piTyInversion Γ⊢PiAB
     Γ⊢id◀a⇒Γ◁A = section Γ⊢A Γ⊢a∷A
   in TySubst Γ◁A⊢B Γ⊢id◀a⇒Γ◁A
+...| TmNat ⊢Γ = TyUniv ⊢Γ
+...| TmZero ⊢Γ = TyNat ⊢Γ
+...| TmSucc Γ⊢a∷Nat = tmWfTy Γ⊢a∷Nat
 ...| TmSubst Δ⊢a∷A Γ⇒Δ = let 
     Δ⊢A = tmWfTy Δ⊢a∷A
   in TySubst Δ⊢A Γ⇒Δ
@@ -205,6 +208,9 @@ tmEqWfTy tm with tm
     Γ⊢A , Γ◁A⊢B = piTyInversion Γ⊢PiAB
     Γ⊢id◀a⇒Γ◁A = section Γ⊢A (proj₁ (tmEqWf Γ⊢a≡b∷A))
   in TySubst Γ◁A⊢B Γ⊢id◀a⇒Γ◁A
+...| TmEqSucc Γ⊢a≡b∷Nat = let
+    ⊢Γ = tmEqWfCtx Γ⊢a≡b∷Nat
+  in TyNat ⊢Γ
 ...| TmEqSubst Δ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Δ = let
     Δ⊢A = tmEqWfTy Δ⊢a≡b∷A
     Γ⊢γ₁⇒Δ , _ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ
@@ -268,6 +274,9 @@ tmEqWf eq with eq
     Γ⊢B[id◀a]≡B[id◀b] = tyEqSubst₂ Γ◁A⊢B Γ⊢id◀a≡id◀b⇒Γ◁A
     Γ⊢gb∷B[id◀a] = TmTyConv Γ⊢gb∷B[id◀b] (TyEqSym Γ⊢B[id◀a]≡B[id◀b])
   in Γ⊢fa∷B[id◀a] , Γ⊢gb∷B[id◀a]
+...| TmEqSucc Γ⊢a≡b∷Nat = let
+    Γ⊢a∷Nat , Γ⊢b∷Nat = tmEqWf Γ⊢a≡b∷Nat
+  in TmSucc Γ⊢a∷Nat , TmSucc Γ⊢b∷Nat
 ...| TmEqSubst Δ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Δ = let 
     Δ⊢A = tmEqWfTy Δ⊢a≡b∷A
     Δ⊢a∷A , Δ⊢b∷A = tmEqWf Δ⊢a≡b∷A

@@ -13,9 +13,13 @@ data Substitution : Set
 
 data Term : Set where
     Var : ℕ → Term
-    Lam : Term → Term
+    
     Pi : Term → Term → Term
+    Lam : Term → Term
     _∙_ : Term → Term → Term
+    Nat : Term
+    Zero : Term
+    Succ : Term → Term
     Univ : ULevel → Term
     _[_]ₑ : Term → Substitution → Term
 

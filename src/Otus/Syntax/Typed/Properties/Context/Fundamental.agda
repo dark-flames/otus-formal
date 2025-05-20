@@ -67,6 +67,9 @@ tyCtxConv ⊢Γ≃Δ ty with ty
     Γ◁A≃Δ◁A = ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A
     Δ◁A⊢B = tyCtxConv Γ◁A≃Δ◁A Γ◁A⊢B
   in TyPi Δ⊢A Δ◁A⊢B
+...| TyNat ⊢Γ = let
+    ⊢Δ = proj₂ (ctxConvWf ⊢Γ≃Δ)
+  in TyNat ⊢Δ
 ...| TyUniv _ = let ⊢Δ = proj₂ (ctxConvWf ⊢Γ≃Δ)
   in TyUniv ⊢Δ
 ...| TySubst Ξ⊢A Γ⇒Ξ = let 
@@ -85,21 +88,30 @@ tmCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B
 tmCtxConv (CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢B Γ⊢A≡B Δ⊢A Δ⊢B Δ⊢A≡B) (TmVarˢ Γ⊢VarX∷C _) = let
     Δ⊢VarX∷C = tmCtxConv ⊢Γ≃Δ Γ⊢VarX∷C 
   in TmVarˢ Δ⊢VarX∷C Δ⊢B
-tmCtxConv ⊢Γ≃Δ (TmLam Γ⊢A Γ◁A⊢b∷B) = let 
-    Δ⊢A = tyCtxConv ⊢Γ≃Δ Γ⊢A
-    ⊢Γ◁A≃Δ◁A = ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A
-    Δ◁A⊢b∷B = tmCtxConv ⊢Γ◁A≃Δ◁A Γ◁A⊢b∷B
-  in TmLam Δ⊢A Δ◁A⊢b∷B
 tmCtxConv ⊢Γ≃Δ (TmPi Γ⊢A∷U Γ◁A⊢B∷U) = let
     Δ⊢A∷U = tmCtxConv ⊢Γ≃Δ Γ⊢A∷U
     Δ⊢A = TyRussel Δ⊢A∷U
     ⊢Γ◁A≃Δ◁A = ctxConvExtRefl ⊢Γ≃Δ (TyRussel Γ⊢A∷U) Δ⊢A
     Δ◁A⊢B∷U = tmCtxConv ⊢Γ◁A≃Δ◁A Γ◁A⊢B∷U 
   in TmPi Δ⊢A∷U Δ◁A⊢B∷U
+tmCtxConv ⊢Γ≃Δ (TmLam Γ⊢A Γ◁A⊢b∷B) = let 
+    Δ⊢A = tyCtxConv ⊢Γ≃Δ Γ⊢A
+    ⊢Γ◁A≃Δ◁A = ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A
+    Δ◁A⊢b∷B = tmCtxConv ⊢Γ◁A≃Δ◁A Γ◁A⊢b∷B
+  in TmLam Δ⊢A Δ◁A⊢b∷B
 tmCtxConv ⊢Γ≃Δ (TmApp Γ⊢f∷PiAB Γ⊢a∷A) = let
     Δ⊢f∷PiAB = tmCtxConv ⊢Γ≃Δ Γ⊢f∷PiAB
     Δ⊢a∷A = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A
   in TmApp Δ⊢f∷PiAB Δ⊢a∷A
+tmCtxConv ⊢Γ≃Δ (TmNat ⊢Γ) = let
+    ⊢Δ = proj₂ (ctxConvWf ⊢Γ≃Δ)
+  in TmNat ⊢Δ
+tmCtxConv ⊢Γ≃Δ (TmZero ⊢Γ) = let
+    ⊢Δ = proj₂ (ctxConvWf ⊢Γ≃Δ)
+  in TmZero ⊢Δ
+tmCtxConv ⊢Γ≃Δ (TmSucc Γ⊢a∷Nat) = let
+    Δ⊢a∷Nat = tmCtxConv ⊢Γ≃Δ Γ⊢a∷Nat
+  in TmSucc Δ⊢a∷Nat
 tmCtxConv ⊢Γ≃Δ (TmSubst Ξ⊢a∷A Γ⊢γ⇒Ξ) = let 
   Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmSubst Ξ⊢a∷A Δ⊢γ⇒Ξ
@@ -167,6 +179,9 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
     Δ⊢a≡b∷A = tmEqCtxConv ⊢Γ≃Δ Γ⊢a≡b∷A
     Δ⊢PiAB = tyCtxConv ⊢Γ≃Δ Γ⊢PiAB
   in TmEqApp Δ⊢PiAB Δ⊢f≡g∷PiAB Δ⊢a≡b∷A
+...| TmEqSucc Γ⊢a≡b∷Nat = let
+    Δ⊢a≡b∷Nat = tmEqCtxConv ⊢Γ≃Δ Γ⊢a≡b∷Nat
+  in TmEqSucc Δ⊢a≡b∷Nat
 ...| TmEqSubst Ξ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Ξ = let 
     Δ⊢γ₁≡γ₂⇒Ξ = sbEqCtxConv ⊢Γ≃Δ Γ⊢γ₁≡γ₂⇒Ξ
   in TmEqSubst Ξ⊢a≡b∷A Δ⊢γ₁≡γ₂⇒Ξ

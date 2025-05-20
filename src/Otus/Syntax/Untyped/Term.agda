@@ -4,10 +4,10 @@ module Otus.Syntax.Untyped.Term where
 open import Otus.Utils
 open import Otus.Syntax.Untyped.Universe
 
-infixl 8 _◀_
-infixl 7 _∘_
-infixl 10 _∙_
-infixl 9 _[_]ₑ
+infixl 9 _◀_
+infixl 8 _∘_
+infixl 11 _∙_
+infixl 10 _[_]ₑ
 
 data Substitution : Set
 
@@ -20,6 +20,7 @@ data Term : Set where
     Nat : Term
     Zero : Term
     Succ : Term → Term
+    NatElim : Term → Term → Term → Term → Term
     Univ : ULevel → Term
     _[_]ₑ : Term → Substitution → Term
 

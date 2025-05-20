@@ -38,6 +38,7 @@ tmWfCtx tm with tm
 ...| TmNat ⊢Γ = ⊢Γ
 ...| TmZero ⊢Γ = ⊢Γ
 ...| TmSucc Γ⊢a∷Nat = tmWfCtx Γ⊢a∷Nat
+...| TmNatElim _ _ _ Γ⊢c∷Nat = tmWfCtx Γ⊢c∷Nat
 ...| TmSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmUniv ⊢Γ = ⊢Γ
 ...| TmTyConv Γ⊢a∷A _ = tmWfCtx Γ⊢a∷A
@@ -60,6 +61,7 @@ tyEqWfCtx ty with ty
 ...| TyEqRussel Γ⊢A≡B∷U = tmEqWfCtx Γ⊢A≡B∷U
 ...| TyEqPiSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyEqUSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
+...| TyEqNatSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyEqSubstSubst _ _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TyEqSubstId Γ⊢A = tyWfCtx Γ⊢A
 
@@ -72,6 +74,7 @@ tmEqWfCtx tm with tm
 ...| TmEqApp _ _ Γ⊢a≡b∷A = tmEqWfCtx Γ⊢a≡b∷A
 ...| TmEqPi _ Γ⊢A≡B∷U _ = tmEqWfCtx Γ⊢A≡B∷U
 ...| TmEqSucc Γ⊢a≡b∷Nat = tmEqWfCtx Γ⊢a≡b∷Nat
+...| TmEqNatElim _ _ _ _ Γ⊢c₁≡c₂∷Nat = tmEqWfCtx Γ⊢c₁≡c₂∷Nat
 ...| TmEqSubst _ Γ⊢γ₁≡γ₂⇒Δ = sbEqWfCtx Γ⊢γ₁≡γ₂⇒Δ
 ...| TmEqConv Γ⊢a≡b∷A _ = tmEqWfCtx Γ⊢a≡b∷A
 ...| TmEqSubstId Γ⊢a∷A = tmWfCtx Γ⊢a∷A

@@ -13,8 +13,8 @@ private
     x y n : ℕ
     Γ Γ₁ Γ₂ Δ Δ₁ Δ₂ Θ Ξ : Context
     γ γ₁ γ₂ γ₃ δ δ₁ δ₂ ξ : Substitution
-    A B C D : Term
-    f g a b c d : Term
+    A A₁ A₂ B C D : Term
+    f g a a₁ a₂ b b₁ b₂ c c₁ c₂ d  : Term
 
 infix 6 ⊢_ _⊢_ _⊢_∷_ _⊢_⇒_ ⊢_≡ⱼ_ _⊢_≡ⱼ_ _⊢_≡ⱼ_⇒_ _⊢_≡ⱼ_∷_
 
@@ -62,6 +62,11 @@ data _⊢_∷_ where
         → Γ ⊢ Zero ∷ Nat
     TmSucc : Γ ⊢ a ∷ Nat
         → Γ ⊢ Succ a ∷ Nat
+    TmNatElim : Γ ◁ Nat ⊢ A → Γ ⊢ a ∷ A [ idₛ ◀ Zero ]ₑ 
+        → Γ ◁ Nat ◁ A ⊢ b ∷ A [ drop 2 ◀ Succ (Var 1) ]ₑ 
+        → Γ ⊢ c ∷ Nat
+        -- -----------------
+        → Γ ⊢ NatElim A a b c ∷ A [ idₛ ◀ c ]ₑ
     TmSubst : Δ ⊢ a ∷ A → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ a [ γ ]ₑ ∷ A [ γ ]ₑ
     TmUniv : ⊢ Γ 
@@ -108,6 +113,8 @@ data _⊢_≡ⱼ_ where
         → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ) -- (γ ∘ drop 1) ◀ Var 0
     TyEqUSubst : Δ ⊢ Univ l → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l
+    TyEqNatSubst : Γ ⊢ γ ⇒ Δ
+        → Γ ⊢ Nat [ γ ]ₑ ≡ⱼ Nat
     TyEqSubstSubst : Ξ ⊢ A → Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ
         → Γ ⊢  A [ δ ]ₑ [ γ ]ₑ ≡ⱼ A [ δ ∘ γ ]ₑ
     TyEqSubstId : Γ ⊢ A
@@ -130,6 +137,13 @@ data _⊢_≡ⱼ_∷_ where
         → Γ ⊢ f ∙ a ≡ⱼ g ∙ b ∷ B [ idₛ ◀ a ]ₑ
     TmEqSucc : Γ ⊢ a ≡ⱼ b ∷ Nat
         → Γ ⊢ Succ a ≡ⱼ Succ b ∷ Nat
+    TmEqNatElim : Γ ◁ Nat ⊢ A₁ -- todo : `Γ ⊢ A` required by context conv (tc)
+        → Γ ◁ Nat ⊢ A₁ ≡ⱼ A₂ 
+        → Γ ⊢ a₁ ≡ⱼ a₂ ∷ A₁ [ idₛ ◀ Zero ]ₑ 
+        → Γ ◁ Nat ◁ A₁ ⊢ b₁ ≡ⱼ b₂ ∷ A₁ [ drop 2 ◀ Succ (Var 1) ]ₑ 
+        → Γ ⊢ c₁ ≡ⱼ c₂ ∷ Nat
+        -- -----------------
+        → Γ ⊢ NatElim A₁ a₁ b₁ c₁ ≡ⱼ NatElim A₂ a₂ b₂ c₂ ∷ A₁ [ idₛ ◀ c₁ ]ₑ
     TmEqSubst : Δ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ
         → Γ ⊢ a [ γ₁ ]ₑ ≡ⱼ b [ γ₂ ]ₑ ∷ A [ γ₁ ]ₑ
     TmEqConv : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ A ≡ⱼ B

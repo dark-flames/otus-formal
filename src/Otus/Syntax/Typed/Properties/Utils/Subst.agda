@@ -25,9 +25,16 @@ display Γ⊢A = let
 section : Γ ⊢ A → Γ ⊢ a ∷ A → Γ ⊢ idₛ ◀ a ⇒ Γ ◁ A
 section Γ⊢A Γ⊢a∷A = let 
     ⊢Γ = tyWfCtx Γ⊢A
-    Γ⊢Aid≡A = TyEqSubstId Γ⊢A
-    Γ⊢aid∷A = TmTyConv Γ⊢a∷A (TyEqSym Γ⊢Aid≡A)
-  in SbExt (SbId ⊢Γ) Γ⊢A Γ⊢aid∷A
+    Γ⊢A[id]≡A = TyEqSubstId Γ⊢A
+    Γ⊢a∷A[id] = TmTyConv Γ⊢a∷A (TyEqSym Γ⊢A[id]≡A)
+  in SbExt (SbId ⊢Γ) Γ⊢A Γ⊢a∷A[id]
+
+sectionEq : Γ ⊢ A → Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ idₛ ◀ a ≡ⱼ idₛ ◀ b ⇒ Γ ◁ A
+sectionEq Γ⊢A Γ⊢a≡b∷A = let 
+    ⊢Γ = tyWfCtx Γ⊢A
+    Γ⊢A[id]≡A = TyEqSubstId Γ⊢A
+    Γ⊢a≡b∷A[id] = TmEqConv Γ⊢a≡b∷A (TyEqSym Γ⊢A[id]≡A)
+  in SbEqExt (SbEqRefl (SbId ⊢Γ)) Γ⊢A Γ⊢a≡b∷A[id]
 
 liftSb : Γ ⊢ γ ⇒ Δ → Δ ⊢ A 
   → Γ ◁ (A [ γ ]ₑ) ⊢ lift γ ⇒ Δ ◁ A

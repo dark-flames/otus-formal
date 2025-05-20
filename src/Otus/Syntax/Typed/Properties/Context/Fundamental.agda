@@ -112,6 +112,15 @@ tmCtxConv ⊢Γ≃Δ (TmZero ⊢Γ) = let
 tmCtxConv ⊢Γ≃Δ (TmSucc Γ⊢a∷Nat) = let
     Δ⊢a∷Nat = tmCtxConv ⊢Γ≃Δ Γ⊢a∷Nat
   in TmSucc Δ⊢a∷Nat
+tmCtxConv ⊢Γ≃Δ (TmNatElim Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] Γ⊢c∷Nat) = let
+    ⊢Γ , ⊢Δ = ctxConvWf ⊢Γ≃Δ
+    ⊢Γ◁ℕ≃Δ◁ℕ = ctxConvExtRefl ⊢Γ≃Δ (TyNat ⊢Γ) (TyNat ⊢Δ)
+    Δ◁ℕ⊢A = tyCtxConv ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A
+    ⊢Γ◁ℕ◁A≃Δ◁ℕ◁A = ctxConvExtRefl ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A Δ◁ℕ⊢A
+    Δ⊢a∷A[id◀Z] = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A[id◀Z]
+    Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] = tmCtxConv ⊢Γ◁ℕ◁A≃Δ◁ℕ◁A Γ◁ℕ◁A⊢b∷A[drop2◀SVar1]
+    Δ⊢c∷Nat = tmCtxConv ⊢Γ≃Δ Γ⊢c∷Nat
+  in TmNatElim Δ◁ℕ⊢A Δ⊢a∷A[id◀Z] Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] Δ⊢c∷Nat
 tmCtxConv ⊢Γ≃Δ (TmSubst Ξ⊢a∷A Γ⊢γ⇒Ξ) = let 
   Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmSubst Ξ⊢a∷A Δ⊢γ⇒Ξ
@@ -154,9 +163,9 @@ tyEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TyEqRussel Γ⊢A≡B∷U = TyEqRussel (tmEqCtxConv ⊢Γ≃Δ Γ⊢A≡B∷U)
 ...| TyEqPiSubst Ξ⊢PiAB Γ⊢γ⇒Ξ = TyEqPiSubst Ξ⊢PiAB (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqUSubst Ξ⊢Univ Γ⊢γ⇒Ξ = TyEqUSubst Ξ⊢Univ (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
+...| TyEqNatSubst Γ⊢γ⇒Ξ = TyEqNatSubst (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqSubstSubst Θ⊢A Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ = TyEqSubstSubst Θ⊢A Ξ⊢δ⇒Θ (sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ)
 ...| TyEqSubstId Γ⊢A = TyEqSubstId (tyCtxConv ⊢Γ≃Δ Γ⊢A)
-
 
 -- tmEqCtxConv : ⊢ Γ ≃ Δ → Γ ⊢ a ≡ⱼ b ∷ A → Δ ⊢ a ≡ⱼ b ∷ A
 tmEqCtxConv ⊢Γ≃Δ eq with eq
@@ -182,6 +191,16 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TmEqSucc Γ⊢a≡b∷Nat = let
     Δ⊢a≡b∷Nat = tmEqCtxConv ⊢Γ≃Δ Γ⊢a≡b∷Nat
   in TmEqSucc Δ⊢a≡b∷Nat
+...| TmEqNatElim Γ◁ℕ⊢A₁ Γ◁ℕ⊢A₁≡A₂ Γ⊢a₁≡a₂∷A₁[id◀Z] Γ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1] Γ⊢c₁≡c₂∷Nat = let
+    ⊢Γ , ⊢Δ = ctxConvWf ⊢Γ≃Δ
+    ⊢Γ◁ℕ≃Δ◁ℕ = ctxConvExtRefl ⊢Γ≃Δ (TyNat ⊢Γ) (TyNat ⊢Δ)
+    Δ◁ℕ⊢A₁ = tyCtxConv ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A₁
+    ⊢Γ◁ℕ◁A₁≃Δ◁ℕ◁A₁ = ctxConvExtRefl ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A₁ Δ◁ℕ⊢A₁
+    Δ◁ℕ⊢A₁≡A₂ = tyEqCtxConv ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A₁≡A₂
+    Δ⊢a₁≡a₂∷A₁[id◀Z] = tmEqCtxConv ⊢Γ≃Δ Γ⊢a₁≡a₂∷A₁[id◀Z]
+    Δ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1] = tmEqCtxConv ⊢Γ◁ℕ◁A₁≃Δ◁ℕ◁A₁ Γ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1]
+    Δ⊢c₁≡c₂∷Nat = tmEqCtxConv ⊢Γ≃Δ Γ⊢c₁≡c₂∷Nat
+  in TmEqNatElim Δ◁ℕ⊢A₁ Δ◁ℕ⊢A₁≡A₂ Δ⊢a₁≡a₂∷A₁[id◀Z] Δ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1] Δ⊢c₁≡c₂∷Nat
 ...| TmEqSubst Ξ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Ξ = let 
     Δ⊢γ₁≡γ₂⇒Ξ = sbEqCtxConv ⊢Γ≃Δ Γ⊢γ₁≡γ₂⇒Ξ
   in TmEqSubst Ξ⊢a≡b∷A Δ⊢γ₁≡γ₂⇒Ξ

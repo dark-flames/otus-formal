@@ -70,6 +70,10 @@ tmWfTy tm with tm
 ...| TmNat ⊢Γ = TyUniv ⊢Γ
 ...| TmZero ⊢Γ = TyNat ⊢Γ
 ...| TmSucc Γ⊢a∷Nat = tmWfTy Γ⊢a∷Nat
+...| TmNatElim Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢A[drop2◀SVar1] Γ⊢c∷Nat = let
+    ⊢Γ = tmWfCtx Γ⊢c∷Nat
+    Γ⊢section-c⇒Γ◁ℕ = section (TyNat ⊢Γ) (Γ⊢c∷Nat)
+  in TySubst Γ◁ℕ⊢A Γ⊢section-c⇒Γ◁ℕ
 ...| TmSubst Δ⊢a∷A Γ⇒Δ = let 
     Δ⊢A = tmWfTy Δ⊢a∷A
   in TySubst Δ⊢A Γ⇒Δ
@@ -182,6 +186,10 @@ tyEqWf eq with eq
     Γ◁Aγ⊢↑γ⇒Δ◁A = liftSb Γ⊢γ⇒Δ Δ⊢A
     Γ◁Aγ⊢B[↑γ] = TySubst Δ◁A⊢B Γ◁Aγ⊢↑γ⇒Δ◁A
   in TySubst Δ⊢PiAB Γ⊢γ⇒Δ , TyPi Γ⊢Aγ Γ◁Aγ⊢B[↑γ]
+...| TyEqNatSubst Γ⊢γ⇒Δ = let 
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
+    ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
+  in TySubst (TyNat ⊢Δ) Γ⊢γ⇒Δ , TyNat ⊢Γ
 ...| TyEqUSubst Δ⊢Univ Γ⊢γ⇒Δ = let 
     ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
     ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
@@ -211,6 +219,11 @@ tmEqWfTy tm with tm
 ...| TmEqSucc Γ⊢a≡b∷Nat = let
     ⊢Γ = tmEqWfCtx Γ⊢a≡b∷Nat
   in TyNat ⊢Γ
+...| TmEqNatElim Γ◁ℕ⊢A₁ Γ◁ℕ⊢A₁≡A₂ Γ⊢a₁≡a₂∷A₁[id◀Z] Γ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1] Γ⊢c₁≡c₂∷Nat = let
+    ⊢Γ = tmEqWfCtx Γ⊢c₁≡c₂∷Nat
+    Γ◁ℕ⊢A₁ = proj₁ (tyEqWf Γ◁ℕ⊢A₁≡A₂)
+    Γ⊢section-c₁⇒Γ◁ℕ = section (TyNat ⊢Γ) (proj₁ (tmEqWf Γ⊢c₁≡c₂∷Nat))
+  in TySubst Γ◁ℕ⊢A₁ Γ⊢section-c₁⇒Γ◁ℕ
 ...| TmEqSubst Δ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Δ = let
     Δ⊢A = tmEqWfTy Δ⊢a≡b∷A
     Γ⊢γ₁⇒Δ , _ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ
@@ -277,6 +290,55 @@ tmEqWf eq with eq
 ...| TmEqSucc Γ⊢a≡b∷Nat = let
     Γ⊢a∷Nat , Γ⊢b∷Nat = tmEqWf Γ⊢a≡b∷Nat
   in TmSucc Γ⊢a∷Nat , TmSucc Γ⊢b∷Nat
+...| TmEqNatElim {Γ} {A₁} {A₂} {a₁} {a₂} {b₁} {b₂} {c₁} {c₂} Γ◁ℕ⊢A₁ Γ◁ℕ⊢A₁≡A₂ Γ⊢a₁≡a₂∷A₁[id◀Z] Γ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1] Γ⊢c₁≡c₂∷Nat = let
+    ⊢Γ = tmEqWfCtx Γ⊢c₁≡c₂∷Nat
+    ⊢Γ◁ℕ = tyEqWfCtx Γ◁ℕ⊢A₁≡A₂
+    Γ⊢ℕ =  TyNat ⊢Γ
+    Γ◁ℕ⊢A₁ , Γ◁ℕ⊢A₂ = tyEqWf Γ◁ℕ⊢A₁≡A₂
+    Γ⊢a₁∷A₁[id◀Z] , Γ⊢a₂∷A₁[id◀Z] = tmEqWf Γ⊢a₁≡a₂∷A₁[id◀Z]
+    Γ◁ℕ◁A₁⊢b₁∷A₁[drop2◀SVar1] , Γ◁ℕ◁A₁⊢b₂∷A₁[drop2◀SVar1] = tmEqWf Γ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1]
+    Γ⊢c₁∷Nat , Γ⊢c₂∷Nat = tmEqWf Γ⊢c₁≡c₂∷Nat
+    Γ⊢section-c₁≡section-c₂⇒Γ◁ℕ = sectionEq Γ⊢ℕ Γ⊢c₁≡c₂∷Nat
+    ⊢Γ◁ℕ◁A₁≡Γ◁ℕ◁A₂ = ctxEqExt₂ ⊢Γ◁ℕ Γ◁ℕ⊢A₁ Γ◁ℕ⊢A₂ Γ◁ℕ⊢A₁≡A₂
+    Γ⊢A₁[id◀c₁]≡A₂[id◀c₂] = TyEqSubst Γ◁ℕ⊢A₁≡A₂ Γ⊢section-c₁≡section-c₂⇒Γ◁ℕ
+    Γ◁ℕ◁A₁⊢drop2⇒Γ = SbDropˢ (SbDropˢ (SbId ⊢Γ) Γ⊢ℕ) Γ◁ℕ⊢A₁
+    Γ⊢a₂∷A₂[id◀Z] =
+      begin
+      intro-⟨ section Γ⊢ℕ (TmZero ⊢Γ) ⟩
+        (Γ ⊢ idₛ ◀ Zero ⇒ Γ ◁ Nat)
+      ⎯⎯⎯⎯⟨ tyEqSubst₁ Γ◁ℕ⊢A₁≡A₂ ⟩
+        Γ ⊢ A₁ [ idₛ ◀ Zero ]ₑ ≡ⱼ A₂ [ idₛ ◀ Zero ]ₑ
+      ⎯⎯⎯⎯⟨ Tm-TyConv-on Γ⊢a₂∷A₁[id◀Z] ⟩
+        (Γ ⊢ a₂ ∷ A₂ [ idₛ ◀ Zero ]ₑ)
+      ∎
+    Γ◁ℕ◁A₂⊢b₂∷A₂[drop2◀SVar1] = 
+      begin
+      intro-⟨ Γ⊢ℕ ⟩ 
+        (Γ ⊢ Nat)
+      ⎯⎯⎯⎯⟨ Tm-Varᶻ ⟩
+        Γ ◁ Nat ⊢ Var 0 ∷ Nat [ drop 1 ]ₑ
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqNatSubst (display Γ⊢ℕ)) ⟩
+        Γ ◁ Nat ⊢ Var 0 ∷ Nat
+      ⎯⎯⎯⎯⟨ Tm-Var-ext Γ◁ℕ⊢A₁ ⟩
+        Γ ◁ Nat ◁ A₁ ⊢ Var 1 ∷ Nat [ drop 1 ]ₑ
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqNatSubst (display Γ◁ℕ⊢A₁)) ⟩
+        Γ ◁ Nat ◁ A₁ ⊢ Var 1 ∷ Nat
+      ⎯⎯⎯⎯⟨ TmSucc ⟩
+        Γ ◁ Nat ◁ A₁ ⊢ Succ (Var 1) ∷ Nat
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by' (TyEqNatSubst Γ◁ℕ◁A₁⊢drop2⇒Γ) ⟩
+        Γ ◁ Nat ◁ A₁ ⊢ Succ (Var 1) ∷ Nat [ drop 2 ]ₑ
+      ⎯⎯⎯⎯⟨ Sb-Ext-to Γ◁ℕ◁A₁⊢drop2⇒Γ Γ⊢ℕ ⟩
+        Γ ◁ Nat ◁ A₁ ⊢ drop 2 ◀ Succ (Var 1) ⇒ Γ ◁ Nat
+      ⎯⎯⎯⎯⟨ tyEqSubst₁ Γ◁ℕ⊢A₁≡A₂ ⟩
+        Γ ◁ Nat ◁ A₁ ⊢ A₁ [ drop 2 ◀ Succ (Var 1) ]ₑ ≡ⱼ A₂ [ drop 2 ◀ Succ (Var 1) ]ₑ
+      ⎯⎯⎯⎯⟨ tmTyConv Γ◁ℕ◁A₁⊢b₂∷A₁[drop2◀SVar1] ⟩
+        (Γ ◁ Nat ◁ A₁ ⊢ b₂ ∷ (A₂ [ drop 2 ◀ Succ (Var 1) ]ₑ))
+      ⎯⎯⎯⎯⟨ tmStability ⊢Γ◁ℕ◁A₁≡Γ◁ℕ◁A₂ ⟩
+        (Γ ◁ Nat ◁ A₂ ⊢ b₂ ∷ A₂ [ drop 2 ◀ Succ (Var 1) ]ₑ)
+      ∎
+    Γ⊢NatElim₂∷A₂[id◀c₂] = TmNatElim Γ◁ℕ⊢A₂ Γ⊢a₂∷A₂[id◀Z] Γ◁ℕ◁A₂⊢b₂∷A₂[drop2◀SVar1] Γ⊢c₂∷Nat
+  in TmNatElim Γ◁ℕ⊢A₁ Γ⊢a₁∷A₁[id◀Z] Γ◁ℕ◁A₁⊢b₁∷A₁[drop2◀SVar1] Γ⊢c₁∷Nat , 
+    TmTyConv Γ⊢NatElim₂∷A₂[id◀c₂] (TyEqSym  Γ⊢A₁[id◀c₁]≡A₂[id◀c₂])
 ...| TmEqSubst Δ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Δ = let 
     Δ⊢A = tmEqWfTy Δ⊢a≡b∷A
     Δ⊢a∷A , Δ⊢b∷A = tmEqWf Δ⊢a≡b∷A

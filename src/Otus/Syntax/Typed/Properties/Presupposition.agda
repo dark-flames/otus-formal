@@ -38,7 +38,7 @@ tmWfCtx tm with tm
 ...| TmNat ⊢Γ = ⊢Γ
 ...| TmZero ⊢Γ = ⊢Γ
 ...| TmSucc Γ⊢a∷Nat = tmWfCtx Γ⊢a∷Nat
-...| TmNatElim _ _ _ Γ⊢c∷Nat = tmWfCtx Γ⊢c∷Nat
+...| TmNatElim _ _ _ Γ⊢c∷ℕ = tmWfCtx Γ⊢c∷ℕ
 ...| TmSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmUniv ⊢Γ = ⊢Γ
 ...| TmTyConv Γ⊢a∷A _ = tmWfCtx Γ⊢a∷A
@@ -90,6 +90,8 @@ tmEqWfCtx tm with tm
 ...| TmEqUSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqPiSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqPiBeta _ _ Γ⊢a∷A = tmWfCtx Γ⊢a∷A
+...| TmEqNatElimZero _ Γ⊢a∷A _ = tmWfCtx Γ⊢a∷A
+...| TmEqNatElimSucc _ Γ⊢a∷A _ _ = tmWfCtx Γ⊢a∷A
 ...| TmEqPiEta Γ⊢f∷PiAB = tmWfCtx Γ⊢f∷PiAB
 
 -- sbEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ

@@ -18,7 +18,7 @@ private
     x y : ℕ
     Γ Δ Ξ  : Context
     γ γ₁ γ₂ : Substitution
-    A a : Term
+    A B a b : Term
 
 {-
 Substitution lemmas related to context conversion and inversion lemma
@@ -323,9 +323,7 @@ liftDropEq {Γ} {A} Γ⊢A = let
         Var 0 [ idₛ ◀ Var 0 ]ₑ ∷ A [ drop 1 ]ₑ [ drop 1 ]ₑ [ idₛ ◀ Var 0 ]ₑ
       heq-≡⟨ TmEqSubstVarExt Γ◁A◁A[drop1]⊢Var0∷A[drop1][drop1] Γ◁A⊢id◀var0⇒Γ◁A◁A[drop1] ⟩
         Var 0   ∷ A [ drop 1 ]ₑ [ drop 1 ]ₑ [ idₛ ◀ Var 0 ]ₑ
-      heq-≡⟨∷ tyEqSubst₁ (TyEqSubstSubst Γ⊢A Γ◁A⊢drop1⇒Γ Γ◁A◁A[drop1]⊢drop1⇒Γ◁A) Γ◁A⊢id◀var0⇒Γ◁A◁A[drop1] ∷⟩
-        Var 0   ∷ A [ drop 1 ∘ drop 1 ]ₑ [ idₛ ◀ Var 0 ]ₑ
-      heq-≡⟨∷ TyEqSubstSubst Γ⊢A (SbComp Γ◁A⊢drop1⇒Γ Γ◁A◁A[drop1]⊢drop1⇒Γ◁A) Γ◁A⊢id◀var0⇒Γ◁A◁A[drop1] ∷⟩ 
+      heq-≡⟨∷ tyEq3Sb Γ⊢A Γ◁A⊢drop1⇒Γ Γ◁A◁A[drop1]⊢drop1⇒Γ◁A Γ◁A⊢id◀var0⇒Γ◁A◁A[drop1] ∷⟩
         Var 0   ∷ A [ drop 1 ∘ drop 1 ∘ idₛ ◀ Var 0 ]ₑ
       heq-≡⟨∷ tyEqSubst₂ Γ⊢A Γ◁A⊢drop2∘id◀Var0≡drop1⇒Γ  ∷⟩∣ 
         Γ◁A⊢var0∷A[drop1] 
@@ -454,3 +452,46 @@ drop2SucExpEq {Γ} {A} Γ◁ℕ⊢A = let
     sb-≡⟨ SbEqExtComp  Γ◁ℕ⊢drop1◀SVar0⇒Γ◁ℕ Γ◁ℕ◁A⊢drop1⇒Γ◁ℕ ⟨∣
       drop 1 ◀ Succ (Var 0) ∘ drop 1
     ∎⇒ Γ ◁ Nat
+
+drop2Ext2Eq : Γ ⊢ γ ◀ a ◀ b ⇒ Δ ◁ A ◁ B
+    → Γ ⊢ drop 2 ∘ γ ◀ a ◀ b ≡ⱼ γ ⇒ Δ
+drop2Ext2Eq {Γ} {γ} {a} {b} {Δ} {A} {B} Γ⊢γ◀a◀b⇒Δ◁A◁B = let
+    ⊢Δ◁A , Δ◁A⊢B = ctxExtInversion (sbWfCodomain Γ⊢γ◀a◀b⇒Δ◁A◁B)
+    ⊢Δ , Δ⊢A = ctxExtInversion ⊢Δ◁A
+    Γ⊢γ◀a⇒Δ◁A , Γ⊢b∷B[γ◀a] = sbExtInversion' Γ⊢γ◀a◀b⇒Δ◁A◁B
+    Γ⊢γ⇒Δ , Γ⊢a∷A[γ] = sbExtInversion' Γ⊢γ◀a⇒Δ◁A
+
+    open SbEqReason
+  in 
+    Γ ⊢begin-sb
+      drop 2 ∘ γ ◀ a ◀ b
+    sb-≡⟨ sbEqComp₁ (SbEqDropComp (display Δ⊢A) (display Δ◁A⊢B)) Γ⊢γ◀a◀b⇒Δ◁A◁B ⟨
+      drop 1 ∘ drop 1 ∘ γ ◀ a ◀ b 
+    sb-≡⟨ SbEqCompAssoc (display Δ⊢A) (display Δ◁A⊢B) Γ⊢γ◀a◀b⇒Δ◁A◁B ⟩
+      drop 1 ∘ (drop 1 ∘ γ ◀ a ◀ b) 
+    sb-≡⟨ sbEqComp₂ (display Δ⊢A) (SbEqDropExt (display Δ◁A⊢B) Γ⊢γ◀a◀b⇒Δ◁A◁B) ⟩
+      drop 1 ∘ γ ◀ a 
+    sb-≡⟨ SbEqDropExt (display Δ⊢A) Γ⊢γ◀a⇒Δ◁A ⟩∣
+      γ
+    ∎⇒ Δ
+
+
+varSbˢ : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Δ ⊢ Var x ∷ A → Δ ⊢ B → Γ ⊢ b ∷ B [ γ ]ₑ → Γ ⊢ Var x [ γ ]ₑ ≡ⱼ a ∷ A [ γ ]ₑ 
+  → Γ ⊢ Var (1 + x) [ γ ◀ b ]ₑ ≡ⱼ a ∷ A [ γ ]ₑ
+varSbˢ {Γ} {γ} {Δ} {A}  {x} {B} {b} {a} Γ⊢γ⇒Δ Δ⊢A Δ⊢Var-x∷A Δ⊢B Γ⊢b∷B[γ] Γ⊢Var-x[γ]≡a∷A = let
+    Γ⊢γ◀b⇒Δ◁B = SbExt Γ⊢γ⇒Δ Δ⊢B Γ⊢b∷B[γ]
+    Δ◁B⊢drop1⇒Δ = display Δ⊢B
+    Δ◁B⊢A[drop1] = TySubst Δ⊢A Δ◁B⊢drop1⇒Δ
+    open TmHEqReason
+  in 
+    Γ ⊢begin-heqᵣ
+      Var (1 + x) [ γ ◀ b ]ₑ ∷ A [ drop 1 ]ₑ [ γ ◀ b ]ₑ
+    heq-≡⟨∣ hTmEqSubst₁ (hTmEqFund' Δ◁B⊢A[drop1] (TmEqSubstVarDrop Δ⊢Var-x∷A Δ◁B⊢drop1⇒Δ)) Γ⊢γ◀b⇒Δ◁B  ∙⟩
+      Var x [ drop 1 ]ₑ [ γ ◀ b ]ₑ ∷ A [ drop 1 ]ₑ [ γ ◀ b ]ₑ
+    heq-≡⟨∣ hTmEqSubstSubst Δ◁B⊢drop1⇒Δ Γ⊢γ◀b⇒Δ◁B Δ⊢A Δ⊢Var-x∷A  ∙⟩
+      Var x [ drop 1 ∘ γ ◀ b ]ₑ ∷ A [ drop 1 ∘ γ ◀ b ]ₑ
+    heq-≡⟨∣ hTmEqSubst₂ Δ⊢A Δ⊢Var-x∷A (SbEqDropExt Δ◁B⊢drop1⇒Δ  Γ⊢γ◀b⇒Δ◁B) ∙⟩
+      Var x [ γ ]ₑ ∷ A [ γ ]ₑ
+    heq-≡⟨ Γ⊢Var-x[γ]≡a∷A ⟩∣ TySubst Δ⊢A Γ⊢γ⇒Δ ∣
+      a  ∷ A [ γ ]ₑ
+    ∎

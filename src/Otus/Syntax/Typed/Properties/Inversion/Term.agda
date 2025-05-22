@@ -92,11 +92,11 @@ natElimTmInversion : Γ ⊢ NatElim A a b c ∷ T
       (Γ ◁ Nat ◁ A ⊢ b ∷ A [ drop 2 ◀ Succ (Var 1) ]ₑ) × 
       (Γ ⊢ c ∷ Nat) ×
       (Γ ⊢ T ≡ⱼ A [ idₛ ◀ c ]ₑ)
-natElimTmInversion (TmNatElim Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] Γ⊢c∷Nat) = let
-    ⊢Γ = tmWfCtx Γ⊢c∷Nat
-    Γ⊢id◀c⇒Γ◁ℕ = section (TyNat ⊢Γ) Γ⊢c∷Nat
+natElimTmInversion (TmNatElim Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] Γ⊢c∷ℕ) = let
+    ⊢Γ = tmWfCtx Γ⊢c∷ℕ
+    Γ⊢id◀c⇒Γ◁ℕ = section (TyNat ⊢Γ) Γ⊢c∷ℕ
     Γ⊢A[id◀c] = TySubst Γ◁ℕ⊢A Γ⊢id◀c⇒Γ◁ℕ
-  in Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷Nat , TyEqRefl Γ⊢A[id◀c]
+  in Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷ℕ , TyEqRefl Γ⊢A[id◀c]
 natElimTmInversion(TmTyConv Γ⊢ne∷G Γ⊢G≡T) = let
-    Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷Nat , Γ⊢G≡A[id◀c] = natElimTmInversion Γ⊢ne∷G
-  in Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷Nat , TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡A[id◀c]
+    Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷ℕ , Γ⊢G≡A[id◀c] = natElimTmInversion Γ⊢ne∷G
+  in Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷ℕ , TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡A[id◀c]

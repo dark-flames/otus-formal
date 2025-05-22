@@ -112,14 +112,14 @@ tmCtxConv ⊢Γ≃Δ (TmZero ⊢Γ) = let
 tmCtxConv ⊢Γ≃Δ (TmSucc Γ⊢a∷Nat) = let
     Δ⊢a∷Nat = tmCtxConv ⊢Γ≃Δ Γ⊢a∷Nat
   in TmSucc Δ⊢a∷Nat
-tmCtxConv ⊢Γ≃Δ (TmNatElim Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] Γ⊢c∷Nat) = let
+tmCtxConv ⊢Γ≃Δ (TmNatElim Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] Γ⊢c∷ℕ) = let
     ⊢Γ , ⊢Δ = ctxConvWf ⊢Γ≃Δ
     ⊢Γ◁ℕ≃Δ◁ℕ = ctxConvExtRefl ⊢Γ≃Δ (TyNat ⊢Γ) (TyNat ⊢Δ)
     Δ◁ℕ⊢A = tyCtxConv ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A
     ⊢Γ◁ℕ◁A≃Δ◁ℕ◁A = ctxConvExtRefl ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A Δ◁ℕ⊢A
     Δ⊢a∷A[id◀Z] = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A[id◀Z]
     Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] = tmCtxConv ⊢Γ◁ℕ◁A≃Δ◁ℕ◁A Γ◁ℕ◁A⊢b∷A[drop2◀SVar1]
-    Δ⊢c∷Nat = tmCtxConv ⊢Γ≃Δ Γ⊢c∷Nat
+    Δ⊢c∷Nat = tmCtxConv ⊢Γ≃Δ Γ⊢c∷ℕ
   in TmNatElim Δ◁ℕ⊢A Δ⊢a∷A[id◀Z] Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] Δ⊢c∷Nat
 tmCtxConv ⊢Γ≃Δ (TmSubst Ξ⊢a∷A Γ⊢γ⇒Ξ) = let 
   Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
@@ -250,6 +250,23 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
     Δ◁A⊢b∷B = tmCtxConv ⊢Γ◁A≃Δ◁A Γ◁A⊢b∷B
     Δ⊢a∷A = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A
   in TmEqPiBeta Δ⊢A Δ◁A⊢b∷B Δ⊢a∷A
+...| TmEqNatElimZero Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] = let
+    ⊢Γ , ⊢Δ = ctxConvWf ⊢Γ≃Δ
+    ⊢Γ◁ℕ≃Δ◁ℕ = ctxConvExtRefl ⊢Γ≃Δ (TyNat ⊢Γ) (TyNat ⊢Δ)
+    Δ◁ℕ⊢A = tyCtxConv ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A
+    ⊢Γ◁ℕ◁A≃Δ◁ℕ◁A = ctxConvExtRefl ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A Δ◁ℕ⊢A
+    Δ⊢a∷A[id◀Z] = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A[id◀Z]
+    Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] = tmCtxConv ⊢Γ◁ℕ◁A≃Δ◁ℕ◁A Γ◁ℕ◁A⊢b∷A[drop2◀SVar1]
+  in TmEqNatElimZero Δ◁ℕ⊢A Δ⊢a∷A[id◀Z] Δ◁ℕ◁A⊢b∷A[drop2◀SVar1]
+...| TmEqNatElimSucc Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] Γ⊢c∷ℕ = let
+    ⊢Γ , ⊢Δ = ctxConvWf ⊢Γ≃Δ
+    ⊢Γ◁ℕ≃Δ◁ℕ = ctxConvExtRefl ⊢Γ≃Δ (TyNat ⊢Γ) (TyNat ⊢Δ)
+    Δ◁ℕ⊢A = tyCtxConv ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A
+    ⊢Γ◁ℕ◁A≃Δ◁ℕ◁A = ctxConvExtRefl ⊢Γ◁ℕ≃Δ◁ℕ Γ◁ℕ⊢A Δ◁ℕ⊢A
+    Δ⊢a∷A[id◀Z] = tmCtxConv ⊢Γ≃Δ Γ⊢a∷A[id◀Z]
+    Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] = tmCtxConv ⊢Γ◁ℕ◁A≃Δ◁ℕ◁A Γ◁ℕ◁A⊢b∷A[drop2◀SVar1]
+    Δ⊢c∷Nat = tmCtxConv ⊢Γ≃Δ Γ⊢c∷ℕ
+  in TmEqNatElimSucc Δ◁ℕ⊢A Δ⊢a∷A[id◀Z] Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] Δ⊢c∷Nat
 ...| TmEqPiEta Γ⊢f∷PiAB = let 
     Δ⊢f∷PiAB = tmCtxConv ⊢Γ≃Δ Γ⊢f∷PiAB
   in TmEqPiEta Δ⊢f∷PiAB

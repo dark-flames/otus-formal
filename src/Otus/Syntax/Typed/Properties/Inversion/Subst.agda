@@ -31,7 +31,7 @@ private
     x : ℕ
     Γ Δ  : Context
     γ  : Substitution
-    a : Term
+    A a : Term
 
 idInversion : Γ ⊢ idₛ ⇒ Δ → ⊢ Γ ≡ⱼ Δ
 drop1Inversion : Γ ⊢ drop 1 ⇒ Δ 
@@ -46,6 +46,10 @@ sbExtInversion : Γ ⊢ γ ◀ a ⇒ Δ
   → Σ[ inv ∈ CtxExtInversion Δ ] 
     Γ ⊢ γ ⇒ CtxExtInversion.Γ' inv ×
     Γ ⊢ a ∷ (CtxExtInversion.A inv) [ γ ]ₑ
+
+sbExtInversion' : Γ ⊢ γ ◀ a ⇒ Δ ◁ A
+  → Γ ⊢ γ ⇒ Δ ×
+    Γ ⊢ a ∷ A [ γ ]ₑ
 
 -- dropSInversion : Γ ⊢ drop (suc x) ⇒ Δ → DropSucInversion Γ Δ x
 dropSInversion (SbDropˢ Γ⊢dropX⇒Δ Γ⊢A) = let 
@@ -92,3 +96,13 @@ sbExtInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let
     ctxExtInv Δ A Δ⊢A ⊢Δ₁≡Δ◁A , Γ⊢γ⇒Δ₁ , Γ⊢a∷Aγ = sbExtInversion Γ⊢γ⇒Δ₁
     inv = ctxExtInv Δ A Δ⊢A (ctxEqTrans (ctxEqSym ⊢Δ₁≡Δ₂) ⊢Δ₁≡Δ◁A)
   in inv , Γ⊢γ⇒Δ₁ , Γ⊢a∷Aγ
+
+-- sbExtInversion' : Γ ⊢ γ ◀ a ⇒ Δ ◁ A
+--  → Γ ⊢ γ ⇒ Δ ×
+--    Γ ⊢ a ∷ A [ γ ]ₑ
+sbExtInversion' Γ⊢γ◀a⇒Δ◁A = let
+    ctxExtInv Δ₁ A₁ Δ₁⊢A₁ ⊢Δ◁A≡Δ₁◁A₁ , Γ⊢γ⇒Δ₁ , Γ⊢a∷A₁[γ] = sbExtInversion Γ⊢γ◀a⇒Δ◁A
+    ⊢Δ≡Δ₁ , Δ⊢A≡A₁ = ctxEqExtInversion ⊢Δ◁A≡Δ₁◁A₁
+    Γ⊢γ⇒Δ = SbConv Γ⊢γ⇒Δ₁ (ctxEqSym ⊢Δ≡Δ₁)
+    Γ⊢A[γ]≡A₁[γ] = tyEqSubst₁ Δ⊢A≡A₁ Γ⊢γ⇒Δ
+  in Γ⊢γ⇒Δ , (TmTyConv Γ⊢a∷A₁[γ] (TyEqSym Γ⊢A[γ]≡A₁[γ]))

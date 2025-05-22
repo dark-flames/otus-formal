@@ -177,6 +177,15 @@ data _⊢_≡ⱼ_∷_ where
 ---- β rules
     TmEqPiBeta : Γ ⊢ A → Γ ◁ A ⊢ b ∷ B → Γ ⊢ a ∷ A
         → Γ ⊢ (Lam b) ∙ a ≡ⱼ b [ idₛ ◀ a ]ₑ ∷ B [ idₛ ◀ a ]ₑ
+    TmEqNatElimZero : Γ ◁ Nat ⊢ A → Γ ⊢ a ∷ A [ idₛ ◀ Zero ]ₑ 
+        → Γ ◁ Nat ◁ A ⊢ b ∷ A [ drop 2 ◀ Succ (Var 1) ]ₑ 
+        -- -----------------
+        → Γ ⊢ NatElim A a b Zero ≡ⱼ a ∷ A [ idₛ ◀ Zero ]ₑ
+    TmEqNatElimSucc : Γ ◁ Nat ⊢ A → Γ ⊢ a ∷ A [ idₛ ◀ Zero ]ₑ 
+        → Γ ◁ Nat ◁ A ⊢ b ∷ A [ drop 2 ◀ Succ (Var 1) ]ₑ 
+        → Γ ⊢ c ∷ Nat
+        -- -----------------
+        → Γ ⊢ NatElim A a b (Succ c) ≡ⱼ b [ idₛ ◀ c ◀ NatElim A a b c ]ₑ ∷ A [ idₛ ◀ (Succ c) ]ₑ
 ---- η rules
     TmEqPiEta : Γ ⊢ f ∷ Pi A B
         → Γ ⊢ f ≡ⱼ Lam ((f [ drop 1 ]ₑ) ∙ Var 0) ∷ Pi A B

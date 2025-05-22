@@ -198,6 +198,7 @@ tmEqWfTy tm with tm
     Γ⊢id◀sc⇒Γ◁ℕ = section (TyNat ⊢Γ) (TmSucc Γ⊢c∷ℕ)
   in TySubst Γ◁ℕ⊢A Γ⊢id◀sc⇒Γ◁ℕ
 ...| TmEqPiEta Γ⊢f∷PiAB = tmWfTy Γ⊢f∷PiAB
+...| TmEqNatEta Γ⊢c∷ℕ = tmWfTy Γ⊢c∷ℕ
 
 -- tmEqWf : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A × Γ ⊢ b ∷ A
 tmEqWf eq with eq
@@ -491,8 +492,6 @@ tmEqWf eq with eq
         lift γ ∘ drop 1 ◀ Succ (Var 0)
       ∎⇒ Δ ◁ Nat
 
-    
-    -- liftComm Γ⊢γ⇒Δ Δ⊢ℕ Δ◁ℕ⊢SVar0∷ℕ[drop1]
     Γ◁ℕ◁A[lift-γ]⊢drop2◀SVar1∘lift-lift-γ≡lift-γ∘drop2◀SVar1⇒Δ◁ℕ = 
        Γ ◁ Nat ◁ A [ lift γ ]ₑ ⊢begin-sb
         drop 2 ◀ Succ (Var 1) ∘ lift (lift γ)
@@ -661,6 +660,22 @@ tmEqWf eq with eq
         Γ ⊢ Lam ((f [ drop 1 ]ₑ) ∙ Var 0) ∷ Pi A B
       ∎
   in Γ⊢f∷PiAB , Γ⊢Lam[f[drop1]∙Var0]∷PiAB
+...| TmEqNatEta {Γ} {c} Γ⊢c∷ℕ = let
+    ⊢Γ = tmWfCtx Γ⊢c∷ℕ
+    Γ⊢ℕ = TyNat ⊢Γ
+    ⊢Γ◁ℕ = ctxExt Γ⊢ℕ
+    Γ◁ℕ⊢ℕ = TyNat ⊢Γ◁ℕ
+    Γ⊢Z∷ℕ = TmZero ⊢Γ
+    Γ⊢id◀c⇒Γ◁ℕ = section Γ⊢ℕ Γ⊢c∷ℕ
+    Γ⊢id◀Z⇒Γ◁ℕ = section Γ⊢ℕ Γ⊢Z∷ℕ
+    Γ◁ℕ◁ℕ⊢SVar0∷ℕ = TmSucc (natVarᶻ ⊢Γ◁ℕ)
+    Γ◁ℕ◁ℕ⊢SVar1∷ℕ = TmSucc (natVarˢ (natVarᶻ ⊢Γ) Γ◁ℕ⊢ℕ)
+    Γ◁ℕ◁ℕ⊢drop2⇒Γ = drop2 Γ⊢ℕ Γ◁ℕ⊢ℕ
+    Γ◁ℕ◁ℕ⊢SVar1∷ℕ[drop2] = TmTyConv Γ◁ℕ◁ℕ⊢SVar1∷ℕ (TyEqSym (TyEqNatSubst Γ◁ℕ◁ℕ⊢drop2⇒Γ))
+    Γ◁ℕ◁ℕ⊢drop2◀SVar1⇒Γ◁ℕ = SbExt Γ◁ℕ◁ℕ⊢drop2⇒Γ Γ⊢ℕ Γ◁ℕ◁ℕ⊢SVar1∷ℕ[drop2]
+    Γ◁ℕ◁ℕ⊢SVar0∷ℕ[drop2◀SVar1] = TmTyConv Γ◁ℕ◁ℕ⊢SVar0∷ℕ (TyEqSym (TyEqNatSubst Γ◁ℕ◁ℕ⊢drop2◀SVar1⇒Γ◁ℕ))
+    Γ⊢Z∷ℕ[id◀Z] = TmTyConv Γ⊢Z∷ℕ (TyEqSym (TyEqNatSubst Γ⊢id◀Z⇒Γ◁ℕ))
+  in TmTyConv (TmNatElim Γ◁ℕ⊢ℕ Γ⊢Z∷ℕ[id◀Z] Γ◁ℕ◁ℕ⊢SVar0∷ℕ[drop2◀SVar1] Γ⊢c∷ℕ) (TyEqNatSubst Γ⊢id◀c⇒Γ◁ℕ) , Γ⊢c∷ℕ
 
 -- sbEqWf : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Γ ⊢ γ₁ ⇒ Δ × Γ ⊢ γ₂ ⇒ Δ
 sbEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq

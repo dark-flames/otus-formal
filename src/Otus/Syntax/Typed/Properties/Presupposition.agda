@@ -93,6 +93,7 @@ tmEqWfCtx tm with tm
 ...| TmEqNatElimZero _ Γ⊢a∷A _ = tmWfCtx Γ⊢a∷A
 ...| TmEqNatElimSucc _ Γ⊢a∷A _ _ = tmWfCtx Γ⊢a∷A
 ...| TmEqPiEta Γ⊢f∷PiAB = tmWfCtx Γ⊢f∷PiAB
+...| TmEqNatEta Γ⊢c∷ℕ = tmWfCtx Γ⊢c∷ℕ
 
 -- sbEqWfCtx : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → ⊢ Γ
 sbEqWfCtx eq with eq

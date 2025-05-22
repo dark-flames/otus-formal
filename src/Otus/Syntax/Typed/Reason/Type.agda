@@ -52,7 +52,7 @@ TyEq-PiSubst : Δ ⊢ Pi A B → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi ( A [ γ ]ₑ ) ( B [ lift γ ]ₑ)
 TyEq-PiSubst = TyEqPiSubst
 
-TyEq-USubst : Δ ⊢ Univ l → Γ ⊢ γ ⇒ Δ
+TyEq-USubst : Γ ⊢ γ ⇒ Δ
     → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l
 TyEq-USubst = TyEqUSubst
 

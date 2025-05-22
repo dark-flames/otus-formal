@@ -270,6 +270,9 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TmEqPiEta Γ⊢f∷PiAB = let 
     Δ⊢f∷PiAB = tmCtxConv ⊢Γ≃Δ Γ⊢f∷PiAB
   in TmEqPiEta Δ⊢f∷PiAB
+...| TmEqNatEta Γ⊢c∷ℕ = let 
+    Δ⊢c∷ℕ = tmCtxConv ⊢Γ≃Δ Γ⊢c∷ℕ
+  in TmEqNatEta Δ⊢c∷ℕ
 
 -- sbEqCtxConv : ⊢ Γ ≃ Δ → Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ → Δ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Ξ
 sbEqCtxConv  ⊢Γ≃Δ eq with eq

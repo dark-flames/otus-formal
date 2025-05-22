@@ -189,6 +189,8 @@ data _⊢_≡ⱼ_∷_ where
 ---- η rules
     TmEqPiEta : Γ ⊢ f ∷ Pi A B
         → Γ ⊢ f ≡ⱼ Lam ((f [ drop 1 ]ₑ) ∙ Var 0) ∷ Pi A B
+    TmEqNatEta : Γ ⊢ c ∷ Nat
+        → Γ ⊢ NatElim Nat Zero (Succ (Var 0)) c ≡ⱼ c ∷ Nat
 
 open _⊢_≡ⱼ_∷_
 

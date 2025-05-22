@@ -13,7 +13,7 @@ private
     x y : ℕ
     Γ  Δ Ξ : Context
     γ γ₁ γ₂ δ δ₁ δ₂ : Substitution
-    A a b : Term
+    A B a b : Term
 
 --- Substitution
 
@@ -36,6 +36,18 @@ sectionEq Γ⊢A Γ⊢a≡b∷A = let
     Γ⊢a≡b∷A[id] = TmEqConv Γ⊢a≡b∷A (TyEqSym Γ⊢A[id]≡A)
   in SbEqExt (SbEqRefl (SbId ⊢Γ)) Γ⊢A Γ⊢a≡b∷A[id]
 
+natVarᶻ : ⊢ Γ  → Γ ◁ Nat ⊢ Var 0 ∷ Nat
+natVarᶻ ⊢Γ = let
+    Γ⊢ℕ = TyNat ⊢Γ
+  in TmTyConv (TmVarᶻ Γ⊢ℕ) (TyEqNatSubst (display Γ⊢ℕ))
+
+natVarˢ : Γ ⊢ Var x ∷ Nat → Γ ⊢ A
+    → Γ ◁ A ⊢ Var (suc x) ∷ Nat
+natVarˢ Γ⊢Var-x∷ℕ Γ⊢A = TmTyConv (TmVarˢ Γ⊢Var-x∷ℕ Γ⊢A) (TyEqNatSubst (display Γ⊢A))
+
+drop2 : Γ ⊢ A → Γ ◁ A ⊢ B → Γ ◁ A ◁ B ⊢ drop 2 ⇒ Γ
+drop2 Γ⊢A Γ◁A⊢B = SbDropˢ (display Γ⊢A) Γ◁A⊢B
+
 liftSb : Γ ⊢ γ ⇒ Δ → Δ ⊢ A 
   → Γ ◁ (A [ γ ]ₑ) ⊢ lift γ ⇒ Δ ◁ A
 liftSb Γ⊢γ⇒Δ Δ⊢A = let 
@@ -46,6 +58,7 @@ liftSb Γ⊢γ⇒Δ Δ⊢A = let
     Γ◁Aγ⊢Var0∷↑A = TmTyConv (TmVarᶻ Γ⊢Aγ) Γ◁Aγ⊢Aγdrop≡A[γ∘drop]
   in SbExt Γ◁Aγ⊢γ∘drop1⇒Δ Δ⊢A Γ◁Aγ⊢Var0∷↑A
 
+
 --- Substition Pairtial Congruence
 sbEqExt : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ∷ A [ γ₁ ]ₑ
     → Γ ⊢ γ₁ ◀ a ≡ⱼ γ₂ ◀ a  ⇒ Δ ◁ A
@@ -54,6 +67,10 @@ sbEqExt Γ⊢γ₁≡γ₂⇒Δ Δ⊢A Γ⊢a∷A[γ₁] = SbEqExt Γ⊢γ₁≡
 sbEqExt₂ : Γ ⊢ γ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ≡ⱼ b ∷ A [ γ ]ₑ 
     → Γ ⊢ γ ◀ a ≡ⱼ γ ◀ b  ⇒ Δ ◁ A
 sbEqExt₂ Γ⊢γ⇒Δ Δ⊢A Γ⊢a≡b∷A[γ₁] = SbEqExt (SbEqRefl Γ⊢γ⇒Δ) Δ⊢A Γ⊢a≡b∷A[γ₁]
+
+sbEqExt₁ : Γ ⊢ γ₁ ≡ⱼ γ₂ ⇒ Δ → Δ ⊢ A → Γ ⊢ a ∷ A [ γ₁ ]ₑ 
+    → Γ ⊢ γ₁ ◀ a ≡ⱼ γ₂ ◀ a  ⇒ Δ ◁ A
+sbEqExt₁ Γ⊢γ₁≡γ₂⇒Δ Δ⊢A Γ⊢a∷A[γ₁] = SbEqExt Γ⊢γ₁≡γ₂⇒Δ Δ⊢A (TmEqRefl Γ⊢a∷A[γ₁])
 
 sbEqDrop : Γ ⊢ drop x ⇒ Δ → x ≡ y → Γ ⊢ drop x ≡ⱼ drop y ⇒ Δ
 sbEqDrop Γ⊢dropX⇒Δ refl = SbEqRefl Γ⊢dropX⇒Δ

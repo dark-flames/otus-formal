@@ -226,12 +226,6 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TmEqAppSubst Ξ⊢fa∷A Γ⊢γ⇒Ξ = let 
     Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmEqAppSubst Ξ⊢fa∷A Δ⊢γ⇒Ξ
-...| TmEqSubstSubst Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ Θ⊢a∷A = let 
-    Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
-  in TmEqSubstSubst Ξ⊢δ⇒Θ Δ⊢γ⇒Ξ Θ⊢a∷A
-...| TmEqUSubst Γ⊢γ⇒Ξ = let 
-    Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
-  in TmEqUSubst Δ⊢γ⇒Ξ
 ...| TmEqNatSubst Γ⊢γ⇒Ξ = let 
     Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmEqNatSubst Δ⊢γ⇒Ξ
@@ -241,6 +235,15 @@ tmEqCtxConv ⊢Γ≃Δ eq with eq
 ...| TmEqSuccSubst Ξ⊢Succ-a∷ℕ Γ⊢γ⇒Ξ = let 
     Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
   in TmEqSuccSubst Ξ⊢Succ-a∷ℕ Δ⊢γ⇒Ξ
+...| TmEqNatElimSubst Ξ⊢NatElim∷A[id◀c] Γ⊢γ⇒Ξ = let
+    Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
+  in TmEqNatElimSubst Ξ⊢NatElim∷A[id◀c] Δ⊢γ⇒Ξ
+...| TmEqSubstSubst Ξ⊢δ⇒Θ Γ⊢γ⇒Ξ Θ⊢a∷A = let 
+    Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
+  in TmEqSubstSubst Ξ⊢δ⇒Θ Δ⊢γ⇒Ξ Θ⊢a∷A
+...| TmEqUSubst Γ⊢γ⇒Ξ = let 
+    Δ⊢γ⇒Ξ = sbCtxConv ⊢Γ≃Δ Γ⊢γ⇒Ξ
+  in TmEqUSubst Δ⊢γ⇒Ξ
 ...| TmEqPiBeta Γ⊢A Γ◁A⊢b∷B Γ⊢a∷A = let 
     Δ⊢A = tyCtxConv ⊢Γ≃Δ Γ⊢A 
     ⊢Γ◁A≃Δ◁A = ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A

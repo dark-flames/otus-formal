@@ -20,3 +20,4 @@ infix 6 _⊢_∷_≡ⱼ_∷_
 data _⊢_∷_≡ⱼ_∷_ : Context → Term → Term → Term → Term → Set where
     HTmEqₗ : Γ ⊢ A ≡ⱼ B → Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ∷ A ≡ⱼ b ∷ B
     HTmEqᵣ : Γ ⊢ A ≡ⱼ B → Γ ⊢ a ≡ⱼ b ∷ B → Γ ⊢ a ∷ A ≡ⱼ b ∷ B
+    

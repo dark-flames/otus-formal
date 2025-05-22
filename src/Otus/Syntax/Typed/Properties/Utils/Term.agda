@@ -46,3 +46,4 @@ tmEqConv = TmEqConv
 tmEqConv' : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ B ≡ⱼ A
         → Γ ⊢ a ≡ⱼ b ∷ B
 tmEqConv' Γ⊢a≡b∷A Γ⊢B≡A = TmEqConv Γ⊢a≡b∷A (TyEqSym Γ⊢B≡A)
+

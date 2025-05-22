@@ -130,3 +130,13 @@ hTmEqSubstSubst : Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ A → Ξ ⊢ 
 hTmEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢A Ξ⊢a∷A = let 
     Γ⊢A[δ][γ]≡A[δ∘γ] = TyEqSubstSubst Ξ⊢A Δ⊢δ⇒Ξ Γ⊢γ⇒Δ
   in HTmEqₗ Γ⊢A[δ][γ]≡A[δ∘γ] (TmEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢a∷A)
+
+hTmEqSuccEqₗ : Γ ⊢ a ∷ Nat ≡ⱼ b ∷ B → Γ ⊢ Succ a ∷ Nat ≡ⱼ Succ b ∷ B
+hTmEqSuccEqₗ Γ⊢a∷ℕ≡b∷B = let
+    Γ⊢ℕ≡B , Γ⊢a≡b∷ℕ = hTmEqCoeₗ Γ⊢a∷ℕ≡b∷B
+  in HTmEqₗ Γ⊢ℕ≡B (TmEqSucc Γ⊢a≡b∷ℕ)
+
+hTmEqSuccEqᵣ : Γ ⊢ a ∷ A ≡ⱼ b ∷ Nat → Γ ⊢ Succ a ∷ A ≡ⱼ Succ b ∷ Nat
+hTmEqSuccEqᵣ Γ⊢a∷A≡b∷ℕ = let
+    Γ⊢A≡ℕ , Γ⊢a≡b∷ℕ = hTmEqCoeᵣ Γ⊢a∷A≡b∷ℕ
+  in HTmEqᵣ Γ⊢A≡ℕ (TmEqSucc Γ⊢a≡b∷ℕ)

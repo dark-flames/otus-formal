@@ -124,10 +124,10 @@ module TmHEqReason where
   conv-step-≡-⟨ _ _ Γ⊢C≡A Γ⊢a∷C≡b∷B = hTmEqConvₗ Γ⊢C≡A Γ⊢a∷C≡b∷B 
 
   syntax homo-step-≡-⟩ x X x≡y y≡z     = x ∷ X heq-≡⟨ x≡y ⟩ y≡z
-  syntax homo-step-≡-⟨ x y≡x y≡z       = x ∷ X heq-≡⟨ y≡x ⟨ y≡z
+  syntax homo-step-≡-⟨ x X y≡x y≡z     = x ∷ X heq-≡⟨ y≡x ⟨ y≡z
   syntax heter-step-≡-∣ x X x≡y        = x ∷ X heq-≡⟨⟩ x≡y
-  syntax heter-stepₗ-≡-⟩ x X x≡y y≡z    = x ∷ X heq-≡⟨∣ x≡y ∙⟩ y≡z
-  syntax heter-stepₗ-≡-⟨ x X y≡x y≡z    = x ∷ X heq-≡⟨∣ y≡x ∙⟨ y≡z
+  syntax heter-stepₗ-≡-⟩ x X x≡y y≡z   = x ∷ X heq-≡⟨∣ x≡y ∙⟩ y≡z
+  syntax heter-stepₗ-≡-⟨ x X y≡x y≡z   = x ∷ X heq-≡⟨∣ y≡x ∙⟨ y≡z
   syntax heter-stepᵣ-≡-⟩ x X x≡y y≡z   = x ∷ X heq-≡⟨∙ x≡y ∣⟩ y≡z
   syntax heter-stepᵣ-≡-⟨ x X y≡x y≡z   = x ∷ X heq-≡⟨∙ y≡x ∣⟨ y≡z
   syntax conv-step-≡-⟩ x X X≡Y x≡z     = x ∷ X heq-≡⟨∷ X≡Y ∷⟩ x≡z
@@ -162,8 +162,8 @@ module TmHEqReason where
   conv-step-≡-⟨-B∎ : (a A B : Term) → Γ ⊢ a ∷ B → Γ ⊢ B ≡ⱼ A → Γ ⊢ a ∷ A ≡ⱼ a ∷ B
   conv-step-≡-⟨-B∎ _ _ _ = hTmEqFundTyᵣ'
 
-  syntax homo-step-≡-⟩-∎  x y X Y j x≡y   = x ∷ X heq-≡⟨ x≡y ⟩ j ∣ y ∷ Y ∎
-  syntax homo-step-≡-⟨-∎  x y X Y j y≡x   = x ∷ X heq-≡⟨ y≡x ⟨ j ∣ y ∷ Y ∎
+  syntax homo-step-≡-⟩-∎  x y X Y j x≡y   = x ∷ X heq-≡⟨ x≡y ⟩∣ j ∣ y ∷ Y ∎
+  syntax homo-step-≡-⟨-∎  x y X Y j y≡x   = x ∷ X heq-≡⟨ y≡x ⟨∣ j ∣ y ∷ Y ∎
   syntax heter-step-≡-⟩-∎ x y X Y x≡y     = x ∷ X heq-≡⟨ x≡y ⟩∣ y ∷ Y ∎
   syntax heter-step-≡-⟨-∎ x y X Y y≡x     = x ∷ X heq-≡⟨ y≡x ⟨∣ y ∷ Y ∎
   syntax conv-step-≡-⟩-A∎  x X Y jX X≡Y     = x ∷ X heq-≡⟨∷ X≡Y ∷⟩∣ jX ⟨∎∷ Y

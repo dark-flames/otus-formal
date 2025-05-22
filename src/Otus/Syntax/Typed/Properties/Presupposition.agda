@@ -82,11 +82,12 @@ tmEqWfCtx tm with tm
 ...| TmEqSubstVarDrop _ Γ⊢dropX⇒Δ = sbWfCtx Γ⊢dropX⇒Δ
 ...| TmEqLamSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqAppSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
-...| TmEqSubstSubst _ Γ⊢γ⇒Δ _ = sbWfCtx Γ⊢γ⇒Δ
-...| TmEqUSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqNatSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqZeroSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqSuccSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
+...| TmEqNatElimSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
+...| TmEqSubstSubst _ Γ⊢γ⇒Δ _ = sbWfCtx Γ⊢γ⇒Δ
+...| TmEqUSubst Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqPiSubst _ Γ⇒Δ = sbWfCtx Γ⇒Δ
 ...| TmEqPiBeta _ _ Γ⊢a∷A = tmWfCtx Γ⊢a∷A
 ...| TmEqPiEta Γ⊢f∷PiAB = tmWfCtx Γ⊢f∷PiAB

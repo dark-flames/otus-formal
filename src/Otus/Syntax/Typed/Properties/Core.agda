@@ -8,6 +8,7 @@ open import Otus.Syntax.Typed.Properties.Reason
 open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Context
+open import Otus.Syntax.Typed.Properties.Heter
 open import Otus.Syntax.Typed.Properties.Inversion
 open import Otus.Syntax.Typed.Properties.Subst
 
@@ -72,8 +73,8 @@ tmWfTy tm with tm
 ...| TmSucc Γ⊢a∷Nat = tmWfTy Γ⊢a∷Nat
 ...| TmNatElim Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢A[drop2◀SVar1] Γ⊢c∷Nat = let
     ⊢Γ = tmWfCtx Γ⊢c∷Nat
-    Γ⊢section-c⇒Γ◁ℕ = section (TyNat ⊢Γ) (Γ⊢c∷Nat)
-  in TySubst Γ◁ℕ⊢A Γ⊢section-c⇒Γ◁ℕ
+    Γ⊢id◀c⇒Γ◁ℕ = section (TyNat ⊢Γ) (Γ⊢c∷Nat)
+  in TySubst Γ◁ℕ⊢A Γ⊢id◀c⇒Γ◁ℕ
 ...| TmSubst Δ⊢a∷A Γ⇒Δ = let 
     Δ⊢A = tmWfTy Δ⊢a∷A
   in TySubst Δ⊢A Γ⇒Δ
@@ -144,8 +145,8 @@ tmEqWfTy tm with tm
 ...| TmEqNatElim Γ◁ℕ⊢A₁ Γ◁ℕ⊢A₁≡A₂ Γ⊢a₁≡a₂∷A₁[id◀Z] Γ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1] Γ⊢c₁≡c₂∷Nat = let
     ⊢Γ = tmEqWfCtx Γ⊢c₁≡c₂∷Nat
     Γ◁ℕ⊢A₁ = proj₁ (tyEqWf Γ◁ℕ⊢A₁≡A₂)
-    Γ⊢section-c₁⇒Γ◁ℕ = section (TyNat ⊢Γ) (proj₁ (tmEqWf Γ⊢c₁≡c₂∷Nat))
-  in TySubst Γ◁ℕ⊢A₁ Γ⊢section-c₁⇒Γ◁ℕ
+    Γ⊢id◀c₁⇒Γ◁ℕ = section (TyNat ⊢Γ) (proj₁ (tmEqWf Γ⊢c₁≡c₂∷Nat))
+  in TySubst Γ◁ℕ⊢A₁ Γ⊢id◀c₁⇒Γ◁ℕ
 ...| TmEqSubst Δ⊢a≡b∷A Γ⊢γ₁≡γ₂⇒Δ = let
     Δ⊢A = tmEqWfTy Δ⊢a≡b∷A
     Γ⊢γ₁⇒Δ , _ = sbEqWf Γ⊢γ₁≡γ₂⇒Δ
@@ -169,12 +170,6 @@ tmEqWfTy tm with tm
 ...| TmEqAppSubst Δ⊢f∙a∷A Γ⊢γ⇒Δ = let
     Δ⊢A = tmWfTy Δ⊢f∙a∷A
   in TySubst Δ⊢A Γ⊢γ⇒Δ
-...| TmEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢a∷A = let
-    Ξ⊢A = tmWfTy Ξ⊢a∷A
-  in TySubst (TySubst Ξ⊢A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ
-...| TmEqUSubst Γ⊢γ⇒Δ = let
-    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
-  in TyUniv ⊢Γ
 ...| TmEqNatSubst Γ⊢γ⇒Δ = let
     ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
   in TyUniv ⊢Γ
@@ -184,6 +179,15 @@ tmEqWfTy tm with tm
 ...| TmEqSuccSubst _ Γ⊢γ⇒Δ = let
     ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
   in TyNat ⊢Γ
+...| TmEqNatElimSubst Δ⊢NatElim∷A[id◀c] Γ⊢γ⇒Δ = let 
+    Δ⊢A[id◀c] = tmWfTy Δ⊢NatElim∷A[id◀c]
+  in TySubst Δ⊢A[id◀c] Γ⊢γ⇒Δ
+...| TmEqSubstSubst Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢a∷A = let
+    Ξ⊢A = tmWfTy Ξ⊢a∷A
+  in TySubst (TySubst Ξ⊢A Δ⊢δ⇒Ξ) Γ⊢γ⇒Δ
+...| TmEqUSubst Γ⊢γ⇒Δ = let
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
+  in TyUniv ⊢Γ
 ...| TmEqPiBeta Γ⊢A Γ◁A⊢b∷B Γ⊢a∷A = let
     Γ◁A⊢B = tmWfTy Γ◁A⊢b∷B
     Γ⊢id◀a⇒Γ◁A = section Γ⊢A Γ⊢a∷A
@@ -229,9 +233,9 @@ tmEqWf eq with eq
     Γ⊢a₁∷A₁[id◀Z] , Γ⊢a₂∷A₁[id◀Z] = tmEqWf Γ⊢a₁≡a₂∷A₁[id◀Z]
     Γ◁ℕ◁A₁⊢b₁∷A₁[drop2◀SVar1] , Γ◁ℕ◁A₁⊢b₂∷A₁[drop2◀SVar1] = tmEqWf Γ◁ℕ◁A₁⊢b₁≡b₂∷A₁[drop2◀SVar1]
     Γ⊢c₁∷Nat , Γ⊢c₂∷Nat = tmEqWf Γ⊢c₁≡c₂∷Nat
-    Γ⊢section-c₁≡section-c₂⇒Γ◁ℕ = sectionEq Γ⊢ℕ Γ⊢c₁≡c₂∷Nat
+    Γ⊢id◀c₁≡id◀c₂⇒Γ◁ℕ = sectionEq Γ⊢ℕ Γ⊢c₁≡c₂∷Nat
     ⊢Γ◁ℕ◁A₁≡Γ◁ℕ◁A₂ = ctxEqExt₂ ⊢Γ◁ℕ Γ◁ℕ⊢A₁ Γ◁ℕ⊢A₂ Γ◁ℕ⊢A₁≡A₂
-    Γ⊢A₁[id◀c₁]≡A₂[id◀c₂] = TyEqSubst Γ◁ℕ⊢A₁≡A₂ Γ⊢section-c₁≡section-c₂⇒Γ◁ℕ
+    Γ⊢A₁[id◀c₁]≡A₂[id◀c₂] = TyEqSubst Γ◁ℕ⊢A₁≡A₂ Γ⊢id◀c₁≡id◀c₂⇒Γ◁ℕ
     Γ◁ℕ◁A₁⊢drop2⇒Γ = SbDropˢ (SbDropˢ (SbId ⊢Γ) Γ⊢ℕ) Γ◁ℕ⊢A₁
     Γ⊢a₂∷A₂[id◀Z] =
       begin
@@ -400,6 +404,152 @@ tmEqWf eq with eq
         Γ ⊢ (f [ γ ]ₑ) ∙ (a [ γ ]ₑ) ∷ T [ γ ]ₑ
       ∎
   in (TmSubst Δ⊢f∙a∷T Γ⊢γ⇒Δ) , Γ⊢f[γ]∙a[γ]∷T[γ]
+...| TmEqNatSubst Γ⊢γ⇒Δ = let
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
+    ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
+    Γ⊢Nat∷U[γ] = TmSubst (TmNat ⊢Δ) Γ⊢γ⇒Δ
+  in TmTyConv Γ⊢Nat∷U[γ] (TyEqUSubst Γ⊢γ⇒Δ) , TmNat ⊢Γ
+...| TmEqZeroSubst Γ⊢γ⇒Δ = let
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
+    ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
+    Γ⊢Zero∷Nat[γ] = TmSubst (TmZero ⊢Δ) Γ⊢γ⇒Δ
+  in TmTyConv Γ⊢Zero∷Nat[γ] (TyEqNatSubst Γ⊢γ⇒Δ) , TmZero ⊢Γ
+...| TmEqSuccSubst Δ⊢Succ-a∷Nat Γ⊢γ⇒Δ = let
+    Δ⊢a∷Nat , _ = succTmInversion Δ⊢Succ-a∷Nat
+    Γ⊢Nat[γ]≡Nat = TyEqNatSubst Γ⊢γ⇒Δ
+    Γ⊢a[γ]∷Nat[γ] = TmSubst Δ⊢a∷Nat Γ⊢γ⇒Δ
+    Γ⊢a[γ]∷Nat = TmTyConv Γ⊢a[γ]∷Nat[γ] Γ⊢Nat[γ]≡Nat
+    Γ⊢Succ-a[γ]∷Nat[γ] = TmSubst Δ⊢Succ-a∷Nat Γ⊢γ⇒Δ
+  in TmTyConv Γ⊢Succ-a[γ]∷Nat[γ] Γ⊢Nat[γ]≡Nat , TmSucc Γ⊢a[γ]∷Nat
+...| TmEqNatElimSubst {Δ} {A} {a} {b} {c} {Γ} {γ} Δ⊢NatElim∷A[id◀c] Γ⊢γ⇒Δ = let
+    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
+    ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
+    Δ◁ℕ⊢A , Δ⊢a∷A[id◀Z] , Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Δ⊢c∷Nat , _ = natElimTmInversion Δ⊢NatElim∷A[id◀c]
+    Γ⊢ℕ[γ]≡ℕ = TyEqNatSubst Γ⊢γ⇒Δ
+    Δ⊢ℕ = TyNat ⊢Δ
+    Γ⊢ℕ = TyNat ⊢Γ
+    ⊢Γ◁ℕ[γ]≡Γ◁ℕ = ctxEqExt₂ ⊢Γ (TySubst Δ⊢ℕ Γ⊢γ⇒Δ) Γ⊢ℕ  Γ⊢ℕ[γ]≡ℕ
+    Γ⊢id⇒Γ = SbId ⊢Γ
+    Γ⊢c[γ]∷Nat = TmTyConv (TmSubst Δ⊢c∷Nat Γ⊢γ⇒Δ) Γ⊢ℕ[γ]≡ℕ
+    Γ◁ℕ⊢lift-γ⇒Δ◁ℕ = sbStability ⊢Γ◁ℕ[γ]≡Γ◁ℕ (liftSb Γ⊢γ⇒Δ Δ⊢ℕ)
+    Γ◁ℕ◁A[lift-γ]⊢lift-lift-γ⇒Δ◁ℕ◁A = liftSb Γ◁ℕ⊢lift-γ⇒Δ◁ℕ Δ◁ℕ⊢A
+    Γ◁ℕ⊢A[lift-γ] = TySubst Δ◁ℕ⊢A Γ◁ℕ⊢lift-γ⇒Δ◁ℕ
+    Γ◁ℕ◁A[lift-γ]⊢SVar1∷ℕ = TmSucc (natVarˢ (natVarᶻ ⊢Γ) Γ◁ℕ⊢A[lift-γ])
+    Δ◁ℕ◁A⊢drop1⇒Δ◁ℕ = display Δ◁ℕ⊢A
+    Γ◁ℕ◁A[lift-γ]⊢drop1⇒Γ◁ℕ = display Γ◁ℕ⊢A[lift-γ]
+    Δ◁ℕ◁A⊢drop2⇒Δ = drop2 Δ⊢ℕ Δ◁ℕ⊢A
+    Δ◁ℕ⊢SVar0∷ℕ = TmSucc (natVarᶻ ⊢Δ)
+    Δ◁ℕ⊢SVar0∷ℕ[drop1] = TmTyConv Δ◁ℕ⊢SVar0∷ℕ (TyEqSym (TyEqNatSubst (display Δ⊢ℕ)))
+    Δ◁ℕ◁A⊢SVar1∷ℕ = TmSucc (natVarˢ (natVarᶻ ⊢Δ) Δ◁ℕ⊢A)
+    Δ◁ℕ◁A⊢SVar1∷ℕ[drop2] = TmTyConv Δ◁ℕ◁A⊢SVar1∷ℕ (TyEqSym (TyEqNatSubst Δ◁ℕ◁A⊢drop2⇒Δ))
+    Γ◁ℕ◁A[lift-γ]⊢drop2◀SVar1⇒Γ◁ℕ = sbExtNat (drop2 Γ⊢ℕ Γ◁ℕ⊢A[lift-γ]) Γ◁ℕ◁A[lift-γ]⊢SVar1∷ℕ
+    Δ◁ℕ◁A⊢drop2◀SVar1⇒Δ◁ℕ = sbExtNat Δ◁ℕ◁A⊢drop2⇒Δ Δ◁ℕ◁A⊢SVar1∷ℕ
+    Δ◁ℕ⊢drop1◀SVar0⇒Δ◁ℕ = sbExtNat (display Δ⊢ℕ) Δ◁ℕ⊢SVar0∷ℕ
+    Γ◁ℕ⊢drop1◀SVar0⇒Γ◁ℕ = sbExtNat (display Γ⊢ℕ) (TmSucc (natVarᶻ ⊢Γ))
+    
+
+    Γ⊢Z[γ]≡Z∷Nat[id] = TmEqConv (TmEqZeroSubst Γ⊢γ⇒Δ) (TyEqSym (TyEqNatSubst Γ⊢id⇒Γ))
+    Δ⊢id◀Z⇒Δ◁ℕ = section Δ⊢ℕ (TmZero ⊢Δ)
+    Γ⊢id◀Z⇒Γ◁ℕ = section Γ⊢ℕ (TmZero ⊢Γ)
+
+    open TyEqReason
+    open SbEqReason
+    open TmHEqReason
+
+    Γ◁ℕ⊢SVar0≡SVar0[lift-γ]∷ℕ[drop1] = 
+      Γ ◁ Nat ⊢begin-heqₗ
+        Succ (Var 0) ∷ Nat [ drop 1 ]ₑ
+      heq-≡⟨∷ TyEqNatSubst (display Γ⊢ℕ) ∷⟩
+        Succ (Var 0) ∷ Nat
+      heq-≡⟨∣ hTmEqSuccEqᵣ (HTmEqₗ (TyEqNatSubst Γ◁ℕ⊢lift-γ⇒Δ◁ℕ) (TmEqSubstVarExt (natVarᶻ ⊢Δ) Γ◁ℕ⊢lift-γ⇒Δ◁ℕ)) ∙⟨ 
+        Succ (Var 0 [ lift γ ]ₑ) ∷ Nat [ lift γ ]ₑ
+      heq-≡⟨∷ TyEqNatSubst Γ◁ℕ⊢lift-γ⇒Δ◁ℕ ∷⟩
+        Succ (Var 0 [ lift γ ]ₑ) ∷ Nat
+      heq-≡⟨  TmEqSuccSubst Δ◁ℕ⊢SVar0∷ℕ Γ◁ℕ⊢lift-γ⇒Δ◁ℕ  ⟨∣ (TyNat (ctxExt Γ⊢ℕ)) ∣
+        Succ (Var 0) [ lift γ ]ₑ ∷ Nat
+      ∎
+
+    Γ⊢id◀Z∘γ≡lift-γ∘id◀Z⇒Δ◁ℕ = 
+      Γ ⊢begin-sb
+        idₛ ◀ Zero ∘ γ
+      sb-≡⟨ liftSectionCommute Γ⊢γ⇒Δ Δ⊢ℕ (TmZero ⊢Δ) ⟨
+        lift γ ∘ idₛ ◀ Zero [ γ ]ₑ
+      sb-≡⟨ sbEqComp₂ Γ◁ℕ⊢lift-γ⇒Δ◁ℕ (sbEqExt₂ (SbId ⊢Γ) Γ⊢ℕ Γ⊢Z[γ]≡Z∷Nat[id]) ⟩∣
+        lift γ ∘ idₛ ◀ Zero
+      ∎⇒ Δ ◁ Nat
+    
+    Γ◁ℕ⊢drop1◀SVar0∘lift-γ≡lift-γ∘drop1◀SVar0⇒Δ◁ℕ = 
+      Γ ◁ Nat ⊢begin-sb
+        drop 1 ◀ Succ (Var 0) ∘ lift γ
+      sb-≡⟨ sbEqStability ⊢Γ◁ℕ[γ]≡Γ◁ℕ (liftComm Γ⊢γ⇒Δ Δ⊢ℕ Δ◁ℕ⊢SVar0∷ℕ[drop1]) ⟩
+        lift γ ∘ drop 1 ◀ Succ (Var 0) [ lift γ ]ₑ
+      sb-≡⟨ sbEqComp₂ Γ◁ℕ⊢lift-γ⇒Δ◁ℕ (sbEqExt₂ (display Γ⊢ℕ)Γ⊢ℕ (TmEqSym Γ◁ℕ⊢SVar0≡SVar0[lift-γ]∷ℕ[drop1])) ⟩∣
+        lift γ ∘ drop 1 ◀ Succ (Var 0)
+      ∎⇒ Δ ◁ Nat
+
+    
+    -- liftComm Γ⊢γ⇒Δ Δ⊢ℕ Δ◁ℕ⊢SVar0∷ℕ[drop1]
+    Γ◁ℕ◁A[lift-γ]⊢drop2◀SVar1∘lift-lift-γ≡lift-γ∘drop2◀SVar1⇒Δ◁ℕ = 
+       Γ ◁ Nat ◁ A [ lift γ ]ₑ ⊢begin-sb
+        drop 2 ◀ Succ (Var 1) ∘ lift (lift γ)
+      sb-≡⟨ sbEqComp₁ (drop2SucExpEq Δ◁ℕ⊢A) Γ◁ℕ◁A[lift-γ]⊢lift-lift-γ⇒Δ◁ℕ◁A ⟩
+        drop 1 ◀ Succ (Var 0) ∘ drop 1 ∘ lift (lift γ)
+      sb-≡⟨ SbEqCompAssoc Δ◁ℕ⊢drop1◀SVar0⇒Δ◁ℕ Δ◁ℕ◁A⊢drop1⇒Δ◁ℕ Γ◁ℕ◁A[lift-γ]⊢lift-lift-γ⇒Δ◁ℕ◁A ⟩
+        drop 1 ◀ Succ (Var 0) ∘ (drop 1 ∘ lift (lift γ))
+      sb-≡⟨ sbEqComp₂ Δ◁ℕ⊢drop1◀SVar0⇒Δ◁ℕ (liftDropComm Γ◁ℕ⊢lift-γ⇒Δ◁ℕ Δ◁ℕ⊢A) ⟩
+        drop 1 ◀ Succ (Var 0) ∘ (lift γ ∘ drop 1)
+      sb-≡⟨ SbEqCompAssoc Δ◁ℕ⊢drop1◀SVar0⇒Δ◁ℕ Γ◁ℕ⊢lift-γ⇒Δ◁ℕ Γ◁ℕ◁A[lift-γ]⊢drop1⇒Γ◁ℕ ⟨
+        drop 1 ◀ Succ (Var 0) ∘ lift γ ∘ drop 1
+      sb-≡⟨ sbEqComp₁ Γ◁ℕ⊢drop1◀SVar0∘lift-γ≡lift-γ∘drop1◀SVar0⇒Δ◁ℕ Γ◁ℕ◁A[lift-γ]⊢drop1⇒Γ◁ℕ ⟩
+        lift γ ∘ drop 1 ◀ Succ (Var 0) ∘ drop 1
+      sb-≡⟨ SbEqCompAssoc Γ◁ℕ⊢lift-γ⇒Δ◁ℕ Γ◁ℕ⊢drop1◀SVar0⇒Γ◁ℕ Γ◁ℕ◁A[lift-γ]⊢drop1⇒Γ◁ℕ ⟩
+        lift γ ∘ (drop 1 ◀ Succ (Var 0) ∘ drop 1)
+      sb-≡⟨ sbEqComp₂ Γ◁ℕ⊢lift-γ⇒Δ◁ℕ (drop2SucExpEq Γ◁ℕ⊢A[lift-γ]) ⟨∣
+        lift γ ∘ drop 2 ◀ Succ (Var 1)
+      ∎⇒ Δ ◁ Nat
+
+
+    Γ⊢a[γ]∷A[lift-γ][id◀Z] = 
+      begin
+        intro-⟨ Δ⊢a∷A[id◀Z] ⟩
+        (Δ ⊢ a ∷ A [ idₛ ◀ Zero ]ₑ)
+      ⎯⎯⎯⎯⟨ Tm-Subst-by Γ⊢γ⇒Δ ⟩
+        (Γ ⊢ a [ γ ]ₑ ∷ A [ idₛ ◀ Zero ]ₑ [ γ ]ₑ) 
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqSubstSubst Δ◁ℕ⊢A Δ⊢id◀Z⇒Δ◁ℕ  Γ⊢γ⇒Δ) ⟩
+        (Γ ⊢ a [ γ ]ₑ ∷ A [ idₛ ◀ Zero ∘ γ ]ₑ)
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (tyEqSubst₂ Δ◁ℕ⊢A Γ⊢id◀Z∘γ≡lift-γ∘id◀Z⇒Δ◁ℕ) ⟩
+        (Γ ⊢ a [ γ ]ₑ ∷ A [ lift γ ∘ idₛ ◀ Zero ]ₑ)
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by' (TyEqSubstSubst Δ◁ℕ⊢A Γ◁ℕ⊢lift-γ⇒Δ◁ℕ Γ⊢id◀Z⇒Γ◁ℕ) ⟩
+        (Γ ⊢ a [ γ ]ₑ ∷ A [ lift γ ]ₑ [ idₛ ◀ Zero ]ₑ) 
+      ∎
+
+    Γ◁ℕ◁A[lift-γ]⊢b[lift-lift-γ]∷A[lift-γ][drop2◀SVar1] = 
+      begin
+        intro-⟨ Δ◁ℕ◁A⊢b∷A[drop2◀SVar1] ⟩
+          Δ ◁ Nat ◁ A ⊢ b ∷ A [ drop 2 ◀ Succ (Var 1) ]ₑ
+        ⎯⎯⎯⎯⟨ Tm-Subst-by Γ◁ℕ◁A[lift-γ]⊢lift-lift-γ⇒Δ◁ℕ◁A  ⟩
+          Γ ◁ Nat ◁ A [ lift γ ]ₑ ⊢ b [ lift (lift γ) ]ₑ ∷ A [ drop 2 ◀ Succ (Var 1) ]ₑ [ lift (lift γ) ]ₑ
+        ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqSubstSubst  Δ◁ℕ⊢A Δ◁ℕ◁A⊢drop2◀SVar1⇒Δ◁ℕ Γ◁ℕ◁A[lift-γ]⊢lift-lift-γ⇒Δ◁ℕ◁A) ⟩
+          Γ ◁ Nat ◁ A [ lift γ ]ₑ ⊢ b [ lift (lift γ) ]ₑ ∷ A [ drop 2 ◀ Succ (Var 1) ∘ lift (lift γ) ]ₑ
+        ⎯⎯⎯⎯⟨ Tm-TyConv-by (tyEqSubst₂ Δ◁ℕ⊢A Γ◁ℕ◁A[lift-γ]⊢drop2◀SVar1∘lift-lift-γ≡lift-γ∘drop2◀SVar1⇒Δ◁ℕ) ⟩
+          Γ ◁ Nat ◁ A [ lift γ ]ₑ ⊢ b [ lift (lift γ) ]ₑ ∷ A [ lift γ ∘ drop 2 ◀ Succ (Var 1) ]ₑ
+        ⎯⎯⎯⎯⟨ Tm-TyConv-by' (TyEqSubstSubst Δ◁ℕ⊢A Γ◁ℕ⊢lift-γ⇒Δ◁ℕ Γ◁ℕ◁A[lift-γ]⊢drop2◀SVar1⇒Γ◁ℕ) ⟩
+          Γ ◁ Nat ◁ A [ lift γ ]ₑ ⊢ b [ lift (lift γ) ]ₑ ∷ A [ lift γ ]ₑ [ drop 2 ◀ Succ (Var 1) ]ₑ
+     ∎ 
+    
+    natElim = TmNatElim Γ◁ℕ⊢A[lift-γ] Γ⊢a[γ]∷A[lift-γ][id◀Z] Γ◁ℕ◁A[lift-γ]⊢b[lift-lift-γ]∷A[lift-γ][drop2◀SVar1] Γ⊢c[γ]∷Nat
+    Γ⊢NatElim[γ]∷A[id◀c][γ] = 
+      begin
+        intro-⟨ natElim ⟩
+        (Γ ⊢ NatElim (A [ lift γ ]ₑ) (a [ γ ]ₑ) (b [ lift (lift γ) ]ₑ) (c [ γ ]ₑ) ∷ A [ lift γ ]ₑ [ idₛ ◀ c [ γ ]ₑ ]ₑ)
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (TyEqSubstSubst Δ◁ℕ⊢A  Γ◁ℕ⊢lift-γ⇒Δ◁ℕ (section Γ⊢ℕ Γ⊢c[γ]∷Nat)) ⟩
+        (Γ ⊢ NatElim (A [ lift γ ]ₑ) (a [ γ ]ₑ) (b [ lift (lift γ) ]ₑ) (c [ γ ]ₑ) ∷ A [ lift γ ∘ idₛ ◀ c [ γ ]ₑ ]ₑ)
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by (tyEqSubst₂ Δ◁ℕ⊢A (liftSectionCommute Γ⊢γ⇒Δ Δ⊢ℕ Δ⊢c∷Nat)) ⟩
+        (Γ ⊢ NatElim (A [ lift γ ]ₑ) (a [ γ ]ₑ) (b [ lift (lift γ) ]ₑ) (c [ γ ]ₑ) ∷ A [ idₛ ◀ c ∘ γ ]ₑ)
+      ⎯⎯⎯⎯⟨ Tm-TyConv-by' (TyEqSubstSubst Δ◁ℕ⊢A (section Δ⊢ℕ Δ⊢c∷Nat) Γ⊢γ⇒Δ) ⟩
+        (Γ ⊢ NatElim (A [ lift γ ]ₑ) (a [ γ ]ₑ) (b [ lift (lift γ) ]ₑ) (c [ γ ]ₑ) ∷ A [ idₛ ◀ c ]ₑ [ γ ]ₑ)
+      ∎
+  in TmSubst Δ⊢NatElim∷A[id◀c] Γ⊢γ⇒Δ , Γ⊢NatElim[γ]∷A[id◀c][γ]
 ...| TmEqSubstSubst {Δ} {δ} {Ξ} {Γ} {γ} {a} {A} Δ⊢δ⇒Ξ Γ⊢γ⇒Δ Ξ⊢a∷A = let
     Ξ⊢A = tmWfTy Ξ⊢a∷A
     Γ⊢a[δ∘γ]∷A[δ][γ] = 
@@ -419,23 +569,6 @@ tmEqWf eq with eq
     ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
     Γ⊢Ul∷USl[γ] = TmSubst (TmUniv ⊢Δ) Γ⊢γ⇒Δ
   in TmTyConv Γ⊢Ul∷USl[γ] (TyEqUSubst Γ⊢γ⇒Δ) , TmUniv ⊢Γ
-...| TmEqNatSubst Γ⊢γ⇒Δ = let
-    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
-    ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
-    Γ⊢Nat∷U[γ] = TmSubst (TmNat ⊢Δ) Γ⊢γ⇒Δ
-  in TmTyConv Γ⊢Nat∷U[γ] (TyEqUSubst Γ⊢γ⇒Δ) , TmNat ⊢Γ
-...| TmEqZeroSubst Γ⊢γ⇒Δ = let
-    ⊢Γ = sbWfCtx Γ⊢γ⇒Δ
-    ⊢Δ = sbWfCodomain Γ⊢γ⇒Δ
-    Γ⊢Zero∷Nat[γ] = TmSubst (TmZero ⊢Δ) Γ⊢γ⇒Δ
-  in TmTyConv Γ⊢Zero∷Nat[γ] (TyEqNatSubst Γ⊢γ⇒Δ) , TmZero ⊢Γ
-...| TmEqSuccSubst Δ⊢Succ-a∷Nat Γ⊢γ⇒Δ = let
-    Δ⊢a∷Nat , _ = succTmInversion Δ⊢Succ-a∷Nat
-    Γ⊢Nat[γ]≡Nat = TyEqNatSubst Γ⊢γ⇒Δ
-    Γ⊢a[γ]∷Nat[γ] = TmSubst Δ⊢a∷Nat Γ⊢γ⇒Δ
-    Γ⊢a[γ]∷Nat = TmTyConv Γ⊢a[γ]∷Nat[γ] Γ⊢Nat[γ]≡Nat
-    Γ⊢Succ-a[γ]∷Nat[γ] = TmSubst Δ⊢Succ-a∷Nat Γ⊢γ⇒Δ
-  in TmTyConv Γ⊢Succ-a[γ]∷Nat[γ] Γ⊢Nat[γ]≡Nat , TmSucc Γ⊢a[γ]∷Nat
 ...| TmEqPiBeta Γ⊢A Γ◁A⊢b∷B Γ⊢a∷A = let
     Γ⊢Lam-b∷PiAB = TmLam Γ⊢A Γ◁A⊢b∷B
     Γ⊢id◀a⇒Γ◁A = section Γ⊢A Γ⊢a∷A
@@ -555,3 +688,4 @@ sbEqWf {Γ}{γ₁} {γ₂} {Δ} eq with eq
         Γ ⊢ (δ ∘ γ) ◀ a [ γ ]ₑ  ⇒ Ξ
       ∎
     ) 
+

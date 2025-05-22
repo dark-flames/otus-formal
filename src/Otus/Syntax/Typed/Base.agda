@@ -161,17 +161,19 @@ data _⊢_≡ⱼ_∷_ where
         → Γ ⊢ Pi A B [ γ ]ₑ ≡ⱼ Pi (A [ γ ]ₑ) (B [ lift γ ]ₑ) ∷ Univ l 
     TmEqAppSubst : Δ ⊢ f ∙ a ∷ A → Γ ⊢ γ ⇒ Δ
         → Γ ⊢ f ∙ a [ γ ]ₑ ≡ⱼ (f [ γ ]ₑ) ∙ (a [ γ ]ₑ) ∷ (A [ γ ]ₑ)
-    TmEqSubstSubst :  Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ a ∷ A
-        → Γ ⊢ a [ δ ]ₑ [ γ ]ₑ ≡ⱼ a [ δ ∘ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
-    TmEqUSubst : Γ ⊢ γ ⇒ Δ
-        → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l ∷ Univ (lsuc l)
     TmEqNatSubst : Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Nat [ γ ]ₑ ≡ⱼ Nat ∷ Univ lBottom
     TmEqZeroSubst : Γ ⊢ γ ⇒ Δ
         → Γ ⊢ Zero [ γ ]ₑ ≡ⱼ Zero ∷ Nat
     TmEqSuccSubst : Δ ⊢ Succ a ∷ Nat → Γ ⊢ γ ⇒ Δ 
         → Γ ⊢ Succ a [ γ ]ₑ ≡ⱼ Succ (a [ γ ]ₑ) ∷ Nat
-
+    TmEqNatElimSubst : Δ ⊢ NatElim A a b c ∷ A [ idₛ ◀ c ]ₑ → Γ ⊢ γ ⇒ Δ
+        -- -----------------
+        → Γ ⊢ NatElim A a b c [ γ ]ₑ ≡ⱼ NatElim (A [ lift γ ]ₑ) (a [ γ ]ₑ) (b [ lift (lift γ) ]ₑ) (c [ γ ]ₑ) ∷ A [ idₛ ◀ c ]ₑ [ γ ]ₑ
+    TmEqSubstSubst :  Δ ⊢ δ ⇒ Ξ → Γ ⊢ γ ⇒ Δ → Ξ ⊢ a ∷ A
+        → Γ ⊢ a [ δ ]ₑ [ γ ]ₑ ≡ⱼ a [ δ ∘ γ ]ₑ ∷ A [ δ ]ₑ [ γ ]ₑ
+    TmEqUSubst : Γ ⊢ γ ⇒ Δ
+        → Γ ⊢ Univ l [ γ ]ₑ ≡ⱼ Univ l ∷ Univ (lsuc l)
 ---- β rules
     TmEqPiBeta : Γ ⊢ A → Γ ◁ A ⊢ b ∷ B → Γ ⊢ a ∷ A
         → Γ ⊢ (Lam b) ∙ a ≡ⱼ b [ idₛ ◀ a ]ₑ ∷ B [ idₛ ◀ a ]ₑ

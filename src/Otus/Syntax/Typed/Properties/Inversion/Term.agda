@@ -29,7 +29,7 @@ private
   variable
     x : ℕ
     Γ : Context
-    A B T a : Term
+    A B T a b c : Term
 
 piTmInversion : Γ ⊢ Pi A B ∷ T 
   → Σ[ inv ∈ ULevelConjInversion ] 
@@ -81,8 +81,22 @@ varTmInversion (TmTyConv Γ⊢VarX∷G Γ⊢G≡T) = let
 succTmInversion : Γ ⊢ Succ a ∷ T → Γ ⊢ a ∷ Nat × (Γ ⊢ T ≡ⱼ Nat)
 succTmInversion (TmSucc Γ⊢a∷Nat) = let
     ⊢Γ = tmWfCtx Γ⊢a∷Nat
-  in Γ⊢a∷Nat , (TyEqRefl (TyNat ⊢Γ))
+  in Γ⊢a∷Nat , TyEqRefl (TyNat ⊢Γ)
 succTmInversion (TmTyConv Γ⊢Succ-a∷G Γ⊢G≡T) = let
     Γ⊢a∷Nat , Γ⊢G≡Nat = succTmInversion Γ⊢Succ-a∷G
   in Γ⊢a∷Nat , TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡Nat
 
+natElimTmInversion : Γ ⊢ NatElim A a b c ∷ T 
+    → (Γ ◁ Nat ⊢ A) ×
+      (Γ ⊢ a ∷ A [ idₛ ◀ Zero ]ₑ) ×
+      (Γ ◁ Nat ◁ A ⊢ b ∷ A [ drop 2 ◀ Succ (Var 1) ]ₑ) × 
+      (Γ ⊢ c ∷ Nat) ×
+      (Γ ⊢ T ≡ⱼ A [ idₛ ◀ c ]ₑ)
+natElimTmInversion (TmNatElim Γ◁ℕ⊢A Γ⊢a∷A[id◀Z] Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] Γ⊢c∷Nat) = let
+    ⊢Γ = tmWfCtx Γ⊢c∷Nat
+    Γ⊢id◀c⇒Γ◁ℕ = section (TyNat ⊢Γ) Γ⊢c∷Nat
+    Γ⊢A[id◀c] = TySubst Γ◁ℕ⊢A Γ⊢id◀c⇒Γ◁ℕ
+  in Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷Nat , TyEqRefl Γ⊢A[id◀c]
+natElimTmInversion(TmTyConv Γ⊢ne∷G Γ⊢G≡T) = let
+    Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷Nat , Γ⊢G≡A[id◀c] = natElimTmInversion Γ⊢ne∷G
+  in Γ◁ℕ⊢A , Γ⊢a∷A[id◀Z] , Γ◁ℕ◁A⊢b∷A[drop2◀SVar1] , Γ⊢c∷Nat , TyEqTrans (TyEqSym Γ⊢G≡T) Γ⊢G≡A[id◀c]

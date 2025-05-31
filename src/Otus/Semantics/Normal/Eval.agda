@@ -62,7 +62,7 @@ data  ⟦_⟧_⇝_ where
   ETmSucc : ⟦ a ⟧ ρ ⇝ t 
     → ⟦ Succ a ⟧ ρ ⇝ VSucc t
   ETmNatElim : ⟦ a ⟧ ρ ⇝ t → ⟦ c ⟧ ρ ⇝ u → NatElim⟨ ⟨ A ⟩ ρ ∣ t ∣ ⟨ b ⟩ ρ ∣ u ⟩⇝ v
-    → ⟦ NatElim A a b d ⟧ ρ  ⇝ v 
+    → ⟦ NatElim A a b c ⟧ ρ  ⇝ v 
   ETmSubst : ⟦ γ ⟧ˢ ρ₁ ⇝ ρ₂ → ⟦ a ⟧ ρ₂ ⇝ t
     → ⟦ a [ γ ]ₑ ⟧ ρ₁ ⇝ t
   ETmUniv : ⟦ Univ l ⟧ ρ ⇝ VUniv l

@@ -2,4 +2,4 @@
 
 module Otus.Semantics.Completeness where
 
-open import Otus.Semantics.Completeness.PER public
+open import Otus.Semantics.Completeness.Relation public

@@ -13,11 +13,67 @@ private
   variable
     l l₁ l₂ : Level
     D : Set l
-    t₁ t₂ v₁ v₂ u₁ u₂ : Value
-    R : Rel D l₁
-    R₁ : Rel D l₂
-    F : RelFamily D l₂
+    t₁ t₂ t₃ v₁ v₂ u₁ u₂ : Value
+    R : PER Value l₁
+    F : PERFamily R l₂
+    R₁ : PER D l₂
 
-data ⟦Π⟧ (R : Rel Value l₁) (F : RelFamily Value l₂) : Rel Value (l₁ ⊔ lsuc l₂) where
-  PERPi : (v₁ ~ v₂ ∈ R → F v₁ R₁ × App⟨ t₁ ∣ v₁ ⟩⇝ u₁ × App⟨ t₂ ∣ v₂ ⟩⇝ u₂ × u₁ ~ u₂ ∈ R₁ )
-    → t₁ ~ t₂ ∈ ⟦Π⟧ R F
+{-
+data PERΠ (R : PER Value l₁) (F : PERFamily R l₂) : Rel Value (l₁ ⊔ lsuc l₂) where
+  PERPi : ( 
+        v₁ ~ v₂ ∈ R → PERFamily.Fam F v₁ R₁ ×
+        App⟨ t₁ ∣ v₁ ⟩⇝ u₁ ×
+        App⟨ t₂ ∣ v₂ ⟩⇝ u₂ ×
+        u₁ ~ u₂ ∈ R₁
+    ) → t₁ ~ t₂ ∈ᵣ PERΠ R F -}
+
+
+
+PERΠ :  ∀ {l₁ l₂} → (R : PER Value l₁) → PERFamily R l₂ → Rel Value (l₁ ⊔ lsuc l₂)
+PERΠ {l₁} {l₂} R F t₁ t₂ = ∀ {v₁ v₂ : Value} → v₁ ~ v₂ ∈ R 
+      → Σ[ R₁ ∈ PER Value l₂ ] Σ[ u₁ ∈ Value ] Σ[ u₂ ∈ Value ]
+        PERFamily.Fam F v₁ R₁ ×
+        App⟨ t₁ ∣ v₁ ⟩⇝ u₁ ×
+        App⟨ t₂ ∣ v₂ ⟩⇝ u₂ ×
+        u₁ ~ u₂ ∈ R₁
+
+open IsPartialEquivalence {{...}}
+
+{-
+appPreservePER : (R : PER Value l₁) → (F : PERFamily R l₂)
+  → t₁ ~ t₂ ∈ᵣ PERΠ R F → v₁ ~ v₂ ∈ R
+  → App⟨ t₁ ∣ v₁ ⟩⇝ u₁ → App⟨ t₂ ∣ v₂ ⟩⇝ u₂
+  → Σ[ R₁ ∈ PER Value l₂ ]  PERFamily.Fam F v₁ R₁ × u₁ ~ u₂ ∈ R₁
+appPreservePER {_} {_} {_} {_} {_} {_} {_} {_} R F tR vR app₁ app₂ = let
+    CD , u₃ , u₄ , fam₁ , app₃ , app₄ , r₃₄ = tR vR
+    fam₂ = PERFamily.transport F vR fam₁
+    eq₁₃ = appCong refl refl app₁ app₃
+    eq₄₂ = appCong refl refl app₄ app₂ 
+    r₁₄ = ~-convₗ CD eq₁₃ r₃₄
+    r₁₂ = ~-convᵣ CD r₁₄ eq₄₂
+  in CD , fam₁ , r₁₂
+-}
+
+
+instance
+  perΠ : ∀ {R : PER Value l₁} {F : PERFamily R l₂} → IsPartialEquivalence (PERΠ R F)
+  sym {{ perΠ {_} {_} {R} {F}  }} r = λ { d → (let
+      d' = ~-sym R d
+      CD , u₁ , u₂ , fam₁ , app₁ , app₂ , r₁ = r d'
+      fam₂ = PERFamily.transport F d' fam₁
+    in CD , u₂ , u₁ , fam₂ , app₂ , app₁ , (~-sym CD r₁)) } 
+  trans {{ perΠ {_} {_} {R} {F} }} l r = λ { d → (let
+      d' = ~-sym R d
+      dₗ = ~-left R d
+      CDₗ , uₗ₁ , uₗ₂ , famₗ₁ , appₗ₁ , appₗ₂ , uEqₗ = l dₗ
+      CDᵣ , uᵣ₁ , uᵣ₂ , famᵣ₁ , appᵣ₁ , appᵣ₂ , uEqᵣ = r d
+      uₗ₂≡uᵣ₁ = appCong refl refl appₗ₂ appᵣ₁ 
+      _ , r⇒l = PERFamily.coherent F dₗ famₗ₁ famᵣ₁
+      uEq = ~-trans CDₗ uEqₗ (~-convₗ CDₗ uₗ₂≡uᵣ₁ (r⇒l uEqᵣ))
+    in CDₗ , uₗ₁ , uᵣ₂ , famₗ₁ , appₗ₁ , appᵣ₂ , uEq )} 
+
+⟦Π⟧ : (R : PER Value l₁) → PERFamily R l₂ → PER Value (l₁ ⊔ lsuc l₂)
+⟦Π⟧ {l₁} {l₂} R F = record {rel = PERΠ R F ; isPER = perΠ {l₁} {l₂} {R} {F}}
+
+ 
+

@@ -9,12 +9,34 @@ open import Otus.Semantics.Completeness.Relation.Neutral
 
 private
   variable
-    t u : Value
+    t u v : Value
     n m : Neutral
 
-data ⟦Nat⟧ : Rel Value 0ℓ where
-  PERZero : VZero ~ VZero ∈ ⟦Nat⟧
-  PERSuc : t ~ u ∈ ⟦Nat⟧
-    → VSucc t ~ VSucc u ∈ ⟦Nat⟧
+data PERNat : Rel Value 0ℓ where
+  PERZero : VZero ~ VZero ∈ᵣ PERNat
+  PERSuc : t ~ u ∈ᵣ PERNat
+    → VSucc t ~ VSucc u ∈ᵣ PERNat
   PERNatRefl : n ~ m ∈ Ne
-    → ↑ n ∷ VNat ~ ↑ m ∷ VNat ∈ ⟦Nat⟧
+    → ↑ n ∷ VNat ~ ↑ m ∷ VNat ∈ᵣ PERNat
+
+
+open IsPartialEquivalence {{...}}
+private
+  perNatSym : t ~ u ∈ᵣ PERNat → u ~ t ∈ᵣ PERNat
+  perNatSym p with p
+  ...| PERZero = PERZero
+  ...| PERSuc q = PERSuc (perNatSym q)
+  ...| PERNatRefl q = PERNatRefl (sym q)
+
+  perNatTrans : t ~ u ∈ᵣ PERNat → u ~ v ∈ᵣ PERNat → t ~ v ∈ᵣ PERNat
+  perNatTrans p q with p | q
+  ...| PERZero | PERZero = PERZero
+  ...| PERSuc p' | PERSuc q' = PERSuc (perNatTrans p' q')
+  ...| PERNatRefl p' | PERNatRefl q' = PERNatRefl (trans p' q')
+
+instance
+  perNat : IsPartialEquivalence PERNat
+  sym {{ perNat }} = perNatSym
+  trans {{ perNat }} = perNatTrans 
+⟦Nat⟧ : PER Value 0ℓ
+⟦Nat⟧ = record {rel = PERNat ; isPER = perNat }

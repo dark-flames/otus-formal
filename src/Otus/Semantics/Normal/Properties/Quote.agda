@@ -71,3 +71,10 @@ quoteTyCong refl refl (RbPi p₁ q₁ r₁) (RbPi p₂ q₂ r₂) = let
               (quoteTyCong UEq refl r₁ r₂)
 quoteTyCong refl refl RbNat RbNat = refl
 quoteTyCong refl refl RbUniv RbUniv = refl
+
+
+quoteNeConv : a₁ ≡ a₂ → ⌈ n₁ ⌉ⁿ x ≡ᵣ a₁ → ⌈ n₁ ⌉ⁿ x ≡ᵣ a₂
+quoteNeConv refl = id
+
+quoteNfConv : a₁ ≡ a₂ → ⌈ p₁ ⌉ x ≡ᵣ a₁ → ⌈ p₁ ⌉ x ≡ᵣ a₂
+quoteNfConv refl = id

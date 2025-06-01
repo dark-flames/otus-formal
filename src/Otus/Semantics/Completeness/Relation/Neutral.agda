@@ -6,13 +6,13 @@ open import Otus.Syntax
 open import Otus.Semantics.Normal
 open import Otus.Semantics.Completeness.Relation.PER
 
-Ne : Rel Neutral 0ℓ
-Ne = λ { n₁ n₂ → (x : ℕ) → Σ[ a ∈ Term ] ⌈ n₁ ⌉ⁿ x ≡ᵣ a × ⌈ n₂ ⌉ⁿ x ≡ᵣ a }
+PERNe : Rel Neutral 0ℓ
+PERNe = λ { n₁ n₂ → (x : ℕ) → Σ[ a ∈ Term ] ⌈ n₁ ⌉ⁿ x ≡ᵣ a × ⌈ n₂ ⌉ⁿ x ≡ᵣ a }
 
-open IsPartialEquivalence {{...}} public
+open IsPartialEquivalence {{...}}
 
 instance
-  perNe : IsPartialEquivalence Ne
+  perNe : IsPartialEquivalence PERNe
   sym {{ perNe }} p = λ { n → (
       let res , quoteL , quoteR = p n 
       in res , quoteR , quoteL
@@ -21,5 +21,9 @@ instance
       let 
         resP , quoteP₁ , quoteP₂ = p n 
         resQ , quoteQ₁ , quoteQ₂ = q n 
-      in {!   !} , {!   !} , {!   !}
-    ) }
+        resEq = quoteNeCong refl refl quoteQ₁ quoteP₂
+      in resP , quoteP₁ , quoteNeConv resEq quoteQ₂
+    )}
+
+Ne : PER Neutral 0ℓ
+Ne = record { rel = PERNe ; isPER = perNe }

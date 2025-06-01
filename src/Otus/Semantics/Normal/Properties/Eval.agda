@@ -111,3 +111,6 @@ evalClosureCong refl refl (EClosure₁ p₁) (EClosure₁ p₂) =
 evalClosureCong refl refl (EClosure₂ p₁) (EClosure₂ p₂) = 
   evalCong refl refl p₁ p₂
 
+appConv : v₁ ≡ v₂ → App⟨ t₁ ∣ u₁ ⟩⇝ v₁ → App⟨ t₁ ∣ u₁ ⟩⇝ v₂
+appConv refl = id
+

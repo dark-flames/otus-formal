@@ -18,15 +18,6 @@ private
     F : PERFamily R l₂
     R₁ : PER D l₂
 
-{-
-data PERΠ (R : PER Value l₁) (F : PERFamily R l₂) : Rel Value (l₁ ⊔ lsuc l₂) where
-  PERPi : ( 
-        v₁ ~ v₂ ∈ R → PERFamily.Fam F v₁ R₁ ×
-        App⟨ t₁ ∣ v₁ ⟩⇝ u₁ ×
-        App⟨ t₂ ∣ v₂ ⟩⇝ u₂ ×
-        u₁ ~ u₂ ∈ R₁
-    ) → t₁ ~ t₂ ∈ᵣ PERΠ R F -}
-
 
 
 PERΠ :  ∀ {l₁ l₂} → (R : PER Value l₁) → PERFamily R l₂ → Rel Value (l₁ ⊔ lsuc l₂)
@@ -38,22 +29,6 @@ PERΠ {l₁} {l₂} R F t₁ t₂ = ∀ {v₁ v₂ : Value} → v₁ ~ v₂ ∈ 
         u₁ ~ u₂ ∈ R₁
 
 open IsPartialEquivalence {{...}}
-
-{-
-appPreservePER : (R : PER Value l₁) → (F : PERFamily R l₂)
-  → t₁ ~ t₂ ∈ᵣ PERΠ R F → v₁ ~ v₂ ∈ R
-  → App⟨ t₁ ∣ v₁ ⟩⇝ u₁ → App⟨ t₂ ∣ v₂ ⟩⇝ u₂
-  → Σ[ R₁ ∈ PER Value l₂ ]  PERFamily.Fam F v₁ R₁ × u₁ ~ u₂ ∈ R₁
-appPreservePER {_} {_} {_} {_} {_} {_} {_} {_} R F tR vR app₁ app₂ = let
-    CD , u₃ , u₄ , fam₁ , app₃ , app₄ , r₃₄ = tR vR
-    fam₂ = PERFamily.transport F vR fam₁
-    eq₁₃ = appCong refl refl app₁ app₃
-    eq₄₂ = appCong refl refl app₄ app₂ 
-    r₁₄ = ~-convₗ CD eq₁₃ r₃₄
-    r₁₂ = ~-convᵣ CD r₁₄ eq₄₂
-  in CD , fam₁ , r₁₂
--}
-
 
 instance
   perΠ : ∀ {R : PER Value l₁} {F : PERFamily R l₂} → IsPartialEquivalence (PERΠ R F)

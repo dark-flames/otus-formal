@@ -38,5 +38,6 @@ instance
   perNat : IsPartialEquivalence PERNat
   sym {{ perNat }} = perNatSym
   trans {{ perNat }} = perNatTrans 
+
 ⟦Nat⟧ : PER Value 0ℓ
 ⟦Nat⟧ = record {rel = PERNat ; isPER = perNat }

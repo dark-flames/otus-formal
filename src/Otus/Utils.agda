@@ -6,7 +6,7 @@ open import Data.Nat using (ℕ; suc; zero; _+_; _∸_; _≤_) public
 open import Data.Nat.Properties using (+-suc) public
 open import Data.Product public
 open import Data.Unit using (⊤; tt) public
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; J; cong; cong₂) public
+open import Relation.Binary.PropositionalEquality using (_≡_; refl; J; cong; cong₂) renaming (trans to ≡-trans) public
 open import Function.Base using (id) public
 open import Relation.Binary using (Rel; REL; _⇔_; IsPartialEquivalence) public
 open import Level using (Level; 0ℓ) public

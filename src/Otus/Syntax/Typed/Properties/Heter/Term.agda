@@ -9,6 +9,7 @@ open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Context
 open import Otus.Syntax.Typed.Properties.Heter.Base
 
+open Product
 
 private
   variable

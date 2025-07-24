@@ -7,6 +7,9 @@ open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Context.Base
 
+open Product
+open Function
+
 private
   variable
     x : ℕ

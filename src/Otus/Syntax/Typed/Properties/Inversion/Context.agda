@@ -8,6 +8,8 @@ open import Otus.Syntax.Typed.Properties.Context
 open import Otus.Syntax.Typed.Properties.Inversion.Base
 open import Otus.Syntax.Typed.Properties.Presupposition
 
+open Product
+
 record CtxExtInversion ( Γ : Context ) : Set where
   constructor ctxExtInv
   field

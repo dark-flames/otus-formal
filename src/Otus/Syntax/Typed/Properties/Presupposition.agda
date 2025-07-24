@@ -6,6 +6,8 @@ open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Inversion.Base
 
+open Product
+
 private
   variable
     Γ Δ  : Context

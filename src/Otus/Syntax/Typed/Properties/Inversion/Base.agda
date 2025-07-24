@@ -5,11 +5,14 @@ open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 
+open Product
+open PropositionalEq
+
 private
   variable
-    l : ULevel
+    l l₁ l₂ : ULevel
     Γ Δ  : Context
-    a A B : Term
+    a b A B : Term
     γ : Substitution
     
 ctxExtInversion : ⊢ Γ ◁ A → ⊢ Γ × Γ ⊢ A

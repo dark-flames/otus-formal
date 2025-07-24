@@ -7,6 +7,7 @@ open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Utils.Context
 
+open PropositionalEq
 
 private
   variable

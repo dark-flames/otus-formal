@@ -5,9 +5,8 @@ open import Otus.Utils
 open import Otus.Syntax.Untyped hiding (_∘_; _⊔_; lsuc; lzero)
 open import Otus.Syntax.Typed.Base
 
-open import Agda.Primitive using (Level; _⊔_; lsuc ; lzero)
-
-
+open Level
+open Product
 
 ---- intro
 

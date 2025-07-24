@@ -6,6 +6,7 @@ open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties
 
+open Product
 
 private
   variable

@@ -9,6 +9,7 @@ open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Inversion.Base
 open import Otus.Syntax.Typed.Properties.Inversion.Term
 
+open Product
 
 private
   variable

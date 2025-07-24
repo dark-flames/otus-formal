@@ -11,6 +11,8 @@ open import Otus.Syntax.Typed.Properties.Context
 open import Otus.Syntax.Typed.Properties.Inversion
 open import Otus.Syntax.Typed.Properties.Heter
 
+open Product
+open PropositionalEq
 
 private
   variable

@@ -10,6 +10,9 @@ open import Otus.Syntax.Typed.Properties.Inversion.Base
 open import Otus.Syntax.Typed.Properties.Inversion.Context
 open import Otus.Syntax.Typed.Properties.Reason
 
+open PropositionalEq
+open Product
+
 record ULevelConjInversion : Set where
   constructor uLvlConjInv
   field

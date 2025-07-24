@@ -12,6 +12,8 @@ open import Otus.Syntax.Typed.Properties.Heter
 open import Otus.Syntax.Typed.Properties.Inversion
 open import Otus.Syntax.Typed.Properties.Subst
 
+open Product
+
 private
   variable
     Γ Δ : Context
@@ -357,7 +359,6 @@ tmEqWf eq with eq
     Γ⊢A[γ]∷Ul₁ = (TmTyConv (TmSubst Δ⊢A∷Ul₁ Γ⊢γ⇒Δ) (TyEqUSubst Γ⊢γ⇒Δ)) 
     Γ◁A[γ]⊢B[liftγ]∷Ul₂ = (TmTyConv (TmSubst Δ◁A⊢B∷Ul₂ Γ◁A[γ]⊢liftγ⇒Δ◁A) (TyEqUSubst Γ◁A[γ]⊢liftγ⇒Δ◁A)) 
     Γ⊢PiA[γ]B[liftγ]∷Ul₁⊔l₂ = TmPi Γ⊢A[γ]∷Ul₁ Γ◁A[γ]⊢B[liftγ]∷Ul₂
-    Γ⊢Ul₁⊔l₂≡Ul' = tyUnivCong (sbWfCtx Γ⊢γ⇒Δ) l₁⊔l₂≡l'
     open TyEqReason
     Γ⊢Ul≡Ul₁⊔l₂ =  
       Γ ⊢begin-ty

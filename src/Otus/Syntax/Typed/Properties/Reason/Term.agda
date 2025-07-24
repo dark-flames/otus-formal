@@ -7,6 +7,8 @@ open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Utils
 open import Otus.Syntax.Typed.Properties.Context
 
+open Product
+
 private
   variable
     l l₁ l₂ : ULevel

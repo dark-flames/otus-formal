@@ -10,6 +10,8 @@ open import Otus.Syntax.Typed.Properties.Presupposition
 open import Otus.Syntax.Typed.Properties.Inversion.Base
 open import Otus.Syntax.Typed.Properties.Inversion.Context
 
+open Product
+
 record DropInversion ( Γ : Context ) ( x : ℕ ) : Set where
   constructor dropInv
   field

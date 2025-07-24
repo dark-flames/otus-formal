@@ -8,6 +8,7 @@ open import Otus.Syntax.Typed.Properties.Context.Base
 open import Otus.Syntax.Typed.Properties.Context.Fundamental
 open import Otus.Syntax.Typed.Properties.Presupposition
 
+open Product
 open FunComp
 
 private

@@ -5,40 +5,11 @@ open import Otus.Syntax.Untyped.Universe
 open import Otus.Syntax.Untyped.Context
 open import Otus.Syntax.Untyped.Term
 
-open import Relation.Binary.PropositionalEquality
+open import Otus.Utils
+
+open PropositionalEq
 open ≡-Reasoning
---- Universe
 
-⊔-identity : ∀ {l} → l ⊔ l ≡ l
-⊔-identity {lzero} = refl
-⊔-identity {lsuc l} = cong lsuc (⊔-identity)
-
-⊔-lzeroʳ : ∀ {l} → l ⊔ lzero ≡ l
-⊔-lzeroʳ {lzero} = refl
-⊔-lzeroʳ {lsuc l} = refl
-
-⊔-comm : ∀ {l₁ l₂} → l₁ ⊔ l₂ ≡ l₂ ⊔ l₁
-⊔-comm {lzero} {l₂} = sym ⊔-lzeroʳ
-⊔-comm {lsuc l₁} {lzero} = refl
-⊔-comm {lsuc l₁} {lsuc l₂} = cong lsuc ( ⊔-comm {l₁} {l₂} )
-
-⊔-assoc : ∀ {l₁ l₂ l₃} → (l₁ ⊔ l₂) ⊔ l₃ ≡ l₁ ⊔ (l₂ ⊔ l₃)
-⊔-assoc {lzero} {l₂} {l₃} = refl
-⊔-assoc {lsuc l₁} {lzero} {l₃} = refl
-⊔-assoc {lsuc l₁} {lsuc l₂} {lzero} = refl
-⊔-assoc {lsuc l₁} {lsuc l₂} {lsuc l₃} = begin
-    (lsuc l₁ ⊔ lsuc l₂) ⊔ lsuc l₃ 
-  ≡⟨⟩
-    lsuc (l₁ ⊔ l₂) ⊔ lsuc l₃
-  ≡⟨⟩
-    lsuc (l₁ ⊔ l₂ ⊔ l₃)
-  ≡⟨ cong lsuc (⊔-assoc {l₁} {l₂} {l₃})  ⟩
-    lsuc (l₁ ⊔ (l₂ ⊔ l₃))
-  ≡⟨ refl ⟩
-    lsuc l₁ ⊔ (lsuc l₂ ⊔ lsuc l₃)
-  ∎  -- cong lsuc (⊔-assoc {l₁} {l₂} {l₃})
-
---- Context
 ◁-cong : ∀ { Γ Δ : Context } → { A B : Term } → Γ ≡ Δ → A ≡ B → Γ ◁ A ≡ Δ ◁ B
 ◁-cong refl refl = refl
 

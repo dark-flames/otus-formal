@@ -6,13 +6,14 @@ open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
 open import Otus.Syntax.Typed.Properties.Context
 
+open Product
+
 private
   variable
     x y : ℕ
     Γ Δ Δ₁ Δ₂ Ξ : Context
     γ δ : Substitution
     A a : Term
-
 
 Sb-Comp :  Δ ⊢ δ ⇒ Ξ × Γ ⊢ γ ⇒ Δ
     → Γ ⊢ δ ∘ γ ⇒ Ξ

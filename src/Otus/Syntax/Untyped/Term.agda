@@ -4,6 +4,8 @@ module Otus.Syntax.Untyped.Term where
 open import Otus.Utils
 open import Otus.Syntax.Untyped.Universe
 
+open Nat
+
 infixl 9 _◀_
 infixl 8 _∘_
 infixl 11 _∙_

@@ -7,7 +7,7 @@ open import Otus.Semantics.Normal.Domain
 
 private
   variable
-    l : ULevel
+    l : Universe
     x : ℕ
     Γ : Context
     γ δ : Substitution

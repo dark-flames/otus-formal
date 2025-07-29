@@ -1,21 +1,29 @@
 {-# OPTIONS --without-K --safe #-}
 module Otus.Syntax.Untyped.Universe.Base where
 
-data ULevel : Set where
-  lzero : ULevel
-  lsuc  : ULevel → ULevel
+open import Otus.Utils
 
-infixl 4 _≤ₗ_
-data _≤ₗ_ : ULevel → ULevel → Set where
-  lz≤ln : ∀ {l}    → lzero ≤ₗ l
-  ls≤ls : ∀ {l₁ l₂} → l₁ ≤ₗ l₂ → lsuc l₁ ≤ₗ lsuc l₂
+open Nat
 
-infixl 10 _⊔_ 
+record Universe : Set where
+  inductive
+  constructor univ
+  field
+    level : ℕ
 
-lBottom : ULevel
-lBottom = lzero
+infixl 4 _⊆_
+_⊆_ : Universe → Universe → Set
+uₗ ⊆ uᵣ = Universe.level uₗ ≤ Universe.level uᵣ
 
-_⊔_  : ULevel → ULevel → ULevel
-lzero ⊔ l₂            = l₂
-(lsuc l₁) ⊔ lzero     = lsuc l₁
-(lsuc l₁) ⊔ (lsuc l₂) = lsuc (l₁ ⊔ l₂)
+infixl 10 _⊔ᵤ_ 
+_⊔ᵤ_  : Universe → Universe → Universe
+(univ l₁) ⊔ᵤ (univ l₂) = univ (l₁ ⊔ₙ l₂)
+
+univ₀ : Universe
+univ₀ = univ 0
+
+liftUniv : ℕ → Universe → Universe
+liftUniv n (univ l) = univ (n + l)
+
+lsuc : Universe → Universe
+lsuc = liftUniv 1

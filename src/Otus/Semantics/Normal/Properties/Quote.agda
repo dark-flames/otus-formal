@@ -11,7 +11,7 @@ open import Otus.Semantics.Normal.Properties.Eval
 
 private
   variable
-    l : ULevel
+    l : Universe
     x y : ℕ
     a₁ a₂ : Term
     t₁ t₂ : Value

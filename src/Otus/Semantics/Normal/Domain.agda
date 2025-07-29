@@ -37,7 +37,7 @@ data Value where
   VNat : Value
   VZero : Value
   VSucc : Value → Value
-  VUniv : ULevel → Value
+  VUniv : Universe → Value
   ↑_∷_ : Neutral → VType → Value
 open Value
 

@@ -1,9 +1,9 @@
 {-# OPTIONS --without-K --safe #-}
-module Otus.Syntax.Typed.Properties.Inversion.Base where
+module Otus.Syntax.Typed.Presupposition.Inversion where
 
 open import Otus.Utils
 open import Otus.Syntax.Untyped
-open import Otus.Syntax.Typed.Base
+open import Otus.Syntax.Typed.Presupposition.Base
 
 open Product
 open PropositionalEq

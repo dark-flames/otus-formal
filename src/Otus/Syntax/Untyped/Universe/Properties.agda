@@ -7,18 +7,26 @@ open import Otus.Utils
 
 open PropositionalEq
 open Relation
+open Algebra
 open Sum
+open Product
+open Nat
 open ≡-Reasoning
 --- Universe
 
-⊔-identity : ∀ {l} → l ⊔ l ≡ l
-⊔-identity {lzero} = refl
-⊔-identity {lsuc l} = cong lsuc (⊔-identity)
+⊔ᵤ-idem : (u : Universe) → u ⊔ᵤ u ≡ u
+⊔ᵤ-idem (univ l) = cong univ (⊔-idem l)
 
-private
-  ⊔-lzeroʳ : ∀ {l} → l ⊔ lzero ≡ l
-  ⊔-lzeroʳ {lzero} = refl
-  ⊔-lzeroʳ {lsuc l} = refl
+u₁⊆u₁⊔u₂ : ∀ { u₁ u₂ } → u₁ ⊆ u₁ ⊔ᵤ u₂
+u₁⊆u₁⊔u₂ {univ l₁} {univ l₂} = m≤m⊔n l₁ l₂
+
+u₂⊆u₁⊔u₂ : ∀ { u₁ u₂ } → u₂ ⊆ u₁ ⊔ᵤ u₂ 
+u₂⊆u₁⊔u₂ {univ l₁} {univ l₂} = m≤n⊔m l₁ l₂
+{-
+
+⊔-lzeroʳ : ∀ {l} → l ⊔ lzero ≡ l
+⊔-lzeroʳ {lzero} = refl
+⊔-lzeroʳ {lsuc l} = refl
 
 ⊔-comm : ∀ {l₁ l₂} → l₁ ⊔ l₂ ≡ l₂ ⊔ l₁
 ⊔-comm {lzero} {l₂} = ≡-sym ⊔-lzeroʳ
@@ -65,6 +73,9 @@ private
 ≤ₗ-lsucᵣ lz≤ln = lz≤ln
 ≤ₗ-lsucᵣ (ls≤ls r) = ls≤ls (≤ₗ-lsucᵣ r)
 
+≤ₗ-diff : ∀ {l₁ l₂} → l₁ ≤ₗ l₂ → Σ[ n ∈ ℕ ] liftUniv l₁ n ≡ l₂
+≤ₗ-diff lz≤ln
+
 ≤ₗ-isPreorder : IsPreorder _≡_ _≤ₗ_
 ≤ₗ-isPreorder = record {
     isEquivalence = ≡-isEquivalence;
@@ -83,3 +94,4 @@ private
     isPartialOrder = ≤ₗ-isPartialOrder;
     total = ≤ₗ-totality
   }
+  -}

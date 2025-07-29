@@ -1,12 +1,12 @@
 {-# OPTIONS --without-K --safe #-}
-module Otus.Syntax.Typed.Properties.Utils.Term where
+module Otus.Syntax.Typed.Presupposition.Utils.Term where
 
 open import Otus.Utils
 open import Otus.Syntax.Untyped
-open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Properties.Presupposition
-open import Otus.Syntax.Typed.Properties.Utils.Type
-
+open import Otus.Syntax.Typed.Presupposition.Base
+open import Otus.Syntax.Typed.Presupposition.WfCtx
+open import Otus.Syntax.Typed.Presupposition.Relation
+open import Otus.Syntax.Typed.Presupposition.Utils.Type
 
 private
   variable

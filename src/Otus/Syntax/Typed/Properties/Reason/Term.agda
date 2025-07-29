@@ -11,7 +11,7 @@ open Product
 
 private
   variable
-    l l₁ l₂ : ULevel
+    l l₁ l₂ : Universe
     x y : ℕ
     Γ Δ : Context
     γ : Substitution

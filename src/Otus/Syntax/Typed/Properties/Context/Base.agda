@@ -4,6 +4,7 @@ module Otus.Syntax.Typed.Properties.Context.Base where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Base
+open import Otus.Syntax.Typed.Properties.Presupposition
 
 private
   variable
@@ -24,4 +25,4 @@ data ⊢_≃_ : Context → Context → Set where
     → ⊢ Γ ◁ A ≃ Δ ◁ B
 
 ctxConvExtRefl : ⊢ Γ ≃ Δ → Γ ⊢ A → Δ ⊢ A → ⊢ Γ ◁ A ≃ Δ ◁ A
-ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A = CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢A (TyEqRefl Γ⊢A) Δ⊢A Δ⊢A (TyEqRefl Δ⊢A)
+ctxConvExtRefl ⊢Γ≃Δ Γ⊢A Δ⊢A = CConvExt ⊢Γ≃Δ Γ⊢A Γ⊢A (tyEqRefl Γ⊢A) Δ⊢A Δ⊢A (tyEqRefl Δ⊢A)

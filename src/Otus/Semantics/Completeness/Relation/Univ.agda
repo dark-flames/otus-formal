@@ -11,14 +11,14 @@ open import Otus.Semantics.Completeness.Relation.Pi
 
 private
   variable
-    l l₁ l₂ : ULevel
+    l l₁ l₂ : Universe
     T T₁ T₂ t u v : Value
     E₁ E₂ : Closure
     n m : Neutral
 
-data ⟦_⟧∷_≡_ : Value → ULevel → PER Value 0ℓ → Set₁
+data ⟦_⟧∷_≡_ : Value → Universe → PER Value 0ℓ → Set₁
 
-data PERUniv : ULevel → Rel Value 0ℓ where
+data PERUniv : Universe → Rel Value 0ℓ where
   PERUnivNe : n ~ n ∈ Ne → l₁ ≡ l₂
     → ↑ n ∷ VUniv l₁ ~ ↑ n ∷ VUniv l₂ ∈ᵣ PERUniv l
   -- PERUnivPi : T₁ ~ T₂ ∈ᵣ PERUniv l
@@ -29,7 +29,7 @@ data PERUniv : ULevel → Rel Value 0ℓ where
 open IsPartialEquivalence {{...}}
 
 instance 
-  perUniv : ∀ {l : ULevel} → IsPartialEquivalence (PERUniv l)
+  perUniv : ∀ {l : Universe} → IsPartialEquivalence (PERUniv l)
   sym {{perUniv}} (PERUnivNe q refl) = PERUnivNe (~-sym Ne q) refl
   sym {{perUniv}} PERUnivNat  = PERUnivNat
   sym {{perUniv}} (PERUnivUniv refl) = PERUnivUniv refl
@@ -38,7 +38,7 @@ instance
   trans {{perUniv}} PERUnivNat PERUnivNat = PERUnivNat
   trans {{perUniv}} (PERUnivUniv eq₁) (PERUnivUniv eq₂) = PERUnivUniv (≡-trans eq₁ eq₂)
 
-⟦Univ⟧ : ULevel → PER Value 0ℓ
+⟦Univ⟧ : Universe → PER Value 0ℓ
 ⟦Univ⟧ l = record { rel = PERUniv l ; isPER = perUniv }
 
 data ⟦_⟧∷_≡ᵣ_ where

@@ -12,18 +12,22 @@ infixl 11 _∙_
 infixl 10 _[_]ₑ
 
 data Substitution : Set
+data Term : Set
 
-data Term : Set where
+Type : Set
+Type = Term
+
+data Term where
     Var : ℕ → Term
     
-    Pi : Term → Term → Term
+    Pi : Type → Type → Term
     Lam : Term → Term
     _∙_ : Term → Term → Term
     Nat : Term
     Zero : Term
     Succ : Term → Term
     NatElim : Term → Term → Term → Term → Term
-    Univ : ULevel → Term
+    Univ : Universe → Type
     _[_]ₑ : Term → Substitution → Term
 
 data Substitution where

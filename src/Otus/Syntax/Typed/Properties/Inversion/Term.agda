@@ -13,10 +13,10 @@ open import Otus.Syntax.Typed.Properties.Reason
 open PropositionalEq
 open Product
 
-record ULevelConjInversion : Set where
+record UniverseConjInversion : Set where
   constructor uLvlConjInv
   field
-    l l₁ l₂ : ULevel
+    l l₁ l₂ : Universe
     l₁⊔l₂≡l : l₁ ⊔ l₂ ≡ l
 
 record VarExistence ( Γ : Context ) ( x : ℕ ) : Set where
@@ -35,10 +35,10 @@ private
     A B T a b c : Term
 
 piTmInversion : Γ ⊢ Pi A B ∷ T 
-  → Σ[ inv ∈ ULevelConjInversion ] 
-    (Γ ⊢ T ≡ⱼ Univ (ULevelConjInversion.l inv)) ×
-    (Γ ⊢ A ∷ Univ (ULevelConjInversion.l₁ inv)) ×
-    (Γ ◁ A ⊢ B ∷ Univ (ULevelConjInversion.l₂ inv))
+  → Σ[ inv ∈ UniverseConjInversion ] 
+    (Γ ⊢ T ≡ⱼ Univ (UniverseConjInversion.l inv)) ×
+    (Γ ⊢ A ∷ Univ (UniverseConjInversion.l₁ inv)) ×
+    (Γ ◁ A ⊢ B ∷ Univ (UniverseConjInversion.l₂ inv))
 piTmInversion (TmPi Γ⊢A∷Ul₁ Γ◁A⊢B∷Ul₂) = let 
     l₁ = univInversion Γ⊢A∷Ul₁
     l₂ = univInversion Γ◁A⊢B∷Ul₂

@@ -7,7 +7,7 @@ open import Otus.Syntax.Typed.Base
 
 private
   variable
-    l l₁ l₂ : ULevel
+    l l₁ l₂ : Universe
     x y n : ℕ
     Γ Γ₁ Γ₂ Γ₃ Δ Δ₁ Δ₂ Θ Ξ : Context
     γ γ₁ γ₂ γ₃ δ δ₁ δ₂ δ₃ ξ : Substitution

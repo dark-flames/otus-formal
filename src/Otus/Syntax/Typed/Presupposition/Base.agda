@@ -1,6 +1,6 @@
 {-# OPTIONS --without-K --safe #-}
 
-module Otus.Syntax.Typed.Base where
+module Otus.Syntax.Typed.Presupposition.Base where
 
 open import Otus.Utils
 open import Otus.Syntax.Untyped
@@ -38,18 +38,12 @@ record _⊢_ (Γ : Context) (A : Type) : Set where
     tyUniv : Universe
     Γ⊢A∷U : Γ ⊢ A ∈ᵤ tyUniv
 
-TypeJdj : Context → Type → Set
-TypeJdj = _⊢_
-
 record _⊢_≡ⱼ_ (Γ : Context) (A B : Type) : Set where
   inductive
   constructor tyEqJdg
   field
     tyUniv : Universe
     Γ⊢A≡B∷U : Γ ⊢ A ≡ⱼ B ∈ᵤ tyUniv
-
-TypeEqJdj : Context → Type → Type → Set
-TypeEqJdj = _⊢_≡ⱼ_
 
 data ⊢_ where
   CEmp : ⊢ ε
@@ -64,7 +58,7 @@ data _⊢_∷_ where
     → Γ ◁ B ⊢ Var (suc x) ∷ A [ drop 1 ]ₑ
   TmPi : Γ ⊢ A ∷ Univ u₁ → Γ ◁ A ⊢ B ∷ Univ u₂
     → Γ ⊢ Pi A B ∷ Univ (u₁ ⊔ᵤ u₂)
-  TmLam : Γ ◁ A ⊢ b ∷ B
+  TmLam : Γ ⊢ A → Γ ◁ A ⊢ b ∷ B
     → Γ ⊢ Lam b ∷ Pi A B
   TmApp : Γ ⊢ f ∷ Pi A B → Γ ⊢ a ∷ A
     → Γ ⊢ f ∙ a ∷ B [ idₛ ◀ a ]ₑ
@@ -103,8 +97,10 @@ open _⊢_⇒_
 
 
 data ⊢_≡ⱼ_ where
-  CEqRefl : ⊢ Γ → ⊢ Γ ≡ⱼ Γ
-  CEqExt : ⊢ Γ ≡ⱼ Δ → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ≡ⱼ B
+  CEqEmp : ⊢ ε ≡ⱼ ε
+  CEqExt :  ⊢ Γ ≡ⱼ Δ
+    → Γ ⊢ A → Γ ⊢ B → Γ ⊢ A ≡ⱼ B
+    → Δ ⊢ A → Δ ⊢ B → Δ ⊢ A ≡ⱼ B
     → ⊢ Γ ◁ A ≡ⱼ Δ ◁ B
 open ⊢_≡ⱼ_
 
@@ -115,15 +111,16 @@ data _⊢_≡ⱼ_∷_ where
   TmEqTrans : Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ b ≡ⱼ c ∷ A
     → Γ ⊢ a ≡ⱼ c ∷ A
 ---- Congruence
-  TmEqLam : Γ ◁ A ⊢ a ≡ⱼ b ∷ B
+  TmEqLam : Γ ⊢ A → Γ ◁ A ⊢ a ≡ⱼ b ∷ B -- todo : `Γ ⊢ A` required by context conv (tc)
     → Γ ⊢ Lam a ≡ⱼ Lam b ∷ Pi A B
-  TmEqPi : Γ ⊢ A ≡ⱼ B ∷ Univ u₁ → Γ ◁ A ⊢ C ≡ⱼ D ∷ Univ u₂
+  TmEqPi : Γ ⊢ A → Γ ⊢ A ≡ⱼ B ∷ Univ u₁ → Γ ◁ A ⊢ C ≡ⱼ D ∷ Univ u₂ -- todo : `Γ ⊢ A` required by context conv (tc)
     → Γ ⊢ Pi A C ≡ⱼ Pi B D ∷ Univ (u₁ ⊔ᵤ u₂)
   TmEqApp : Γ ⊢ Pi A B → Γ ⊢ f ≡ⱼ g ∷ Pi A B → Γ ⊢ a ≡ⱼ b ∷ A
     → Γ ⊢ f ∙ a ≡ⱼ g ∙ b ∷ B [ idₛ ◀ a ]ₑ
   TmEqSucc : Γ ⊢ a ≡ⱼ b ∷ Nat
     → Γ ⊢ Succ a ≡ⱼ Succ b ∷ Nat
-  TmEqNatElim : Γ ◁ Nat ⊢ A₁ ≡ⱼ A₂ 
+  TmEqNatElim : Γ ◁ Nat ⊢ A₁ -- todo : `Γ ⊢ A` required by context conv (tc)
+    → Γ ◁ Nat ⊢ A₁ ≡ⱼ A₂ 
     → Γ ⊢ a₁ ≡ⱼ a₂ ∷ A₁ [ idₛ ◀ Zero ]ₑ 
     → Γ ◁ Nat ◁ A₁ ⊢ b₁ ≡ⱼ b₂ ∷ A₁ [ drop 2 ◀ Succ (Var 1) ]ₑ 
     → Γ ⊢ c₁ ≡ⱼ c₂ ∷ Nat

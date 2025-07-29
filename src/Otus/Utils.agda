@@ -3,8 +3,11 @@
 module Otus.Utils where
 
 module Relation where
-  open import Relation.Binary.Definitions using (Total; Antisymmetric) public
+  open import Relation.Binary using (Reflexive; Total; Antisymmetric) public
   open import Relation.Binary using (Rel; REL; _⇔_; IsPartialEquivalence; IsPreorder; IsPartialOrder; IsTotalOrder) public
+
+module Algebra where
+  open import Algebra.Definitions using (Idempotent) public
 
 module PropositionalEq where
   open import Relation.Binary.PropositionalEquality using (_≡_; refl; J; cong; cong₂) renaming (sym to ≡-sym; trans to ≡-trans; isEquivalence to ≡-isEquivalence) public
@@ -26,8 +29,8 @@ module Sum where
   open import Data.Sum using (_⊎_; inj₁; inj₂) renaming (map to ⊎-map) public
 
 module Nat where
-  open import Data.Nat using (ℕ; suc; zero; _+_; _∸_; _≤_) public
-  open import Data.Nat.Properties using (+-suc) public
+  open import Data.Nat using (ℕ; suc; zero; _+_; _∸_; _≤_) renaming (_⊔_ to _⊔ₙ_) public
+  open import Data.Nat.Properties using (+-suc; ⊔-idem; m∸n+n≡m; m≤m⊔n; m≤n⊔m) public
   open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 
   suc-+ : ∀ m n → suc m + n ≡ suc (m + n)

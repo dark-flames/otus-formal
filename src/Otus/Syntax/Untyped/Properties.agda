@@ -39,7 +39,7 @@ open ≡-Reasoning
     Γ ⧺ Δ ⧺ Ξ ◁ C
   ≡⟨⟩ 
     (Γ ⧺ Δ ⧺ Ξ) ◁ C
-  ≡⟨ ◁-cong (⧺-assoc Δ Ξ ) refl ⟩ 
+  ≡⟨ ◁-cong (⧺-assoc Δ Ξ) refl ⟩ 
     (Γ ⧺ (Δ ⧺ Ξ)) ◁ C
   ≡⟨⟩ 
     Γ ⧺ (Δ ⧺ Ξ) ◁ C

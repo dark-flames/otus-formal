@@ -62,14 +62,14 @@ data _⊢_∷_ where
     → Γ ◁ A ⊢ Var 0 ∷ A [ drop 1 ]ₑ
   TmVarˢ : Γ ⊢ Var x ∷ A → Γ ⊢ B
     → Γ ◁ B ⊢ Var (suc x) ∷ A [ drop 1 ]ₑ
-  TmPi : Γ ⊢ A ∷ Univ u₁ → Γ ◁ A ⊢ B ∷ Univ u₂
-    → Γ ⊢ Pi A B ∷ Univ (u₁ ⊔ᵤ u₂)
+  TmPi : Γ ⊢ A ∈ᵤ u₁ → Γ ◁ A ⊢ B ∈ᵤ u₂
+    → Γ ⊢ Pi A B ∈ᵤ (u₁ ⊔ᵤ u₂)
   TmLam : Γ ◁ A ⊢ b ∷ B
     → Γ ⊢ Lam b ∷ Pi A B
   TmApp : Γ ⊢ f ∷ Pi A B → Γ ⊢ a ∷ A
     → Γ ⊢ f ∙ a ∷ B [ idₛ ◀ a ]ₑ
   TmNat : ⊢ Γ
-    → Γ ⊢ Nat ∷ Univ univ₀
+    → Γ ⊢ Nat ∈ᵤ univ₀
   TmZero : ⊢ Γ
     → Γ ⊢ Zero ∷ Nat
   TmSucc : Γ ⊢ a ∷ Nat
@@ -82,9 +82,9 @@ data _⊢_∷_ where
   TmSubst : Δ ⊢ a ∷ A → Γ ⊢ γ ⇒ Δ
     → Γ ⊢ a [ γ ]ₑ ∷ A [ γ ]ₑ
   TmUniv : ⊢ Γ 
-    → Γ ⊢ Univ u ∷ Univ (lsuc u)
-  TmCum : Γ ⊢ A ∷ Univ u
-    → Γ ⊢ A ∷ Univ (lsuc u)
+    → Γ ⊢ Univ u ∈ᵤ lsuc u
+  TmCum : Γ ⊢ A ∈ᵤ u
+    → Γ ⊢ A ∈ᵤ lsuc u
   TmTyConv : Γ ⊢ a ∷ A → Γ ⊢ A ≡ⱼ B
     → Γ ⊢ a ∷ B
 open _⊢_∷_

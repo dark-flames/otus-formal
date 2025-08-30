@@ -1,5 +1,5 @@
 {-# OPTIONS --without-K --safe #-}
-module Otus.Syntax.Typed.Presupposition.Univ where
+module Otus.Syntax.Typed.Presupposition.Utils.Univ where
 
 open import Otus.Utils
 open import Otus.Syntax.Untyped

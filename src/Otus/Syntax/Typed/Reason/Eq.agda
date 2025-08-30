@@ -2,20 +2,19 @@
 module Otus.Syntax.Typed.Reason.Eq where
 
 open import Otus.Utils
-open import Otus.Syntax.Untyped hiding (_∘_; _⊔_; lsuc)
-open import Otus.Syntax.Typed.Base
+open import Otus.Syntax.Untyped hiding (_∘_; lsuc)
 
-private
-  variable
-    l l₁ l₂ : Universe
-    x y n : ℕ
-    Γ Γ₁ Γ₂ Γ₃ Δ Δ₁ Δ₂ Θ Ξ : Context
-    γ γ₁ γ₂ γ₃ δ δ₁ δ₂ δ₃ ξ : Substitution
-    A B C D : Term
-    f g a b c d : Term
-
-module TyEqReason where
+module TyEqReason 
+  (_⊢_≡ⱼ_ : Context → Type → Type → Set)
+  (sym : ∀ {Γ A B} → Γ ⊢ A ≡ⱼ B → Γ ⊢ B ≡ⱼ A)
+  (trans : ∀ {Γ A B C} → Γ ⊢ A ≡ⱼ B  → Γ ⊢ B ≡ⱼ C → Γ ⊢ A ≡ⱼ C)
+  where
   infix 1 _⊢begin-ty_
+
+  private
+    variable
+      Γ : Context
+      A B C : Type
 
   _⊢begin-ty_ : (Γ : Context) →  Γ ⊢ A ≡ⱼ B  → Γ ⊢ A ≡ⱼ B
   Γ ⊢begin-ty aRb = aRb
@@ -23,13 +22,13 @@ module TyEqReason where
   infixr 2 ty-step-≡-⟩  ty-step-≡-∣ ty-step-≡-⟨
 
   ty-step-≡-⟩ : (A : Term) → Γ ⊢ A ≡ⱼ B  → Γ ⊢ B ≡ⱼ C → Γ ⊢ A ≡ⱼ C
-  ty-step-≡-⟩ _ = TyEqTrans
+  ty-step-≡-⟩ _ = trans
 
   ty-step-≡-∣ : (A : Term) → Γ ⊢ A ≡ⱼ B → Γ ⊢ A ≡ⱼ B
   ty-step-≡-∣ _ aRb = aRb
 
   ty-step-≡-⟨ : (A : Term) → Γ ⊢ B ≡ⱼ A → Γ ⊢ B ≡ⱼ C → Γ ⊢ A ≡ⱼ C
-  ty-step-≡-⟨ _ bRa bRc = TyEqTrans (TyEqSym bRa) bRc
+  ty-step-≡-⟨ _ bRa bRc = trans (sym bRa) bRc
 
   syntax ty-step-≡-⟩ x xRy yRz  = x ty-≡⟨ xRy ⟩ yRz
   syntax ty-step-≡-∣ x xRy      = x ty-≡⟨⟩ xRy
@@ -41,14 +40,24 @@ module TyEqReason where
   ty-step-≡-⟨-∎ _ _ aRb = aRb
 
   ty-step-≡-⟩-∎ : ∀ {Γ} → (A B : Term) → Γ ⊢ B ≡ⱼ A → Γ ⊢ A ≡ⱼ B
-  ty-step-≡-⟩-∎ _ _ bRa = TyEqSym bRa
+  ty-step-≡-⟩-∎ _ _ bRa = sym bRa
 
   syntax ty-step-≡-⟨-∎ x y xRy = x ty-≡⟨ xRy ⟩∣ y ∎
   syntax ty-step-≡-⟩-∎ x y yRx = x ty-≡⟨ yRx ⟨∣ y ∎
 
 
-module TmEqReason where
+module TmEqReason
+  (_⊢_≡ⱼ_∷_ : Context → Term → Term → Type → Set)
+  (sym : ∀ {Γ A a b} →  Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ b ≡ⱼ a ∷ A)
+  (trans : ∀ {Γ A a b c} → Γ ⊢ a ≡ⱼ b ∷ A  → Γ ⊢ b ≡ⱼ c ∷ A → Γ ⊢ a ≡ⱼ c ∷ A)
+  where
   infix 1 _⊢begin-tm_
+
+  private
+    variable
+      Γ : Context
+      A : Type
+      a b c : Term
 
   _⊢begin-tm_ : (Γ : Context) →  Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ≡ⱼ b ∷ A
   Γ ⊢begin-tm aRb = aRb
@@ -56,13 +65,13 @@ module TmEqReason where
   infixr 2 tm-step-≡-⟩  tm-step-≡-∣ tm-step-≡-⟨
 
   tm-step-≡-⟩ : (a : Term) → Γ ⊢ a ≡ⱼ b ∷ A  → Γ ⊢ b ≡ⱼ c ∷ A → Γ ⊢ a ≡ⱼ c ∷ A
-  tm-step-≡-⟩ _ = TmEqTrans
+  tm-step-≡-⟩ _ = trans
 
   tm-step-≡-∣ : (a : Term) → Γ ⊢ a ≡ⱼ b ∷ A → Γ ⊢ a ≡ⱼ b ∷ A
   tm-step-≡-∣ _ aRb = aRb
 
   tm-step-≡-⟨ : (a : Term) → Γ ⊢ b ≡ⱼ a ∷ A → Γ ⊢ b ≡ⱼ c ∷ A → Γ ⊢ a ≡ⱼ c ∷ A
-  tm-step-≡-⟨ _ bRa bRc = TmEqTrans (TmEqSym bRa) bRc
+  tm-step-≡-⟨ _ bRa bRc = trans (sym bRa) bRc
 
   syntax tm-step-≡-⟩ x xRy yRz  = x tm-≡⟨ xRy ⟩ yRz
   syntax tm-step-≡-∣ x xRy      = x tm-≡⟨⟩ xRy
@@ -74,11 +83,13 @@ module TmEqReason where
   tm-step-≡-⟨-∎ _ _ _ aRb = aRb
 
   tm-step-≡-⟩-∎ : ∀ {Γ} → (a b : Term) → (A : Term) → Γ ⊢ b ≡ⱼ a ∷ A → Γ ⊢ a ≡ⱼ b ∷ A
-  tm-step-≡-⟩-∎ _ _ _ bRa = TmEqSym bRa
+  tm-step-≡-⟩-∎ _ _ _ bRa = sym bRa
 
   syntax tm-step-≡-⟨-∎ x y A xRy = x tm-≡⟨ xRy ⟩∣ y ∎∷ A
   syntax tm-step-≡-⟩-∎ x y A yRx = x tm-≡⟨ yRx ⟨∣ y ∎∷ A
 
+
+{-
 module TmHEqReason where
   open import Otus.Syntax.Typed.Properties.Heter
 
@@ -202,3 +213,4 @@ module SbEqReason where
 
   syntax sb-step-≡-⟨-∎ x y Δ xRy = x sb-≡⟨ xRy ⟩∣ y ∎⇒ Δ
   syntax sb-step-≡-⟩-∎ x y Δ yRx = x sb-≡⟨ yRx ⟨∣ y ∎⇒ Δ
+-}

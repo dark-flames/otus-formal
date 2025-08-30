@@ -2,8 +2,7 @@
 module Otus.Syntax.Typed.Reason.Base where
 
 open import Otus.Utils
-open import Otus.Syntax.Untyped hiding (_∘_; _⊔_; lsuc; lzero)
-open import Otus.Syntax.Typed.Base
+open import Otus.Syntax.Untyped hiding (_∘_; lsuc)
 
 open Level
 open Product
@@ -83,7 +82,7 @@ step-⟨⟩-with rule p c = (PremiseWithHole.proofConstr c) (rule p)
 
 syntax step-∣ P p           = p ⎯⎯⎯⎯ P
 syntax step-⟨⟩ C r p        = p ⎯⎯⎯⎯⟨ r ⟩ C -- apply
-syntax step-⟨⟩-with r p C        = p ⎯⎯⎯⎯⟨ r ⟩-with C -- apply
+syntax step-⟨⟩-with r p C   = p ⎯⎯⎯⎯⟨ r ⟩-with C -- apply
 
 
 ---- end syntax

@@ -8,3 +8,4 @@ open import Otus.Syntax.Typed.Presupposition.Utils.Context public
 open import Otus.Syntax.Typed.Presupposition.Utils.Subst public
 open import Otus.Syntax.Typed.Presupposition.Utils.Type public
 open import Otus.Syntax.Typed.Presupposition.Utils.Term public
+open import Otus.Syntax.Typed.Presupposition.Utils.Univ public

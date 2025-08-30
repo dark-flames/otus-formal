@@ -5,7 +5,7 @@ open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Presupposition.Base
 open import Otus.Syntax.Typed.Presupposition.WfCtx
-open import Otus.Syntax.Typed.Presupposition.Univ
+open import Otus.Syntax.Typed.Presupposition.Utils.Univ
 
 
 private

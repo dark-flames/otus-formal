@@ -30,7 +30,7 @@ module Sum where
 
 module Nat where
   open import Data.Nat using (ℕ; suc; zero; _+_; _∸_; _≤_) renaming (_⊔_ to _⊔ₙ_) public
-  open import Data.Nat.Properties using (+-suc; ⊔-idem; m∸n+n≡m; m≤m⊔n; m≤n⊔m) public
+  open import Data.Nat.Properties using (+-suc; ⊔-idem; ≤-refl; m≤n⇒m≤1+n; m∸n+n≡m; m≤m⊔n; m≤n⊔m) public
   open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 
   suc-+ : ∀ m n → suc m + n ≡ suc (m + n)

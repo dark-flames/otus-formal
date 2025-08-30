@@ -16,7 +16,7 @@ private
     A A₁ A₂ B C D : Type
     f g a a₁ a₂ b b₁ b₂ c c₁ c₂ d  : Term
 
-infix 6 ⊢_ _⊢_∈ᵤ_ _⊢_ _⊢_∷_ _⊢_⇒_ ⊢_≡ⱼ_ _⊢_≡ⱼ_ _⊢_≡ⱼ_⇒_ _⊢_≡ⱼ_∷_
+infix 6 ⊢_ _⊢_∈ᵤ_ _⊢_≡ⱼ_∈ᵤ_ _⊢_ _⊢_∷_ _⊢_⇒_ ⊢_≡ⱼ_ _⊢_≡ⱼ_ _⊢_≡ⱼ_⇒_ _⊢_≡ⱼ_∷_
 
 data ⊢_ : Context → Set
 data _⊢_∷_ : Context → Term → Type → Set
@@ -36,19 +36,20 @@ record _⊢_ (Γ : Context) (A : Type) : Set where
   constructor tyJdg
   field
     tyUniv : Universe
-    Γ⊢A∷U : Γ ⊢ A ∈ᵤ tyUniv
+    Γ⊢A∷U  : Γ ⊢ A ∈ᵤ tyUniv
 
 record _⊢_≡ⱼ_ (Γ : Context) (A B : Type) : Set where
   inductive
   constructor tyEqJdg
   field
-    tyUniv : Universe
+    tyUniv  : Universe
     Γ⊢A≡B∷U : Γ ⊢ A ≡ⱼ B ∈ᵤ tyUniv
 
 data ⊢_ where
   CEmp : ⊢ ε
   CExt : ⊢ Γ → Γ ⊢ A
-    →  ⊢ Γ ◁ A
+      -----------------
+       → ⊢ Γ ◁ A
 open ⊢_
 
 data _⊢_∷_ where

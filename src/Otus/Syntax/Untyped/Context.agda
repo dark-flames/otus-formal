@@ -7,8 +7,8 @@ infixl 8 _◁_
 infixl 7 _⧺_
 
 data Context : Set where
-    ε : Context
-    _◁_ : Context → Type → Context
+  ε   : Context
+  _◁_ : Context → Type → Context
 
 
 _⧺_ : Context → Context → Context

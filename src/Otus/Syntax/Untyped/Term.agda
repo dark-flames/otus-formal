@@ -18,22 +18,21 @@ Type : Set
 Type = Term
 
 data Term where
-    Var : ℕ → Term
-    
-    Pi : Type → Type → Term
-    Lam : Term → Term
-    _∙_ : Term → Term → Term
-    Nat : Term
-    Zero : Term
-    Succ : Term → Term
+    Var     : ℕ → Term
+    Pi      : Type → Type → Term
+    Lam     : Term → Term
+    _∙_     : Term → Term → Term
+    Nat     : Term
+    Zero    : Term
+    Succ    : Term → Term
     NatElim : Term → Term → Term → Term → Term
-    Univ : Universe → Type
-    _[_]ₑ : Term → Substitution → Term
+    Univ    : Universe → Type
+    _[_]ₑ   : Term → Substitution → Term
 
 data Substitution where
     drop : ℕ → Substitution
-    _◀_ : Substitution → Term → Substitution
-    _∘_ : Substitution → Substitution → Substitution
+    _◀_  : Substitution → Term → Substitution
+    _∘_  : Substitution → Substitution → Substitution
 
 idₛ : Substitution
 idₛ = drop 0

@@ -1,14 +1,15 @@
 {-# OPTIONS --without-K --safe #-}
-module Otus.Syntax.Typed.Properties.Inversion.Subst where
+module Otus.Syntax.Typed.Presupposition.Inversion.Subst where
 
 open import Otus.Utils
 open import Otus.Syntax.Untyped
-open import Otus.Syntax.Typed.Base
-open import Otus.Syntax.Typed.Properties.Utils
-open import Otus.Syntax.Typed.Properties.Context
-open import Otus.Syntax.Typed.Properties.Presupposition
-open import Otus.Syntax.Typed.Properties.Inversion.Base
-open import Otus.Syntax.Typed.Properties.Inversion.Context
+open import Otus.Syntax.Typed.Presupposition.Base
+open import Otus.Syntax.Typed.Presupposition.Utils
+open import Otus.Syntax.Typed.Presupposition.Relation
+open import Otus.Syntax.Typed.Presupposition.WfCtx
+open import Otus.Syntax.Typed.Presupposition.Stability
+open import Otus.Syntax.Typed.Presupposition.Inversion.Base
+open import Otus.Syntax.Typed.Presupposition.Inversion.Context
 
 open Product
 
@@ -62,7 +63,7 @@ dropSInversion (SbConv Γ⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂) = let
   in dropSucInv _ _ Γ'⊢A ⊢Γ≡Γ'◁A (SbConv Γ'⊢dropX⇒Δ₁ ⊢Δ₁≡Δ₂)
 
 -- idInversion : Γ ⊢ idₛ ⇒ Δ → ⊢ Γ ≡ⱼ Δ
-idInversion (SbId ⊢Γ) = CEqRefl ⊢Γ
+idInversion (SbId ⊢Γ) = ctxEqRefl ⊢Γ
 idInversion (SbConv Γ⊢γ⇒Δ₁ ⊢Δ₁≡Δ₂) = let 
     ⊢Γ≡Δ₁ = idInversion Γ⊢γ⇒Δ₁
   in ctxEqTrans ⊢Γ≡Δ₁ ⊢Δ₁≡Δ₂
@@ -107,4 +108,4 @@ sbExtInversion' Γ⊢γ◀a⇒Δ◁A = let
     ⊢Δ≡Δ₁ , Δ⊢A≡A₁ = ctxEqExtInversion ⊢Δ◁A≡Δ₁◁A₁
     Γ⊢γ⇒Δ = SbConv Γ⊢γ⇒Δ₁ (ctxEqSym ⊢Δ≡Δ₁)
     Γ⊢A[γ]≡A₁[γ] = tyEqSubst₁ Δ⊢A≡A₁ Γ⊢γ⇒Δ
-  in Γ⊢γ⇒Δ , (TmTyConv Γ⊢a∷A₁[γ] (TyEqSym Γ⊢A[γ]≡A₁[γ]))
+  in Γ⊢γ⇒Δ , (TmTyConv Γ⊢a∷A₁[γ] (tyEqSym Γ⊢A[γ]≡A₁[γ]))

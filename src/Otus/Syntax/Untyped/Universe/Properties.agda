@@ -17,6 +17,12 @@ open ≡-Reasoning
 ⊔ᵤ-idem : (u : Universe) → u ⊔ᵤ u ≡ u
 ⊔ᵤ-idem (univ l) = cong univ (⊔-idem l)
 
+⊆-refl : ∀ {u} → u ⊆ u
+⊆-refl = ≤-refl
+
+⊆-lsucᵣ : ∀ {u₁ u₂} → u₁ ⊆ u₂ → u₁ ⊆ lsuc u₂
+⊆-lsucᵣ = m≤n⇒m≤1+n
+
 u₁⊆u₁⊔u₂ : ∀ { u₁ u₂ } → u₁ ⊆ u₁ ⊔ᵤ u₂
 u₁⊆u₁⊔u₂ {univ l₁} {univ l₂} = m≤m⊔n l₁ l₂
 
@@ -49,9 +55,7 @@ u₂⊆u₁⊔u₂ {univ l₁} {univ l₂} = m≤n⊔m l₁ l₂
     lsuc l₁ ⊔ (lsuc l₂ ⊔ lsuc l₃)
   ∎  -- cong lsuc (⊔-assoc {l₁} {l₂} {l₃})
 
-≤ₗ-refl : ∀ {l} → l ≤ₗ l
-≤ₗ-refl { lzero }  = lz≤ln
-≤ₗ-refl { lsuc l } = ls≤ls ≤ₗ-refl
+
 
 ≤ₗ-trans : ∀ {l₁ l₂ l₃} → l₁ ≤ₗ l₂ → l₂ ≤ₗ l₃ → l₁ ≤ₗ l₃
 ≤ₗ-trans lz≤ln _ = lz≤ln
@@ -69,9 +73,7 @@ u₂⊆u₁⊔u₂ {univ l₁} {univ l₂} = m≤n⊔m l₁ l₂
 ≤ₗ-antisym lz≤ln lz≤ln = refl
 ≤ₗ-antisym (ls≤ls r₁) (ls≤ls r₂) = cong lsuc (≤ₗ-antisym r₁ r₂)
 
-≤ₗ-lsucᵣ : ∀ {l₁ l₂} → l₁ ≤ₗ l₂ → l₁ ≤ₗ lsuc l₂
-≤ₗ-lsucᵣ lz≤ln = lz≤ln
-≤ₗ-lsucᵣ (ls≤ls r) = ls≤ls (≤ₗ-lsucᵣ r)
+
 
 ≤ₗ-diff : ∀ {l₁ l₂} → l₁ ≤ₗ l₂ → Σ[ n ∈ ℕ ] liftUniv l₁ n ≡ l₂
 ≤ₗ-diff lz≤ln

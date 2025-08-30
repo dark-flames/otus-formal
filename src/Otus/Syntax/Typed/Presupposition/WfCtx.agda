@@ -4,7 +4,7 @@ module Otus.Syntax.Typed.Presupposition.WfCtx where
 open import Otus.Utils
 open import Otus.Syntax.Untyped
 open import Otus.Syntax.Typed.Presupposition.Base
-open import Otus.Syntax.Typed.Presupposition.Inversion
+open import Otus.Syntax.Typed.Presupposition.Inversion.Base
 
 open Product
 
